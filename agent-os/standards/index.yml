@@ -19,6 +19,8 @@ frontend:
 global:
   coding-style:
     description: Modern C# features, naming conventions, EditorConfig rules
+  git-workflow:
+    description: Git worktrees for feature development, /new-feature command
   tech-stack:
     description: .NET 10, AWS SDK, DynamoDB, OneOf, FluentValidation, xUnit
 
