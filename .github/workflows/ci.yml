@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet restore
+      - run: dotnet build --no-restore
+      - run: dotnet test --no-build --verbosity normal
+
+  release:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Publish for all platforms
+      - name: Publish win-x64
+        run: dotnet publish src/Questline -c Release -r win-x64 --self-contained -o publish/win-x64
+
+      - name: Publish linux-x64
+        run: dotnet publish src/Questline -c Release -r linux-x64 --self-contained -o publish/linux-x64
+
+      - name: Publish linux-arm64
+        run: dotnet publish src/Questline -c Release -r linux-arm64 --self-contained -o publish/linux-arm64
+
+      - name: Publish osx-x64
+        run: dotnet publish src/Questline -c Release -r osx-x64 --self-contained -o publish/osx-x64
+
+      - name: Publish osx-arm64
+        run: dotnet publish src/Questline -c Release -r osx-arm64 --self-contained -o publish/osx-arm64
+
+      # Create zip archives
+      - name: Create archives
+        run: |
+          cd publish
+          zip -r questline-win-x64.zip win-x64
+          tar -czf questline-linux-x64.tar.gz linux-x64
+          tar -czf questline-linux-arm64.tar.gz linux-arm64
+          tar -czf questline-osx-x64.tar.gz osx-x64
+          tar -czf questline-osx-arm64.tar.gz osx-arm64
+
+      # Create GitHub Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          files: |
+            publish/questline-win-x64.zip
+            publish/questline-linux-x64.tar.gz
+            publish/questline-linux-arm64.tar.gz
+            publish/questline-osx-x64.tar.gz
+            publish/questline-osx-arm64.tar.gz
+          generate_release_notes: true
