@@ -1,3 +1,4 @@
+using Questline.Cli;
 using Shouldly;
 using Xunit;
 

@@ -1,4 +1,4 @@
-namespace Questline;
+namespace Questline.Cli;
 
 public class CommandParser
 {
