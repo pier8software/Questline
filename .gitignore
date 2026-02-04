@@ -1,0 +1,22 @@
+# User-specific stuff
+.idea/
+.claude/
+
+# Visual Studio User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio cache/options directory
+.vs/
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# VS build artifacts. Always want to ignore this.
+[Bb]in/
+[Oo]bj/
