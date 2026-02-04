@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="src/Questline/Questline.csproj" />
+  <Project Path="tests/Questline.Tests/Questline.Tests.csproj" />
 </Solution>
