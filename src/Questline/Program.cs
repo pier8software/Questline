@@ -1,6 +1,5 @@
+using Questline.Cli;
 using Terminal.Gui;
-using Questline;
-using Questline.Tui;
 
 Application.Init();
 try

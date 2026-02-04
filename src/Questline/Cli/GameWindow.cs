@@ -1,13 +1,13 @@
 using Terminal.Gui;
 
-namespace Questline.Tui;
+namespace Questline.Cli;
 
 public class GameWindow : Window
 {
-    private readonly CommandParser _parser;
     private readonly CommandHandler _handler;
-    private readonly TextView _outputView;
     private readonly TextField _inputField;
+    private readonly TextView _outputView;
+    private readonly CommandParser _parser;
     private GameState _state;
 
     public GameWindow(CommandParser parser, CommandHandler handler)
@@ -105,6 +105,7 @@ public class GameWindow : Window
         {
             _outputView.Text += Environment.NewLine;
         }
+
         _outputView.Text += text;
 
         _outputView.MoveEnd();

@@ -1,4 +1,4 @@
-namespace Questline;
+namespace Questline.Cli;
 
 public record RoomState
 {
@@ -19,10 +19,7 @@ public record GameState
         return this with { Flags = newFlags };
     }
 
-    public GameState WithRoom(string roomId)
-    {
-        return this with { CurrentRoomId = roomId };
-    }
+    public GameState WithRoom(string roomId) => this with { CurrentRoomId = roomId };
 
     public GameState WithRoomVisited(string roomId)
     {
