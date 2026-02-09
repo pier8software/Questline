@@ -21,7 +21,7 @@ var world = new WorldBuilder()
         r.WithExit(Direction.South, "hallway"))
     .Build();
 
-GameState state = new(world, new Player { Location = "entrance" });
+GameState state = new(world, new Player { Id = "player1", Location = "entrance" });
 
 // Configure dispatcher
 CommandDispatcher dispatcher = new();

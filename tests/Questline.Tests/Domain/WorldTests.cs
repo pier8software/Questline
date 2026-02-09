@@ -44,7 +44,7 @@ public class WorldTests
     [Fact]
     public void Player_HasMutableLocation()
     {
-        var player = new Player { Location = "start" };
+        var player = new Player { Id = "player1", Location = "start" };
         player.Location.ShouldBe("start");
 
         player.Location = "end";
@@ -57,7 +57,7 @@ public class WorldTests
         var world = new WorldBuilder()
             .WithRoom("start", "Start", "Starting room.")
             .Build();
-        var player = new Player { Location = "start" };
+        var player = new Player { Id = "player1", Location = "start" };
 
         var state = new GameState(world, player);
 

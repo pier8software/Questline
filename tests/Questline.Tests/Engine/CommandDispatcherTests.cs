@@ -13,7 +13,7 @@ public class CommandDispatcherTests
         var world = new WorldBuilder()
             .WithRoom("start", "Start", "A starting room.")
             .Build();
-        var state = new GameState(world, new Player { Location = "start" });
+        var state = new GameState(world, new Player { Id = "player1", Location = "start" });
         var dispatcher = new CommandDispatcher();
         dispatcher.Register("look", new LookCommandHandler(), _ => new LookCommand());
 
@@ -27,7 +27,7 @@ public class CommandDispatcherTests
     {
         var state = new GameState(
             new WorldBuilder().WithRoom("r", "R", "R.").Build(),
-            new Player { Location = "r" });
+            new Player { Id = "player1", Location = "r" });
         var dispatcher = new CommandDispatcher();
 
         var result = dispatcher.Dispatch(state, new ParsedInput("dance", []));
@@ -42,7 +42,7 @@ public class CommandDispatcherTests
         var world = new WorldBuilder()
             .WithRoom("start", "Start", "A starting room.")
             .Build();
-        var state = new GameState(world, new Player { Location = "start" });
+        var state = new GameState(world, new Player { Id = "player1", Location = "start" });
         var dispatcher = new CommandDispatcher();
         dispatcher.Register(["look", "l"], new LookCommandHandler(), _ => new LookCommand());
 
@@ -58,7 +58,7 @@ public class CommandDispatcherTests
             .WithRoom("a", "Room A", "Room A.", r => r.WithExit(Direction.North, "b"))
             .WithRoom("b", "Room B", "Room B.")
             .Build();
-        var state = new GameState(world, new Player { Location = "a" });
+        var state = new GameState(world, new Player { Id = "player1", Location = "a" });
         var dispatcher = new CommandDispatcher();
         dispatcher.Register(["go", "walk", "move"], new GoCommandHandler(), args =>
         {
@@ -81,7 +81,7 @@ public class CommandDispatcherTests
     {
         var state = new GameState(
             new WorldBuilder().WithRoom("r", "R", "R.").Build(),
-            new Player { Location = "r" });
+            new Player { Id = "player1", Location = "r" });
         var dispatcher = new CommandDispatcher();
         dispatcher.Register("quit", new QuitCommandHandler(), _ => new QuitCommand());
 
@@ -95,7 +95,7 @@ public class CommandDispatcherTests
     {
         var state = new GameState(
             new WorldBuilder().WithRoom("r", "R", "R.").Build(),
-            new Player { Location = "r" });
+            new Player { Id = "player1", Location = "r" });
         var dispatcher = new CommandDispatcher();
 
         var result = dispatcher.Dispatch(state, new ParsedInput("", []));

@@ -22,7 +22,7 @@ public class GameLoopTests
                 r.WithExit(Direction.South, "hallway"))
             .Build();
 
-        var state = new GameState(world, new Player { Location = "entrance" });
+        var state = new GameState(world, new Player { Id = "player1", Location = "entrance" });
 
         var dispatcher = new CommandDispatcher();
         dispatcher.Register(["look", "l"], new LookCommandHandler(), _ => new LookCommand());

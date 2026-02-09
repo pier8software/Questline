@@ -13,7 +13,7 @@ public class LookCommandHandlerTests
         var world = new WorldBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern with a roaring fire.")
             .Build();
-        var state = new GameState(world, new Player { Location = "tavern" });
+        var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
         var handler = new LookCommandHandler();
 
         var result = handler.Execute(state, new LookCommand());
@@ -35,7 +35,7 @@ public class LookCommandHandlerTests
             .WithRoom("throne-room", "Throne Room", "Grand throne room.")
             .WithRoom("entrance", "Entrance", "The entrance.")
             .Build();
-        var state = new GameState(world, new Player { Location = "hallway" });
+        var state = new GameState(world, new Player { Id = "player1", Location = "hallway" });
         var handler = new LookCommandHandler();
 
         var result = handler.Execute(state, new LookCommand());
@@ -51,7 +51,7 @@ public class LookCommandHandlerTests
         var world = new WorldBuilder()
             .WithRoom("sealed-room", "Sealed Room", "No way out.")
             .Build();
-        var state = new GameState(world, new Player { Location = "sealed-room" });
+        var state = new GameState(world, new Player { Id = "player1", Location = "sealed-room" });
         var handler = new LookCommandHandler();
 
         var result = handler.Execute(state, new LookCommand());

@@ -14,7 +14,7 @@ public class GoCommandHandlerTests
             .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .Build();
-        var player = new Player { Location = "start" };
+        var player = new Player { Id = "player1", Location = "start" };
         var state = new GameState(world, player);
         var handler = new GoCommandHandler();
 
@@ -32,7 +32,7 @@ public class GoCommandHandlerTests
         var world = new WorldBuilder()
             .WithRoom("sealed", "Sealed Room", "No way north.")
             .Build();
-        var player = new Player { Location = "sealed" };
+        var player = new Player { Id = "player1", Location = "sealed" };
         var state = new GameState(world, player);
         var handler = new GoCommandHandler();
 
@@ -55,7 +55,7 @@ public class GoCommandHandlerTests
             })
             .WithRoom("c", "Room C", "Third room.")
             .Build();
-        var state = new GameState(world, new Player { Location = "a" });
+        var state = new GameState(world, new Player { Id = "player1", Location = "a" });
         var handler = new GoCommandHandler();
 
         var result = handler.Execute(state, new GoCommand(Direction.East));
