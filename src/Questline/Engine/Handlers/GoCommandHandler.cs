@@ -18,6 +18,7 @@ public class GoCommandHandler : ICommandHandler<GoCommand>
 
         var newRoom = state.World.GetRoom(destinationId);
         var exits = newRoom.Exits.Keys.Select(d => d.ToString()).ToList();
-        return new MovedResult(newRoom.Name, newRoom.Description, exits);
+        var items = newRoom.Items.Items.Select(i => i.Name).ToList();
+        return new MovedResult(newRoom.Name, newRoom.Description, exits, items);
     }
 }

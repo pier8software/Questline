@@ -35,7 +35,8 @@ public class GameLoop(IConsole console, Parser parser, CommandDispatcher dispatc
     {
         var room = state.World.GetRoom(state.Player.Location);
         var exits = room.Exits.Keys.Select(d => d.ToString()).ToList();
-        var lookResult = new LookResult(room.Name, room.Description, exits);
+        var items = room.Items.Items.Select(i => i.Name).ToList();
+        var lookResult = new LookResult(room.Name, room.Description, exits, items);
         console.WriteLine(lookResult.Message);
     }
 }

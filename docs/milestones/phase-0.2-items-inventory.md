@@ -2,7 +2,7 @@
 
 ## Status
 
-Not Started
+Complete
 
 ## Objective
 
@@ -11,49 +11,49 @@ Not Started
 ## Acceptance Criteria
 
 ### Item Entity
-- [ ] Items exist as entities with required `Id`, `Name`, and `Description` properties
-- [ ] Items use `required init` properties following the Room entity pattern
+- [x] Items exist as entities with required `Id`, `Name`, and `Description` properties
+- [x] Items use `required init` properties following the Room entity pattern
 
 ### Inventory Container
-- [ ] Inventory can add an item
-- [ ] Inventory can remove an item (returns `bool`)
-- [ ] Inventory can find an item by name (case-insensitive exact match)
-- [ ] Inventory can check whether it contains a specific item
-- [ ] Inventory exposes items as a readonly collection
-- [ ] Inventory reports whether it is empty
+- [x] Inventory can add an item
+- [x] Inventory can remove an item (returns `bool`)
+- [x] Inventory can find an item by name (case-insensitive exact match)
+- [x] Inventory can check whether it contains a specific item
+- [x] Inventory exposes items as a readonly collection
+- [x] Inventory reports whether it is empty
 
 ### Room Items
-- [ ] Rooms have an `Items` property backed by `Inventory`
-- [ ] `WorldBuilder` supports adding items to rooms via `RoomBuilder.WithItem`
+- [x] Rooms have an `Items` property backed by `Inventory`
+- [x] `WorldBuilder` supports adding items to rooms via `RoomBuilder.WithItem`
 
 ### Player Inventory
-- [ ] Player has an `Inventory` property
-- [ ] Player inventory starts empty
+- [x] Player has an `Inventory` property
+- [x] Player inventory starts empty
 
 ### Get Command
-- [ ] `get <item>` picks up item from current room and adds to player inventory
-- [ ] `get <item>` removes the item from the room
-- [ ] `get <item>` returns a success result with descriptive message
-- [ ] `get <item>` returns an error if item is not present in room
-- [ ] `get` with no argument returns an error asking what to pick up
-- [ ] `take` works as an alias for `get`
-- [ ] Item name matching is case-insensitive
+- [x] `get <item>` picks up item from current room and adds to player inventory
+- [x] `get <item>` removes the item from the room
+- [x] `get <item>` returns a success result with descriptive message
+- [x] `get <item>` returns an error if item is not present in room
+- [x] `get` with no argument returns an error asking what to pick up
+- [x] `take` works as an alias for `get`
+- [x] Item name matching is case-insensitive
 
 ### Drop Command
-- [ ] `drop <item>` removes item from player inventory and places in current room
-- [ ] `drop <item>` returns a success result with descriptive message
-- [ ] `drop <item>` returns an error if item is not in inventory
-- [ ] `drop` with no argument returns an error asking what to drop
+- [x] `drop <item>` removes item from player inventory and places in current room
+- [x] `drop <item>` returns a success result with descriptive message
+- [x] `drop <item>` returns an error if item is not in inventory
+- [x] `drop` with no argument returns an error asking what to drop
 
 ### Inventory Command
-- [ ] `inventory` lists all items currently carried
-- [ ] `inv` and `i` work as aliases for `inventory`
-- [ ] Inventory command shows a message when carrying nothing
+- [x] `inventory` lists all items currently carried
+- [x] `inv` and `i` work as aliases for `inventory`
+- [x] Inventory command shows a message when carrying nothing
 
 ### Look Enhancement
-- [ ] `look` result includes items visible in the current room
-- [ ] `go` result includes items visible in the destination room
-- [ ] Items are hidden from room output when none are present
+- [x] `look` result includes items visible in the current room
+- [x] `go` result includes items visible in the destination room
+- [x] Items are hidden from room output when none are present
 
 ## Implementation Notes
 

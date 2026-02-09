@@ -9,6 +9,7 @@ public class LookCommandHandler : ICommandHandler<LookCommand>
     {
         var room = state.World.GetRoom(state.Player.Location);
         var exits = room.Exits.Keys.Select(d => d.ToString()).ToList();
-        return new LookResult(room.Name, room.Description, exits);
+        var items = room.Items.Items.Select(i => i.Name).ToList();
+        return new LookResult(room.Name, room.Description, exits, items);
     }
 }

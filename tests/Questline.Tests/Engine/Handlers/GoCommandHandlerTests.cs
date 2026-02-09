@@ -64,4 +64,22 @@ public class GoCommandHandlerTests
         moved.Exits.ShouldContain("West");
         moved.Exits.ShouldContain("North");
     }
+
+    [Fact]
+    public void Go_WhenDestinationHasItems_IncludesThemInResult()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var world = new WorldBuilder()
+            .WithRoom("a", "Room A", "First room.", r => r.WithExit(Direction.North, "b"))
+            .WithRoom("b", "Room B", "Second room.", r => r.WithItem(lamp))
+            .Build();
+        var state = new GameState(world, new Player { Id = "player1", Location = "a" });
+        var handler = new GoCommandHandler();
+
+        var result = handler.Execute(state, new GoCommand(Direction.North));
+
+        var moved = result.ShouldBeOfType<MovedResult>();
+        moved.Items.ShouldContain("brass lamp");
+        moved.Message.ShouldContain("You can see");
+    }
 }

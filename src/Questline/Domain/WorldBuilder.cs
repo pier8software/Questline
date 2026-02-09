@@ -18,6 +18,7 @@ public class WorldBuilder
 public class RoomBuilder(string id, string name, string description)
 {
     private readonly Dictionary<Direction, string> _exits = new();
+    private readonly List<Item> _items = new();
 
     public RoomBuilder WithExit(Direction direction, string destinationId)
     {
@@ -25,11 +26,27 @@ public class RoomBuilder(string id, string name, string description)
         return this;
     }
 
-    public Room Build() => new()
+    public RoomBuilder WithItem(Item item)
     {
-        Id = id,
-        Name = name,
-        Description = description,
-        Exits = new Dictionary<Direction, string>(_exits)
-    };
+        _items.Add(item);
+        return this;
+    }
+
+    public Room Build()
+    {
+        var room = new Room
+        {
+            Id = id,
+            Name = name,
+            Description = description,
+            Exits = new Dictionary<Direction, string>(_exits)
+        };
+
+        foreach (var item in _items)
+        {
+            room.Items.Add(item);
+        }
+
+        return room;
+    }
 }
