@@ -1,14 +1,7 @@
 namespace Questline.Domain;
 
-public class World
+public class World(Dictionary<string, Room> rooms)
 {
-    private readonly Dictionary<string, Room> rooms;
-
-    public World(Dictionary<string, Room> rooms)
-    {
-        this.rooms = rooms;
-    }
-
     public Room GetRoom(string id)
     {
         if (!rooms.TryGetValue(id, out var room))
