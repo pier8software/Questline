@@ -4,31 +4,18 @@ using Questline.Domain;
 using Questline.Engine;
 using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
+using Questline.Framework.Content;
 
 ServiceCollection services = new();
 
-// Build the test world
-var rustyKey = new Item { Id = "key", Name = "rusty key", Description = "A rusty iron key." };
-var torch = new Item { Id = "torch", Name = "torch", Description = "A flickering wooden torch." };
+// Load adventure from content files
+var contentPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "content", "adventures", "five-room-dungeon");
+contentPath = Path.GetFullPath(contentPath);
 
-var world = new WorldBuilder()
-    .WithRoom("entrance", "Dungeon Entrance", "A dark entrance to the dungeon. Cold air drifts from the north.", r =>
-        r.WithExit(Direction.North, "hallway")
-         .WithItem(rustyKey))
-    .WithRoom("hallway", "Torch-Lit Hallway", "A hallway lined with flickering torches. Passages lead north and south.",
-        r =>
-        {
-            r.WithExit(Direction.South, "entrance");
-            r.WithExit(Direction.North, "chamber");
-            r.WithItem(torch);
-        })
-    .WithRoom("chamber", "Great Chamber", "A vast chamber with vaulted ceilings. The only exit is to the south.", r =>
-        r.WithExit(Direction.South, "hallway"))
-    .Build();
+var loader = new FileSystemAdventureLoader();
+var adventure = loader.Load(contentPath);
 
-// A comment
-
-GameState state = new(world, new Player { Id = "player1", Location = "entrance" });
+GameState state = new(adventure.World, new Player { Id = "player1", Location = adventure.StartingRoomId });
 
 // Configure dispatcher
 CommandDispatcher dispatcher = new();

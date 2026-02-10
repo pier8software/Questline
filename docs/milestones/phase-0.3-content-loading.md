@@ -2,7 +2,7 @@
 
 ## Status
 
-Not Started
+Complete
 
 ## Objective
 
@@ -11,23 +11,23 @@ Define the 5-room dungeon adventure as JSON data files and load them at runtime.
 ## Acceptance Criteria
 
 ### Content Structure
-- [ ] Adventure content lives in `content/adventures/five-room-dungeon/`
-- [ ] Rooms defined in JSON with connections, descriptions, and items
-- [ ] Items defined in JSON with properties
-- [ ] Adventure metadata (name, starting room) defined in manifest
+- [x] Adventure content lives in `content/adventures/five-room-dungeon/`
+- [x] Rooms defined in JSON with connections, descriptions, and items
+- [x] Items defined in JSON with properties
+- [x] Adventure metadata (name, starting room) defined in manifest
 
 ### Content Loading
-- [ ] Game loads adventure from content files on startup
-- [ ] World is constructed from loaded data
-- [ ] Invalid content produces clear error messages
-- [ ] Missing required fields fail fast with helpful errors
+- [x] Game loads adventure from content files on startup
+- [x] World is constructed from loaded data
+- [x] Invalid content produces clear error messages
+- [x] Missing required fields fail fast with helpful errors
 
 ### The 5-Room Dungeon
-- [ ] Room 1: Entrance with a challenge/guardian (puzzle in 0.4)
-- [ ] Room 2: Puzzle or roleplaying challenge
-- [ ] Room 3: Trick or setback
-- [ ] Room 4: Climax / big challenge
-- [ ] Room 5: Reward / revelation
+- [x] Room 1: Entrance with a challenge/guardian (puzzle in 0.4)
+- [x] Room 2: Puzzle or roleplaying challenge
+- [x] Room 3: Trick or setback
+- [x] Room 4: Climax / big challenge
+- [x] Room 5: Reward / revelation
 
 ## Implementation Notes
 
@@ -181,6 +181,14 @@ Using the classic 5-room dungeon structure:
 | 5. Treasure | Reward | Victory condition |
 
 Actual puzzle mechanics come in Phase 0.4 — this phase just defines the rooms and connections.
+
+## Decisions Made
+
+- Added `Description` property to `Adventure` domain type (not in original spec but consistent with the adventure.json manifest having a description field).
+- JSON exits support both string format (`"north": "room-id"`) and object format (`"north": {"destination": "room-id", "barrier": "door-id"}`) via a custom `ExitDictionaryConverter`. Only destination is used in Phase 0.3; barrier support comes in 0.4.
+- Used `Enum.TryParse<Direction>` for parsing direction strings from JSON — the enum values match JSON keys case-insensitively, avoiding a dependency on `Engine.DirectionParser`.
+- Validation (exit references, item references, starting room, BFS reachability) runs on DTOs before constructing domain objects.
+- DTOs live in `Framework.Content.Dtos` namespace, separate from domain entities.
 
 ## Out of Scope
 
