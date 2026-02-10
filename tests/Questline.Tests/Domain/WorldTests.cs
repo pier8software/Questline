@@ -52,6 +52,26 @@ public class WorldTests
     }
 
     [Fact]
+    public void WithItem_AddsItemToRoom()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var world = new WorldBuilder()
+            .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
+            .Build();
+
+        var room = world.GetRoom("cellar");
+        room.Items.FindByName("brass lamp").ShouldBe(lamp);
+    }
+
+    [Fact]
+    public void Player_InventoryStartsEmpty()
+    {
+        var player = new Player { Id = "player1", Location = "start" };
+
+        player.Inventory.IsEmpty.ShouldBeTrue();
+    }
+
+    [Fact]
     public void GameState_HoldsWorldAndPlayer()
     {
         var world = new WorldBuilder()
