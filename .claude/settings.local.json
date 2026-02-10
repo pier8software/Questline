@@ -1,8 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet build:*)",
-      "Bash(dotnet test:*)"
+      "Bash(python3:*)",
+      "Bash(python3 -c \"import sys, json; import yaml; json.dumps\\(yaml.safe_load\\(sys.stdin\\)\\); print\\(''YAML is valid''\\)\")"
     ]
   }
 }

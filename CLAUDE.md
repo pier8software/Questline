@@ -14,10 +14,8 @@ The goal of Phase 0 is to build a playable 5-room dungeon that proves the core l
 
 | Location | Purpose |
 |----------|---------|
-| `docs/PRODUCT_PLAN.md` | Mission, goals, roadmap overview |
-| `docs/ARCHITECTURE.md` | Component design, namespace responsibilities, design decisions |
-| `docs/CODE_STANDARDS.md` | Tech stack, style, testing approach, git workflow |
-| `docs/milestones/` | Detailed specs for each milestone with acceptance criteria |
+| `openspec/config.yaml` | Project context, tech stack, architecture summary, rules |
+| `openspec/specs/` | Capability specifications (requirements, scenarios) |
 | `src/Questline/` | Main application code |
 | `tests/Questline.Tests/` | Test project |
 | `content/adventures/` | JSON content files for adventures |
@@ -26,12 +24,11 @@ The goal of Phase 0 is to build a playable 5-room dungeon that proves the core l
 
 ### 1. Read the Spec First
 
-Before implementing anything, read the relevant milestone spec in `docs/milestones/`. Each spec contains:
+Before implementing anything, read the relevant capability spec in `openspec/specs/<capability>/spec.md`. Each spec contains:
 
-- Objective
-- Acceptance criteria (checkboxes)
-- Implementation notes with code examples
-- Test approach
+- Purpose
+- Requirements (SHALL language with WHEN/THEN scenarios)
+- Implementation Notes (for planned capabilities)
 
 ### 2. Test First, Always
 
@@ -66,11 +63,11 @@ For each acceptance criterion:
 
 ### 4. Update the Spec
 
-When a milestone is complete:
+Specs are updated through the OpenSpec change workflow:
 
-1. Check all acceptance criteria boxes
-2. Change status from `Not Started` → `In Progress` → `Complete`
-3. Note any deviations or decisions made
+1. Create a change with a proposal and delta-spec for any new or modified requirements
+2. Implement the change
+3. Archive the change (syncs delta-spec into the main spec)
 
 ## Code Patterns
 
@@ -116,156 +113,45 @@ Define content in JSON, not code. Behaviour that can't be expressed declarativel
 - [ ] Code builds without warnings (`dotnet build`)
 - [ ] No commented-out code
 - [ ] No `Console.WriteLine` debugging left behind
-- [ ] Acceptance criteria updated in milestone spec
+- [ ] Changes align with relevant OpenSpec specs
 
 ## Updating Specs
 
-### Marking Progress
+Specs live in `openspec/specs/<capability>/spec.md` and are updated through the OpenSpec change workflow — not edited directly.
 
-Edit the milestone spec directly:
+### Creating a New Spec
 
-```markdown
-## Status
-
-Complete  ← Update this
-
-## Acceptance Criteria
-
-- [x] Rooms exist as entities  ← Check completed items
-- [x] Rooms have exits
-```
-
-### Recording Decisions
-
-If you deviate from the spec or make a significant decision, add a note:
+Create `openspec/specs/<capability-name>/spec.md` following this format:
 
 ```markdown
-## Implementation Notes
+# <capability-name> Specification
 
-...
+## Purpose
 
-### Decisions Made
+What this capability does and why it matters.
 
-- Used `Dictionary<Direction, Exit>` instead of `Dictionary<Direction, string>` to support barriers from the start.
+## Requirements
+
+### Requirement: <descriptive name>
+
+The system SHALL <behaviour>.
+
+#### Scenario: <descriptive name>
+
+- **WHEN** <precondition and action>
+- **THEN** <expected outcome using SHALL>
+
+## Implementation Notes (planned capabilities only)
+
+Key models, patterns, and design guidance.
 ```
 
-## Creating New Milestone Specs
+### Guidelines
 
-When starting a new phase or breaking down work into milestones, create spec files following this structure:
-
-### File Location and Naming
-
-```
-docs/milestones/phase-{phase}.{milestone}-{short-name}.md
-```
-
-Examples:
-- `phase-0.1-scaffolding.md`
-- `phase-1.1-combat-basics.md`
-- `phase-2.3-party-inventory.md`
-
-### Template
-
-Use this template for new milestone specs:
-
-```markdown
-# Phase X.Y: [Title]
-
-## Status
-
-Not Started
-
-## Objective
-
-> One or two sentences describing what this milestone achieves and why it matters.
-
-## Acceptance Criteria
-
-### [Category 1]
-- [ ] Criterion in testable, behavioural terms
-- [ ] Another criterion
-- [ ] Criteria should be independently verifiable
-
-### [Category 2]
-- [ ] Group related criteria under headings
-- [ ] Each criterion maps to one or more tests
-
-## Implementation Notes
-
-### Suggested Order
-
-1. Step one
-2. Step two
-3. Continue in logical sequence
-
-### [Topic Heading]
-
-Provide guidance, code examples, or design suggestions:
-
-```csharp
-// Example code showing patterns to follow
-public class Example
-{
-    // ...
-}
-```
-
-### [Another Topic]
-
-Continue with relevant implementation guidance.
-
-### Test Approach
-
-```csharp
-[Fact]
-public void DescriptiveTestName_Scenario_ExpectedOutcome()
-{
-    // Arrange: setup
-    // Act: execute
-    // Assert: verify
-}
-```
-
-Describe what to test and how.
-
-## Dependencies
-
-List any milestones that must be complete before this one:
-
-- Phase X.Y: [Name] — reason needed
-
-## Out of Scope
-
-- Things explicitly not included in this milestone
-- Features deferred to later phases
-- Edge cases not yet handled
-
-## Decisions Made
-
-_Record significant implementation decisions here as work progresses._
-```
-
-### Guidelines for Writing Specs
-
-1. **Acceptance criteria must be testable** — if you can't write a test for it, rewrite it
-2. **Be specific about behaviour** — "handles errors gracefully" is too vague; "displays error message when item not found" is testable
-3. **Include code examples** — show the patterns, not just describe them
-4. **Define scope boundaries** — "Out of Scope" prevents creep and sets expectations
-5. **Keep milestones small** — if a milestone has more than 10-15 acceptance criteria, consider splitting it
-
-### Updating PRODUCT_PLAN.md
-
-When adding new phases or milestones, update `docs/PRODUCT_PLAN.md` to reflect the roadmap:
-
-```markdown
-### Phase 1: Solo Adventure
-
-| Milestone | Deliverable |
-|-----------|-------------|
-| 1.1 | Combat system basics |
-| 1.2 | Enemy AI and encounters |
-| ... | ... |
-```
+- Use SHALL for requirements
+- Every requirement must have at least one WHEN/THEN scenario
+- Implemented specs: requirements only (code is the source of truth)
+- Planned specs: include Implementation Notes with key models and patterns
 
 ## Common Tasks
 
@@ -294,8 +180,7 @@ When adding new phases or milestones, update `docs/PRODUCT_PLAN.md` to reflect t
 
 If unclear on approach, check in this order:
 
-1. Milestone spec for the current work
-2. `docs/ARCHITECTURE.md` for design patterns
-3. `docs/CODE_STANDARDS.md` for conventions
-4. Existing code for precedent
-5. Ask for clarification if still uncertain
+1. Capability spec for the current work (`openspec/specs/<capability>/spec.md`)
+2. `openspec/config.yaml` for architecture, conventions, and project context
+3. Existing code for precedent
+4. Ask for clarification if still uncertain
