@@ -1,0 +1,38 @@
+using Questline.Domain;
+using Questline.Engine;
+using Questline.Engine.Commands;
+using Questline.Engine.Handlers;
+
+namespace Questline.Tests.Engine.Handlers;
+
+public class QuitCommandHandlerTests
+{
+    [Fact]
+    public void Quit_ExitsGameSuccessfully()
+    {
+        var world = new WorldBuilder()
+            .WithRoom("tavern", "The Tavern", "A cozy tavern.")
+            .Build();
+        var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
+        var handler = new QuitCommandHandler();
+
+        var result = handler.Execute(state, new QuitCommand());
+
+        result.ShouldBeOfType<QuitResult>();
+        result.Success.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Quit_DisplaysGoodbyeMessage()
+    {
+        var world = new WorldBuilder()
+            .WithRoom("tavern", "The Tavern", "A cozy tavern.")
+            .Build();
+        var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
+        var handler = new QuitCommandHandler();
+
+        var result = handler.Execute(state, new QuitCommand());
+
+        result.Message.ShouldBe("Goodbye!");
+    }
+}

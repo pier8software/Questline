@@ -1,0 +1,72 @@
+schema: spec-driven
+
+context: |
+  ## Project Identity
+  Questline is a parser-driven text adventure engine built in C# (.NET 10).
+  Long-term vision: cooperative MUD platform. Development follows an incremental
+  roadmap starting with a single-player 5-room dungeon (Phase 0).
+
+  ## Tech Stack
+  - Runtime: .NET 10 (LTS)
+  - Serialisation: System.Text.Json
+  - DI: Microsoft.Extensions.DependencyInjection
+  - Testing: xUnit + Shouldly (behavioural, test-first)
+  - Console output: Console.WriteLine (Phase 0)
+  - Monorepo, single app project with namespace separation
+
+  ## Architecture
+  Four namespaces with inward dependency flow:
+  - Questline.Cli — entry point, game loop, terminal I/O, DI composition root
+  - Questline.Domain — entities, value objects, game rules (NO dependencies on other namespaces)
+  - Questline.Engine — parser, command dispatcher, command handlers, event generation
+  - Questline.Framework — JSON serialisation, save/load, content loading, messaging
+
+  Command pipeline: Input -> Parser -> Command -> Handler -> Event/Result -> Renderer
+  Handlers receive command objects, return results (never write to console directly).
+  Handlers registered with dispatcher by verb using registration pattern.
+
+  ## Code Style
+  - File-scoped namespaces, primary constructors, prefer records for immutable data
+  - PascalCase public members/types, camelCase private fields
+  - Entities have identity (required string Id), value objects use records
+  - Content defined in JSON, not code
+
+  ## Git Workflow
+  - Trunk-based development, short-lived feature branches
+  - Rebase only, squash merge on PR
+  - CI: build + test on every PR
+
+  ## Roadmap Status
+  Implemented (Phase 0):
+  - 0.1 Scaffolding: world model, room graph, look/go commands, game loop, quit
+  - 0.2 Items & Inventory: Item entity, Inventory container, get/drop/inventory commands
+  - 0.3 Content Loading: JSON adventure files, loader, validation, 5-room dungeon
+
+  Planned (Phase 0):
+  - 0.4 Puzzles: use command, barriers, examine, room features
+  - 0.5 Character Creation: name entry, default Human Fighter, stats command
+  - 0.6 Save/Load: persist and restore game state
+  - 0.7 Polish: help system, error handling, victory detection, command shortcuts
+
+  Future phases: Solo Adventure (combat, XP), Party Play (networking), MUD Platform.
+
+  ## Phase 0 Scope Boundaries
+  Out of scope: combat/enemies, NPCs with dialogue, multiplayer/networking,
+  progression (XP, levelling, shops), Terminal.Gui or TUI frameworks.
+
+rules:
+  spec:
+    - Use SHALL for requirements (e.g. "The parser SHALL tokenise input")
+    - Every requirement MUST have at least one WHEN/THEN scenario
+    - Implemented specs describe requirements only — code is the source of truth
+    - Planned specs include an Implementation Notes section with key models and patterns
+  proposal:
+    - Reference the relevant spec by name
+    - Keep proposals under 500 words
+    - Include a Non-goals section
+  tasks:
+    - Each task should be completable in a single session
+    - Include the test to write before the production code
+  delta-spec:
+    - Only include requirements that are new or changed
+    - Reference existing spec requirements by name when unchanged
