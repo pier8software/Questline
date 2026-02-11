@@ -17,12 +17,15 @@ public class WorldBuilder
 
 public class RoomBuilder(string id, string name, string description)
 {
-    private readonly Dictionary<Direction, string> _exits = new();
+    private readonly Dictionary<Direction, Exit> _exits = new();
     private readonly List<Item> _items = new();
 
     public RoomBuilder WithExit(Direction direction, string destinationId)
+        => WithExit(direction, new Exit(destinationId));
+
+    public RoomBuilder WithExit(Direction direction, Exit exit)
     {
-        _exits[direction] = destinationId;
+        _exits[direction] = exit;
         return this;
     }
 
@@ -39,7 +42,7 @@ public class RoomBuilder(string id, string name, string description)
             Id = id,
             Name = name,
             Description = description,
-            Exits = new Dictionary<Direction, string>(_exits)
+            Exits = new Dictionary<Direction, Exit>(_exits)
         };
 
         foreach (var item in _items)

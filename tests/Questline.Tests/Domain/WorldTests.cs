@@ -24,11 +24,25 @@ public class WorldTests
 
         var start = world.GetRoom("start");
         start.Exits.ShouldContainKey(Direction.North);
-        start.Exits[Direction.North].ShouldBe("end");
+        start.Exits[Direction.North].Destination.ShouldBe("end");
 
         var end = world.GetRoom("end");
         end.Exits.ShouldContainKey(Direction.South);
-        end.Exits[Direction.South].ShouldBe("start");
+        end.Exits[Direction.South].Destination.ShouldBe("start");
+    }
+
+    [Fact]
+    public void WorldBuilder_WithExit_SupportsBarrierExit()
+    {
+        var world = new WorldBuilder()
+            .WithRoom("start", "Start", "Starting room.",
+                r => r.WithExit(Direction.North, new Exit("end", "iron-door")))
+            .WithRoom("end", "End", "Ending room.")
+            .Build();
+
+        var start = world.GetRoom("start");
+        start.Exits[Direction.North].Destination.ShouldBe("end");
+        start.Exits[Direction.North].BarrierId.ShouldBe("iron-door");
     }
 
     [Fact]

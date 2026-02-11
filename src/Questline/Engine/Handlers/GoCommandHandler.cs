@@ -9,14 +9,14 @@ public class GoCommandHandler : ICommandHandler<GoCommand>
     {
         var currentRoom = state.World.GetRoom(state.Player.Location);
 
-        if (!currentRoom.Exits.TryGetValue(command.Direction, out var destinationId))
+        if (!currentRoom.Exits.TryGetValue(command.Direction, out var exit))
         {
             return new ErrorResult($"There is no exit to the {command.Direction}.");
         }
 
-        state.Player.Location = destinationId;
+        state.Player.Location = exit.Destination;
 
-        var newRoom = state.World.GetRoom(destinationId);
+        var newRoom = state.World.GetRoom(exit.Destination);
         var exits = newRoom.Exits.Keys.Select(d => d.ToString()).ToList();
         var items = newRoom.Items.Items.Select(i => i.Name).ToList();
         return new MovedResult(newRoom.Name, newRoom.Description, exits, items);

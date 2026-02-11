@@ -88,7 +88,7 @@ public class AdventureLoaderTests : IDisposable
         var room1 = adventure.World.GetRoom("room-1");
         room1.Name.ShouldBe("First Room");
         room1.Exits.ShouldContainKey(Direction.North);
-        room1.Exits[Direction.North].ShouldBe("room-2");
+        room1.Exits[Direction.North].Destination.ShouldBe("room-2");
 
         var room2 = adventure.World.GetRoom("room-2");
         room2.Name.ShouldBe("Second Room");
@@ -139,7 +139,8 @@ public class AdventureLoaderTests : IDisposable
         var adventure = _loader.Load(_tempDir);
 
         var roomA = adventure.World.GetRoom("room-a");
-        roomA.Exits[Direction.North].ShouldBe("room-b");
+        roomA.Exits[Direction.North].Destination.ShouldBe("room-b");
+        roomA.Exits[Direction.North].BarrierId.ShouldBe("locked-door");
     }
 
     [Fact]
