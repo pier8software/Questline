@@ -12,7 +12,7 @@ public class DirectionParserTests
     [InlineData("west", Direction.West)]
     [InlineData("up", Direction.Up)]
     [InlineData("down", Direction.Down)]
-    public void Parse_FullDirectionName_ReturnsDirection(string input, Direction expected)
+    public void Full_direction_name_is_parsed(string input, Direction expected)
     {
         DirectionParser.TryParse(input, out var result).ShouldBeTrue();
         result.ShouldBe(expected);
@@ -25,12 +25,12 @@ public class DirectionParserTests
     [InlineData("w", Direction.West)]
     [InlineData("u", Direction.Up)]
     [InlineData("d", Direction.Down)]
-    public void Parse_Alias_ReturnsDirection(string input, Direction expected)
+    public void Single_letter_alias_is_parsed(string input, Direction expected)
     {
         DirectionParser.TryParse(input, out var result).ShouldBeTrue();
         result.ShouldBe(expected);
     }
 
     [Fact]
-    public void Parse_InvalidDirection_ReturnsFalse() => DirectionParser.TryParse("sideways", out _).ShouldBeFalse();
+    public void Invalid_direction_returns_false() => DirectionParser.TryParse("sideways", out _).ShouldBeFalse();
 }

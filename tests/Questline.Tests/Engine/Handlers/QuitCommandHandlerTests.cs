@@ -8,7 +8,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class QuitCommandHandlerTests
 {
     [Fact]
-    public void Quit_ExitsGameSuccessfully()
+    public void Returns_successful_quit_result()
     {
         var world = new WorldBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
@@ -23,7 +23,7 @@ public class QuitCommandHandlerTests
     }
 
     [Fact]
-    public void Quit_DisplaysGoodbyeMessage()
+    public void Displays_goodbye_message()
     {
         var world = new WorldBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")

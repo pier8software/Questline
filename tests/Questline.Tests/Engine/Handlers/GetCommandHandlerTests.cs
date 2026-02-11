@@ -8,7 +8,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class GetCommandHandlerTests
 {
     [Fact]
-    public void Get_WhenItemInRoom_AddsToInventoryAndRemovesFromRoom()
+    public void Item_moves_from_room_to_inventory()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var world = new WorldBuilder()
@@ -25,7 +25,7 @@ public class GetCommandHandlerTests
     }
 
     [Fact]
-    public void Get_WhenItemNotInRoom_ReturnsError()
+    public void Item_not_in_room_returns_error()
     {
         var world = new WorldBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
@@ -40,7 +40,7 @@ public class GetCommandHandlerTests
     }
 
     [Fact]
-    public void Get_IsCaseInsensitive()
+    public void Matching_is_case_insensitive()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var world = new WorldBuilder()
@@ -55,7 +55,7 @@ public class GetCommandHandlerTests
     }
 
     [Fact]
-    public void Get_ReturnsDescriptiveMessage()
+    public void Result_message_mentions_item_name()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var world = new WorldBuilder()

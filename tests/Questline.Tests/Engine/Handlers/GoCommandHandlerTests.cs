@@ -8,7 +8,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class GoCommandHandlerTests
 {
     [Fact]
-    public void GoNorth_WhenExitExists_MovesPlayerToDestination()
+    public void Player_moves_to_destination_when_exit_exists()
     {
         var world = new WorldBuilder()
             .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
@@ -27,7 +27,7 @@ public class GoCommandHandlerTests
     }
 
     [Fact]
-    public void GoNorth_WhenNoExit_ReturnsErrorAndPlayerUnmoved()
+    public void Player_stays_put_when_no_exit_exists()
     {
         var world = new WorldBuilder()
             .WithRoom("sealed", "Sealed Room", "No way north.")
@@ -44,7 +44,7 @@ public class GoCommandHandlerTests
     }
 
     [Fact]
-    public void Go_WhenExitExists_ReturnsExitsOfNewRoom()
+    public void Result_includes_exits_of_destination_room()
     {
         var world = new WorldBuilder()
             .WithRoom("a", "Room A", "First room.", r => r.WithExit(Direction.East, "b"))
@@ -66,7 +66,7 @@ public class GoCommandHandlerTests
     }
 
     [Fact]
-    public void Go_WhenDestinationHasItems_IncludesThemInResult()
+    public void Result_includes_items_in_destination_room()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var world = new WorldBuilder()

@@ -8,7 +8,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class InventoryCommandHandlerTests
 {
     [Fact]
-    public void Inventory_WhenCarryingItems_ListsThem()
+    public void Lists_carried_items()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var key = new Item { Id = "key", Name = "rusty key", Description = "A rusty iron key." };
@@ -28,7 +28,7 @@ public class InventoryCommandHandlerTests
     }
 
     [Fact]
-    public void Inventory_WhenEmpty_ShowsMessage()
+    public void Empty_inventory_shows_not_carrying_anything()
     {
         var world = new WorldBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
@@ -42,7 +42,7 @@ public class InventoryCommandHandlerTests
     }
 
     [Fact]
-    public void GetThenDrop_MovesItemFromRoomToInventoryAndBack()
+    public void Get_then_drop_round_trips_item_through_inventory()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var world = new WorldBuilder()

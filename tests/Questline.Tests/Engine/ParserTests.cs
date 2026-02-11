@@ -7,7 +7,7 @@ public class ParserTests
     private readonly Parser _parser = new();
 
     [Fact]
-    public void Parse_SingleWord_ReturnsVerbWithNoArgs()
+    public void Single_word_returns_verb_with_no_args()
     {
         var result = _parser.Parse("look");
 
@@ -16,7 +16,7 @@ public class ParserTests
     }
 
     [Fact]
-    public void Parse_VerbWithArgument_SplitsCorrectly()
+    public void Verb_with_argument_splits_correctly()
     {
         var result = _parser.Parse("go north");
 
@@ -25,7 +25,7 @@ public class ParserTests
     }
 
     [Fact]
-    public void Parse_ConvertsToLowercase()
+    public void Input_is_converted_to_lowercase()
     {
         var result = _parser.Parse("GO North");
 
@@ -34,7 +34,7 @@ public class ParserTests
     }
 
     [Fact]
-    public void Parse_TrimsWhitespace()
+    public void Leading_and_trailing_whitespace_is_trimmed()
     {
         var result = _parser.Parse("  look  ");
 
@@ -43,7 +43,7 @@ public class ParserTests
     }
 
     [Fact]
-    public void Parse_MultipleSpaces_IgnoresExtraWhitespace()
+    public void Extra_whitespace_between_words_is_ignored()
     {
         var result = _parser.Parse("go   north");
 
@@ -52,7 +52,7 @@ public class ParserTests
     }
 
     [Fact]
-    public void Parse_EmptyInput_ReturnsEmptyVerbAndNoArgs()
+    public void Empty_input_returns_empty_verb_and_no_args()
     {
         var result = _parser.Parse("");
 

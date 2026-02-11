@@ -3,7 +3,7 @@ namespace Questline.Domain;
 public class RoomTests
 {
     [Fact]
-    public void Room_HasRequiredProperties()
+    public void Has_required_id_name_and_description()
     {
         var room = new Room
         {
@@ -18,7 +18,7 @@ public class RoomTests
     }
 
     [Fact]
-    public void Room_HasEmptyExitsByDefault()
+    public void Has_empty_exits_by_default()
     {
         var room = new Room
         {
@@ -31,7 +31,7 @@ public class RoomTests
     }
 
     [Fact]
-    public void Room_CanHaveExitsLinkingToOtherRooms()
+    public void Exits_link_to_other_rooms()
     {
         var room = new Room
         {

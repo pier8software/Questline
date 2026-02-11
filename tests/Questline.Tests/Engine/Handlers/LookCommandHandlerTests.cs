@@ -8,7 +8,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class LookCommandHandlerTests
 {
     [Fact]
-    public void Look_ReturnsRoomNameAndDescription()
+    public void Returns_room_name_and_description()
     {
         var world = new WorldBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern with a roaring fire.")
@@ -24,7 +24,7 @@ public class LookCommandHandlerTests
     }
 
     [Fact]
-    public void Look_ReturnsAvailableExits()
+    public void Returns_available_exits()
     {
         var world = new WorldBuilder()
             .WithRoom("hallway", "Hallway", "A long hallway.", r =>
@@ -46,7 +46,7 @@ public class LookCommandHandlerTests
     }
 
     [Fact]
-    public void Look_WhenNoExits_ReturnsEmptyExitsList()
+    public void Room_with_no_exits_returns_empty_list()
     {
         var world = new WorldBuilder()
             .WithRoom("sealed-room", "Sealed Room", "No way out.")
@@ -61,7 +61,7 @@ public class LookCommandHandlerTests
     }
 
     [Fact]
-    public void Look_WhenRoomHasItems_IncludesThemInResult()
+    public void Room_with_items_includes_them_in_result()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var world = new WorldBuilder()
@@ -78,7 +78,7 @@ public class LookCommandHandlerTests
     }
 
     [Fact]
-    public void Look_WhenRoomHasNoItems_DoesNotShowItemsLine()
+    public void Room_with_no_items_omits_items_line()
     {
         var world = new WorldBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")

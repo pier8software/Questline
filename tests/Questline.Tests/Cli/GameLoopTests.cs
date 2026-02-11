@@ -45,7 +45,7 @@ public class GameLoopTests
     }
 
     [Fact]
-    public void GameLoop_DisplaysInitialRoomOnStart()
+    public void Displays_initial_room_on_start()
     {
         var (loop, console) = CreateGameLoop();
         console.QueueInput("quit");
@@ -57,7 +57,7 @@ public class GameLoopTests
     }
 
     [Fact]
-    public void GameLoop_DisplaysPrompt()
+    public void Displays_command_prompt()
     {
         var (loop, console) = CreateGameLoop();
         console.QueueInput("quit");
@@ -68,7 +68,7 @@ public class GameLoopTests
     }
 
     [Fact]
-    public void GameLoop_LookCommand_DisplaysRoomInfo()
+    public void Look_command_displays_room_info()
     {
         var (loop, console) = CreateGameLoop();
         console.QueueInput("look", "quit");
@@ -82,7 +82,7 @@ public class GameLoopTests
     }
 
     [Fact]
-    public void GameLoop_GoCommand_MovesAndDisplaysNewRoom()
+    public void Go_command_moves_and_displays_new_room()
     {
         var (loop, console) = CreateGameLoop();
         console.QueueInput("go north", "quit");
@@ -93,7 +93,7 @@ public class GameLoopTests
     }
 
     [Fact]
-    public void GameLoop_UnknownCommand_DisplaysError()
+    public void Unknown_command_displays_error()
     {
         var (loop, console) = CreateGameLoop();
         console.QueueInput("dance", "quit");
@@ -104,7 +104,7 @@ public class GameLoopTests
     }
 
     [Fact]
-    public void GameLoop_QuitCommand_ExitsGracefully()
+    public void Quit_command_exits_gracefully()
     {
         var (loop, console) = CreateGameLoop();
         console.QueueInput("quit");
@@ -115,7 +115,7 @@ public class GameLoopTests
     }
 
     [Fact]
-    public void GameLoop_NullInput_ExitsLoop()
+    public void Null_input_exits_loop()
     {
         var (loop, console) = CreateGameLoop();
         // No input queued, ReadLine returns null
