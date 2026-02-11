@@ -18,17 +18,17 @@ public class WorldBuilderTests
     public void Exits_connect_rooms_bidirectionally()
     {
         var world = new WorldBuilder()
-            .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
+            .WithRoom("start", "Start", "Starting room.", r => { r.WithExit(Direction.North, "end"); })
             .WithRoom("end", "End", "Ending room.", r => r.WithExit(Direction.South, "start"))
             .Build();
 
         var start = world.GetRoom("start");
         start.Exits.ShouldContainKey(Direction.North);
-        start.Exits[Direction.North].ShouldBe("end");
+        start.Exits[Direction.North].Destination.ShouldBe("end");
 
         var end = world.GetRoom("end");
         end.Exits.ShouldContainKey(Direction.South);
-        end.Exits[Direction.South].ShouldBe("start");
+        end.Exits[Direction.South].Destination.ShouldBe("start");
     }
 
     [Fact]
