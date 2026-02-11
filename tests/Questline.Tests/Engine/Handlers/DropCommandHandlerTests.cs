@@ -8,7 +8,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class DropCommandHandlerTests
 {
     [Fact]
-    public void Drop_WhenItemInInventory_PlacesInRoomAndRemovesFromInventory()
+    public void Item_moves_from_inventory_to_room()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var world = new WorldBuilder()
@@ -26,7 +26,7 @@ public class DropCommandHandlerTests
     }
 
     [Fact]
-    public void Drop_WhenItemNotInInventory_ReturnsError()
+    public void Item_not_in_inventory_returns_error()
     {
         var world = new WorldBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
@@ -41,7 +41,7 @@ public class DropCommandHandlerTests
     }
 
     [Fact]
-    public void Drop_ReturnsDescriptiveMessage()
+    public void Result_message_mentions_item_name()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var world = new WorldBuilder()

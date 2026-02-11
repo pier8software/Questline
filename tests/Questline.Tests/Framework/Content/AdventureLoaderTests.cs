@@ -74,7 +74,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_ValidAdventure_ConstructsWorld()
+    public void Valid_adventure_constructs_world_with_rooms_and_exits()
     {
         WriteTwoRoomAdventure();
 
@@ -96,7 +96,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_ItemsPlacedInCorrectRooms()
+    public void Items_are_placed_in_correct_rooms()
     {
         WriteTwoRoomAdventure();
 
@@ -111,7 +111,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_ExitObjectWithBarrier_ExtractsDestination()
+    public void Exit_object_with_barrier_extracts_destination()
     {
         WriteAdventureJson(startingRoomId: "room-a");
         WriteRoomsJson("""
@@ -144,7 +144,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_MissingAdventureJson_Throws()
+    public void Missing_adventure_json_throws()
     {
         WriteRoomsJson("""{ "rooms": [] }""");
         WriteItemsJson("""{ "items": [] }""");
@@ -154,7 +154,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_InvalidJson_Throws()
+    public void Invalid_json_throws()
     {
         WriteAdventureJson();
         WriteRoomsJson("{ not valid json }}}");
@@ -164,7 +164,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_ExitToNonexistentRoom_Throws()
+    public void Exit_to_nonexistent_room_throws()
     {
         WriteAdventureJson(startingRoomId: "room-1");
         WriteRoomsJson("""
@@ -186,7 +186,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_RoomReferencesUnknownItem_Throws()
+    public void Room_referencing_unknown_item_throws()
     {
         WriteAdventureJson(startingRoomId: "room-1");
         WriteRoomsJson("""
@@ -208,7 +208,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_StartingRoomMissing_Throws()
+    public void Missing_starting_room_throws()
     {
         WriteAdventureJson(startingRoomId: "nonexistent");
         WriteRoomsJson("""
@@ -229,7 +229,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_OrphanedRoom_Throws()
+    public void Orphaned_room_throws()
     {
         WriteAdventureJson(startingRoomId: "room-1");
         WriteRoomsJson("""
@@ -255,7 +255,7 @@ public class AdventureLoaderTests : IDisposable
     }
 
     [Fact]
-    public void Load_InvalidDirection_Throws()
+    public void Invalid_direction_throws()
     {
         WriteAdventureJson(startingRoomId: "room-1");
         WriteRoomsJson("""

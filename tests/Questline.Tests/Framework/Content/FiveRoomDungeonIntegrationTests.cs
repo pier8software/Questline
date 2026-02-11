@@ -23,7 +23,7 @@ public class FiveRoomDungeonIntegrationTests
     }
 
     [Fact]
-    public void Load_AdventureMetadata_IsCorrect()
+    public void Adventure_metadata_is_correct()
     {
         _adventure.Id.ShouldBe("five-room-dungeon");
         _adventure.Name.ShouldBe("The Goblin's Lair");
@@ -31,7 +31,7 @@ public class FiveRoomDungeonIntegrationTests
     }
 
     [Fact]
-    public void Load_AllFiveRoomsExist()
+    public void All_five_rooms_exist()
     {
         var roomIds = new[] { "entrance", "puzzle-room", "setback-room", "climax-room", "treasure-room" };
 
@@ -42,7 +42,7 @@ public class FiveRoomDungeonIntegrationTests
     }
 
     [Fact]
-    public void Load_EntranceRoom_HasCorrectExitsAndItems()
+    public void Entrance_room_has_correct_exits_and_items()
     {
         var room = _adventure.World.GetRoom("entrance");
 
@@ -53,7 +53,7 @@ public class FiveRoomDungeonIntegrationTests
     }
 
     [Fact]
-    public void Load_PuzzleRoom_HasBarrierExitDestination()
+    public void Puzzle_room_has_barrier_exit_destination()
     {
         var room = _adventure.World.GetRoom("puzzle-room");
 
@@ -65,7 +65,7 @@ public class FiveRoomDungeonIntegrationTests
     }
 
     [Fact]
-    public void Load_AllItemsPlacedCorrectly()
+    public void All_items_placed_in_correct_rooms()
     {
         _adventure.World.GetRoom("entrance").Items.Items
             .ShouldContain(i => i.Id == "rusty-key");
@@ -80,7 +80,7 @@ public class FiveRoomDungeonIntegrationTests
     }
 
     [Fact]
-    public void Load_FullConnectivity_CanTraverseAllRooms()
+    public void All_rooms_are_connected_and_traversable()
     {
         var entrance = _adventure.World.GetRoom("entrance");
         entrance.Exits[Direction.North].Destination.ShouldBe("puzzle-room");

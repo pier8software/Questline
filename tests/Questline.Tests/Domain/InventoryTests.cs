@@ -5,7 +5,7 @@ namespace Questline.Tests.Domain;
 public class InventoryTests
 {
     [Fact]
-    public void Add_ThenFindByName_ReturnsItem()
+    public void Added_item_is_found_by_name()
     {
         var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
@@ -16,7 +16,7 @@ public class InventoryTests
     }
 
     [Fact]
-    public void FindByName_IsCaseInsensitive()
+    public void Find_by_name_is_case_insensitive()
     {
         var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
@@ -26,7 +26,7 @@ public class InventoryTests
     }
 
     [Fact]
-    public void FindByName_WhenNotFound_ReturnsNull()
+    public void Find_by_name_returns_null_when_item_not_present()
     {
         var inventory = new Inventory();
 
@@ -34,7 +34,7 @@ public class InventoryTests
     }
 
     [Fact]
-    public void Remove_WhenItemExists_ReturnsTrueAndRemovesItem()
+    public void Removing_an_item_makes_inventory_empty()
     {
         var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
@@ -45,7 +45,7 @@ public class InventoryTests
     }
 
     [Fact]
-    public void IsEmpty_WhenNoItems_ReturnsTrue()
+    public void New_inventory_is_empty()
     {
         var inventory = new Inventory();
 
@@ -53,7 +53,7 @@ public class InventoryTests
     }
 
     [Fact]
-    public void Items_ReturnsReadonlyCollection()
+    public void Items_collection_contains_added_item()
     {
         var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
@@ -63,7 +63,7 @@ public class InventoryTests
     }
 
     [Fact]
-    public void Contains_WhenItemPresent_ReturnsTrue()
+    public void Contains_returns_true_when_item_present()
     {
         var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
@@ -73,7 +73,7 @@ public class InventoryTests
     }
 
     [Fact]
-    public void Contains_WhenItemAbsent_ReturnsFalse()
+    public void Contains_returns_false_when_item_absent()
     {
         var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
