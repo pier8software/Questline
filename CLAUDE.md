@@ -32,16 +32,22 @@ Before implementing anything, read the relevant capability spec in `openspec/spe
 
 ### 2. Test First, Always
 
-No production code without a failing test. Follow behavioural testing:
+No production code without a failing test.
+Write test names as clear, declarative statements that describe behavior from a business perspective.
+Use class names to represent the subject and method names to describe scenarios, improving readability and grouping
+Example Test Class:
 
 ```csharp
-// Good: tests observable behaviour
-[Fact]
-public void GoNorth_WhenExitExists_MovesPlayerToDestination()
+public class RoomTests
+{
+    // Good Test Name
+    [Fact]
+    public void Next_Room_Loaded_When_Player_Exits_Room() { /* ... */ }
 
-// Bad: tests implementation details
-[Fact]
-public void GoCommandHandler_CallsRoomRepository_WithCorrectId()
+    // Bad Test Name
+    [Fact]
+    public void GoCommandHandler_CallsRoomRepository_WithCorrectId() { /* ... */ }
+}
 ```
 
 Use Shouldly for assertions:
