@@ -143,13 +143,13 @@ public class FileSystemAdventureLoader : IAdventureLoader
 
         foreach (var dto in roomDtos.Values)
         {
-            var exits = new Dictionary<Direction, string>();
+            var exits = new Dictionary<Direction, Exit>();
             if (dto.Exits is not null)
             {
-                foreach (var (directionStr, exit) in dto.Exits)
+                foreach (var (directionStr, exitDto) in dto.Exits)
                 {
                     var direction = Enum.Parse<Direction>(directionStr, ignoreCase: true);
-                    exits[direction] = exit.Destination;
+                    exits[direction] = new Exit(exitDto.Destination, exitDto.Barrier);
                 }
             }
 

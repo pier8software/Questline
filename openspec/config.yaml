@@ -1,72 +1,89 @@
 schema: spec-driven
 
 context: |
-  ## Project Identity
-  Questline is a parser-driven text adventure engine built in C# (.NET 10).
-  Long-term vision: cooperative MUD platform. Development follows an incremental
-  roadmap starting with a single-player 5-room dungeon (Phase 0).
+    ## Project Identity
+    Questline is a parser-driven text adventure engine built in C# (.NET 10).
+    Long-term vision: cooperative MUD platform. Development follows an incremental
+    roadmap starting with a single-player 5-room dungeon (Phase 0).
 
-  ## Tech Stack
-  - Runtime: .NET 10 (LTS)
-  - Serialisation: System.Text.Json
-  - DI: Microsoft.Extensions.DependencyInjection
-  - Testing: xUnit + Shouldly (behavioural, test-first)
-  - Console output: Console.WriteLine (Phase 0)
-  - Monorepo, single app project with namespace separation
+    ## Tech Stack
+    - Runtime: .NET 10 (LTS)
+    - Serialisation: System.Text.Json
+    - DI: Microsoft.Extensions.DependencyInjection
+    - Testing: xUnit + Shouldly (behavioural, test-first)
+    - Console output: Console.WriteLine (Phase 0)
+    - Monorepo, single app project with namespace separation
 
-  ## Architecture
-  Four namespaces with inward dependency flow:
-  - Questline.Cli — entry point, game loop, terminal I/O, DI composition root
-  - Questline.Domain — entities, value objects, game rules (NO dependencies on other namespaces)
-  - Questline.Engine — parser, command dispatcher, command handlers, event generation
-  - Questline.Framework — JSON serialisation, save/load, content loading, messaging
+    ## Architecture
+    Four namespaces with inward dependency flow:
+    - Questline.Cli — entry point, game loop, terminal I/O, DI composition root
+    - Questline.Domain — entities, value objects, game rules (NO dependencies on other namespaces)
+    - Questline.Engine — parser, command dispatcher, command handlers, event generation
+    - Questline.Framework — JSON serialisation, save/load, content loading, messaging
 
-  Command pipeline: Input -> Parser -> Command -> Handler -> Event/Result -> Renderer
-  Handlers receive command objects, return results (never write to console directly).
-  Handlers registered with dispatcher by verb using registration pattern.
+    Command pipeline: Input -> Parser -> Command -> Handler -> Event/Result -> Renderer
+    Handlers receive command objects, return results (never write to console directly).
+    Handlers registered with dispatcher by verb using registration pattern.
 
-  ## Code Style
-  - File-scoped namespaces, primary constructors, prefer records for immutable data
-  - PascalCase public members/types, camelCase private fields
-  - Entities have identity (required string Id), value objects use records
-  - Content defined in JSON, not code
+    ## Code Style
+    - File-scoped namespaces, primary constructors, prefer records for immutable data
+    - PascalCase public members/types, camelCase private fields
+    - Entities have identity (required string Id), value objects use records
+    - Content defined in JSON, not code
 
-  ## Git Workflow
-  - Trunk-based development, short-lived feature branches
-  - Rebase only, squash merge on PR
-  - CI: build + test on every PR
+    ## Testing
+    - use xUnit + Shouldly and write tests BEFORE implementation
+    - Test name convention: Plain English, fact-based naming: Write test names as clear, declarative statements that describe behavior from a business perspective.
+    - Example test name: `Delivery_with_a_past_date_is_invalid()`
+    - Use class names to represent the subject and method names to describe scenarios, improving readability and grouping.
+    - Example test class:
+    ```
+    public class BankAccountTests
+    {
+        [Fact]
+        public void Has_balance_of_zero_when_created() { /* ... */ }
 
-  ## Roadmap Status
-  Implemented (Phase 0):
-  - 0.1 Scaffolding: world model, room graph, look/go commands, game loop, quit
-  - 0.2 Items & Inventory: Item entity, Inventory container, get/drop/inventory commands
-  - 0.3 Content Loading: JSON adventure files, loader, validation, 5-room dungeon
+        [Fact]
+        public void Has_balance_increased_after_a_deposit() { /* ... */ }
+    }
+    ```
 
-  Planned (Phase 0):
-  - 0.4 Puzzles: use command, barriers, examine, room features
-  - 0.5 Character Creation: name entry, default Human Fighter, stats command
-  - 0.6 Save/Load: persist and restore game state
-  - 0.7 Polish: help system, error handling, victory detection, command shortcuts
+    ## Git Workflow
+    - Trunk-based development, short-lived feature branches
+    - Rebase only, squash merge on PR
+    - CI: build + test on every PR
 
-  Future phases: Solo Adventure (combat, XP), Party Play (networking), MUD Platform.
+    ## Roadmap Status
+    Implemented (Phase 0):
+    -   0.1 Scaffolding: world model, room graph, look/go commands, game loop, quit
+    -   0.2 Items & Inventory: Item entity, Inventory container, get/drop/inventory commands
+    -   0.3 Content Loading: JSON adventure files, loader, validation, 5-room dungeon
 
-  ## Phase 0 Scope Boundaries
-  Out of scope: combat/enemies, NPCs with dialogue, multiplayer/networking,
-  progression (XP, levelling, shops), Terminal.Gui or TUI frameworks.
+    Planned (Phase 0):
+    -   0.4 Puzzles: use command, barriers, examine, room features
+    -   0.5 Character Creation: name entry, default Human Fighter, stats command
+    -   0.6 Save/Load: persist and restore game state
+    -   0.7 Polish: help system, error handling, victory detection, command shortcuts
+
+    Future phases: Solo Adventure (combat, XP), Party Play (networking), MUD Platform.
+
+    ## Phase 0 Scope Boundaries
+    Out of scope: combat/enemies, NPCs with dialogue, multiplayer/networking,
+    progression (XP, levelling, shops), Terminal.Gui or TUI frameworks.
 
 rules:
-  spec:
-    - Use SHALL for requirements (e.g. "The parser SHALL tokenise input")
-    - Every requirement MUST have at least one WHEN/THEN scenario
-    - Implemented specs describe requirements only — code is the source of truth
-    - Planned specs include an Implementation Notes section with key models and patterns
-  proposal:
-    - Reference the relevant spec by name
-    - Keep proposals under 500 words
-    - Include a Non-goals section
-  tasks:
-    - Each task should be completable in a single session
-    - Include the test to write before the production code
-  delta-spec:
-    - Only include requirements that are new or changed
-    - Reference existing spec requirements by name when unchanged
+    spec:
+        - Use SHALL for requirements (e.g. "The parser SHALL tokenise input")
+        - Every requirement MUST have at least one WHEN/THEN scenario
+        - Implemented specs describe requirements only — code is the source of truth
+        - Planned specs include an Implementation Notes section with key models and patterns
+    proposal:
+        - Reference the relevant spec by name
+        - Keep proposals under 500 words
+        - Include a Non-goals section
+    tasks:
+        - Each task should be completable in a single session
+        - Include the test to write before the production code
+    delta-spec:
+        - Only include requirements that are new or changed
+        - Reference existing spec requirements by name when unchanged

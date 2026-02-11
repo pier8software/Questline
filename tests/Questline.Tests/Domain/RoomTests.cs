@@ -38,16 +38,16 @@ public class RoomTests
             Id = "hallway",
             Name = "Hallway",
             Description = "A long hallway.",
-            Exits = new Dictionary<Direction, string>
+            Exits = new Dictionary<Direction, Exit>
             {
-                [Direction.North] = "throne-room",
-                [Direction.South] = "entrance"
+                [Direction.North] = new Exit("throne-room"),
+                [Direction.South] = new Exit("entrance")
             }
         };
 
         room.Exits.ShouldContainKey(Direction.North);
-        room.Exits[Direction.North].ShouldBe("throne-room");
+        room.Exits[Direction.North].Destination.ShouldBe("throne-room");
         room.Exits.ShouldContainKey(Direction.South);
-        room.Exits[Direction.South].ShouldBe("entrance");
+        room.Exits[Direction.South].Destination.ShouldBe("entrance");
     }
 }
