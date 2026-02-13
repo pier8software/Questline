@@ -1,4 +1,6 @@
-namespace Questline.Domain;
+using Questline.Domain.Shared;
+
+namespace Questline.Domain.Entities;
 
 public class Player
 {

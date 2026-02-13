@@ -1,4 +1,5 @@
 using Questline.Domain;
+using Questline.Domain.Shared;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
@@ -8,7 +9,7 @@ public class TakeItemHandler : ICommandHandler<Commands.TakeItem>
 {
     public CommandResult Execute(GameState state, Commands.TakeItem command)
     {
-        var room = state.World.GetRoom(state.Player.Location);
+        var room = state.GetRoom(state.Player.Location);
         var item = room.Items.FindByName(command.ItemName);
 
         if (item is null)

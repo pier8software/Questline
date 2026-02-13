@@ -1,4 +1,5 @@
 using Questline.Domain;
+using Questline.Domain.Shared;
 
 namespace Questline.Framework.Mediator;
 

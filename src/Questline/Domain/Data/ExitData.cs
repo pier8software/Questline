@@ -1,4 +1,4 @@
-namespace Questline.Domain.Rooms.Data;
+namespace Questline.Domain.Data;
 
 public class ExitData
 {

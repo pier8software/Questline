@@ -1,7 +1,6 @@
-using Questline.Domain;
-using Questline.Domain.Rooms.Data;
-using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared.Data;
+using Questline.Domain.Data;
+using Questline.Domain.Entities;
+using Questline.Domain.Shared;
 using Questline.Framework.FileSystem;
 
 namespace Questline.Engine;
@@ -19,9 +18,8 @@ public class GameContentLoader(JsonFileLoader loader)
             Name = i.Name
         });
         var rooms = BuildRooms(adventureData.Rooms, itemsDictionary);
-        var world = new World(rooms);
 
-        return new GameState(world, new Player { Id = "Player1", Location = adventureData.StartingRoomId });
+        return new GameState(rooms, new Player { Id = "Player1", Location = adventureData.StartingRoomId });
     }
 
 
@@ -50,7 +48,7 @@ public class GameContentLoader(JsonFileLoader loader)
                 Exits = exits
             };
 
-            if (roomDetail.Items.Count > 0)
+            if (roomDetail.Items.Length > 0)
             {
                 foreach (var item in roomDetail.Items)
                 {

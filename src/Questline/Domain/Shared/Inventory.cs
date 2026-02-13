@@ -1,4 +1,6 @@
-namespace Questline.Domain;
+using Questline.Domain.Entities;
+
+namespace Questline.Domain.Shared;
 
 public class Inventory
 {

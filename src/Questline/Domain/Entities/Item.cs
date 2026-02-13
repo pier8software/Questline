@@ -1,4 +1,4 @@
-namespace Questline.Domain;
+namespace Questline.Domain.Entities;
 
 public class Item
 {

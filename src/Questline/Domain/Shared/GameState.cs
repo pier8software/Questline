@@ -1,9 +1,11 @@
-using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Entities;
 
-namespace Questline.Domain;
+namespace Questline.Domain.Shared;
 
-public class World(Dictionary<string, Room> rooms)
+public class GameState(Dictionary<string, Room> rooms, Player player)
 {
+    public Player Player { get; } = player;
+
     public Room GetRoom(string id)
     {
         if (!rooms.TryGetValue(id, out var room))

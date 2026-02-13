@@ -1,4 +1,4 @@
-namespace Questline.Domain.Shared.Data;
+namespace Questline.Domain.Data;
 
 public class ItemData
 {

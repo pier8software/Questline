@@ -1,6 +1,8 @@
-using Questline.Domain;
+using Questline.Domain.Entities;
+using Questline.Domain.Shared;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
+using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -10,23 +12,23 @@ public class TakeItemHandlerTests
     public void Item_moves_from_room_to_inventory()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var world = new WorldBuilder()
+        var rooms = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
-        var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
+        var state = new GameState(rooms, new Player { Id = "player1", Location = "cellar" });
         var handler = new TakeItemHandler();
 
         var result = handler.Execute(state, new Commands.TakeItem("brass lamp"));
 
         result.ShouldBeOfType<Results.ItemTaken>();
         state.Player.Inventory.Items.ShouldContain(lamp);
-        world.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBeNull();
+        state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBeNull();
     }
 
     [Fact]
     public void Item_not_in_room_returns_error()
     {
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
@@ -42,7 +44,7 @@ public class TakeItemHandlerTests
     public void Matching_is_case_insensitive()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
@@ -57,7 +59,7 @@ public class TakeItemHandlerTests
     public void Result_message_mentions_item_name()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });

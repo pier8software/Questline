@@ -1,6 +1,6 @@
-using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Entities;
 
-namespace Questline.Domain;
+namespace Questline.Tests.TestHelpers.Builders;
 
 public class RoomBuilder(string id, string name, string description)
 {

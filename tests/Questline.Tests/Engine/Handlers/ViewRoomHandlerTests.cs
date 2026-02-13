@@ -1,7 +1,8 @@
-using Questline.Domain;
-using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Entities;
+using Questline.Domain.Shared;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
+using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -10,7 +11,7 @@ public class ViewRoomHandlerTests
     [Fact]
     public void Returns_room_name_and_description()
     {
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern with a roaring fire.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
@@ -26,7 +27,7 @@ public class ViewRoomHandlerTests
     [Fact]
     public void Returns_available_exits()
     {
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("hallway", "Hallway", "A long hallway.", r =>
             {
                 r.WithExit(Direction.North, "throne-room");
@@ -48,7 +49,7 @@ public class ViewRoomHandlerTests
     [Fact]
     public void Room_with_no_exits_returns_empty_list()
     {
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("sealed-room", "Sealed Room", "No way out.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "sealed-room" });
@@ -64,7 +65,7 @@ public class ViewRoomHandlerTests
     public void Room_with_items_includes_them_in_result()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
@@ -80,7 +81,7 @@ public class ViewRoomHandlerTests
     [Fact]
     public void Room_with_no_items_omits_items_line()
     {
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });

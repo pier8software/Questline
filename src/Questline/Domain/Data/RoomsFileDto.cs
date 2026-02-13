@@ -1,6 +1,4 @@
-using Questline.Domain.Rooms.Data;
-
-namespace Questline.Framework.Content.Dtos;
+namespace Questline.Domain.Data;
 
 public class RoomsFileDto
 {

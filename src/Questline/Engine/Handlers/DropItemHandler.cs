@@ -1,4 +1,5 @@
 using Questline.Domain;
+using Questline.Domain.Shared;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
@@ -16,7 +17,7 @@ public class DropItemHandler : ICommandHandler<Commands.DropItem>
         }
 
         state.Player.Inventory.Remove(item);
-        var room = state.World.GetRoom(state.Player.Location);
+        var room = state.GetRoom(state.Player.Location);
         room.Items.Add(item);
 
         return new Results.ItemDropped(item.Name);

@@ -1,6 +1,4 @@
-using Questline.Domain.Rooms.Data;
-
-namespace Questline.Domain.Shared.Data;
+namespace Questline.Domain.Data;
 
 public class AdventureData
 {

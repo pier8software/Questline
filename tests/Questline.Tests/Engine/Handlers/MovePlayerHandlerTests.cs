@@ -1,7 +1,8 @@
-using Questline.Domain;
-using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Entities;
+using Questline.Domain.Shared;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
+using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -10,7 +11,7 @@ public class MovePlayerHandlerTests
     [Fact]
     public void Player_moves_to_destination_when_exit_exists()
     {
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .Build();
@@ -29,7 +30,7 @@ public class MovePlayerHandlerTests
     [Fact]
     public void Player_stays_put_when_no_exit_exists()
     {
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("sealed", "Sealed Room", "No way north.")
             .Build();
         var player = new Player { Id = "player1", Location = "sealed" };
@@ -46,7 +47,7 @@ public class MovePlayerHandlerTests
     [Fact]
     public void Result_includes_exits_of_destination_room()
     {
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("a", "Room A", "First room.", r => r.WithExit(Direction.East, "b"))
             .WithRoom("b", "Room B", "Second room.", r =>
             {
@@ -69,7 +70,7 @@ public class MovePlayerHandlerTests
     public void Result_includes_items_in_destination_room()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("a", "Room A", "First room.", r => r.WithExit(Direction.North, "b"))
             .WithRoom("b", "Room B", "Second room.", r => r.WithItem(lamp))
             .Build();

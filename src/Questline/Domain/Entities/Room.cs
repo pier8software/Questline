@@ -1,4 +1,6 @@
-namespace Questline.Domain.Rooms.Entity;
+using Questline.Domain.Shared;
+
+namespace Questline.Domain.Entities;
 
 public class Room
 {
@@ -7,4 +9,16 @@ public class Room
     public required string Description { get; init; }
     public Dictionary<Direction, Exit> Exits { get; init; } = new();
     public Inventory Items { get; init; } = new();
+}
+
+public record Exit(string Destination, string? BarrierId = null);
+
+public enum Direction
+{
+    North,
+    South,
+    East,
+    West,
+    Up,
+    Down
 }
