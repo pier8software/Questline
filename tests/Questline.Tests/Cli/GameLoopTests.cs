@@ -27,9 +27,9 @@ public class GameLoopTests
         var state = new GameState(world, new Player { Id = "player1", Location = "entrance" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<ICommandHandler<Commands.LookCommand>, LookCommandHandler>()
-            .AddSingleton<ICommandHandler<Commands.GoCommand>, GoCommandHandler>()
-            .AddSingleton<ICommandHandler<Commands.QuitCommand>, QuitCommandHandler>()
+            .AddSingleton<ICommandHandler<Commands.ViewRoom>, ViewRoomHandler>()
+            .AddSingleton<ICommandHandler<Commands.MovePlayer>, MovePlayerHandler>()
+            .AddSingleton<ICommandHandler<Commands.QuitGame>, QuitGameHandler>()
             .BuildServiceProvider();
 
         var dispatcher = new CommandDispatcher(serviceProvider);
@@ -37,17 +37,17 @@ public class GameLoopTests
 
         var console = new FakeConsole();
         var parser = new ParserBuilder()
-            .RegisterCommand<Commands.LookCommand>(["look", "l"], _ => new Commands.LookCommand())
-            .RegisterCommand<Commands.GoCommand>(["go", "walk", "move"], args =>
+            .RegisterCommand<Commands.ViewRoom>(["look", "l"], _ => new Commands.ViewRoom())
+            .RegisterCommand<Commands.MovePlayer>(["go", "walk", "move"], args =>
             {
                 if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
                 {
                     return new ParseError("Invalid direction.");
                 }
 
-                return new Commands.GoCommand(dir);
+                return new Commands.MovePlayer(dir);
             })
-            .RegisterCommand<Commands.QuitCommand>(["quit", "exit", "q"], _ => new Commands.QuitCommand())
+            .RegisterCommand<Commands.QuitGame>(["quit", "exit", "q"], _ => new Commands.QuitGame())
             .Build();
 
         var loop = new GameLoop(console, parser, dispatcher, state);

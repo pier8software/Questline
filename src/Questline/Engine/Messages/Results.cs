@@ -4,7 +4,7 @@ namespace Questline.Engine.Messages;
 
 public static class Results
 {
-    public record LookResult(string RoomName, string Description, IReadOnlyList<string> Exits, IReadOnlyList<string> Items)
+    public record RoomViewed(string RoomName, string Description, IReadOnlyList<string> Exits, IReadOnlyList<string> Items)
         : CommandResult(FormatRoomDescription(RoomName, Description, Exits, Items))
     {
         private static string FormatRoomDescription(
@@ -23,7 +23,7 @@ public static class Results
         }
     }
 
-    public record MovedResult(string RoomName, string Description, IReadOnlyList<string> Exits, IReadOnlyList<string> Items)
+    public record PlayerMoved(string RoomName, string Description, IReadOnlyList<string> Exits, IReadOnlyList<string> Items)
         : CommandResult(FormatRoomDescription(RoomName, Description, Exits, Items))
     {
         private static string FormatRoomDescription(
@@ -42,18 +42,18 @@ public static class Results
         }
     }
 
-    public record ItemPickedUpResult(string ItemName)
-        : CommandResult($"You pick up the {ItemName}.");
+    public record ItemTaken(string Item)
+        : CommandResult($"You pick up the {Item}.");
 
-    public record ItemDroppedResult(string ItemName)
-        : CommandResult($"You drop the {ItemName}.");
+    public record ItemDropped(string Item)
+        : CommandResult($"You drop the {Item}.");
 
-    public record InventoryResult(IReadOnlyList<string> Items)
+    public record InventoryLoaded(IReadOnlyList<string> Items)
         : CommandResult(Items.Count == 0
             ? "You are not carrying anything."
             : $"You are carrying: {string.Join(", ", Items)}");
 
-    public record ErrorResult(string ErrorMessage) : CommandResult(ErrorMessage, false);
+    public record CommandError(string Message) : CommandResult(Message, false);
 
-    public record QuitResult() : CommandResult("Goodbye!");
+    public record GameQuited() : CommandResult("Goodbye!");
 }

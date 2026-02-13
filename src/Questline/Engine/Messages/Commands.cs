@@ -5,15 +5,15 @@ namespace Questline.Engine.Messages;
 
 public static class Commands
 {
-    public record DropCommand(string ItemName) : ICommand;
+    public record DropItem(string ItemName) : ICommand;
 
-    public record GetCommand(string ItemName) : ICommand;
+    public record TakeItem(string ItemName) : ICommand;
 
-    public record GoCommand(Direction Direction) : ICommand;
+    public record MovePlayer(Direction Direction) : ICommand;
 
-    public record InventoryCommand : ICommand;
+    public record LoadInventory : ICommand;
 
-    public record LookCommand : ICommand;
+    public record ViewRoom : ICommand;
 
-    public record QuitCommand : ICommand;
+    public record QuitGame : ICommand;
 }

@@ -4,7 +4,7 @@ using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
-public class GetCommandHandlerTests
+public class TakeItemHandlerTests
 {
     [Fact]
     public void Item_moves_from_room_to_inventory()
@@ -14,11 +14,11 @@ public class GetCommandHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
-        var handler = new GetCommandHandler();
+        var handler = new TakeItemHandler();
 
-        var result = handler.Execute(state, new Commands.GetCommand("brass lamp"));
+        var result = handler.Execute(state, new Commands.TakeItem("brass lamp"));
 
-        result.ShouldBeOfType<Results.ItemPickedUpResult>();
+        result.ShouldBeOfType<Results.ItemTaken>();
         state.Player.Inventory.Items.ShouldContain(lamp);
         world.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBeNull();
     }
@@ -30,11 +30,11 @@ public class GetCommandHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
-        var handler = new GetCommandHandler();
+        var handler = new TakeItemHandler();
 
-        var result = handler.Execute(state, new Commands.GetCommand("lamp"));
+        var result = handler.Execute(state, new Commands.TakeItem("lamp"));
 
-        result.ShouldBeOfType<Results.ErrorResult>();
+        result.ShouldBeOfType<Results.CommandError>();
         result.Success.ShouldBeFalse();
     }
 
@@ -46,11 +46,11 @@ public class GetCommandHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
-        var handler = new GetCommandHandler();
+        var handler = new TakeItemHandler();
 
-        var result = handler.Execute(state, new Commands.GetCommand("BRASS LAMP"));
+        var result = handler.Execute(state, new Commands.TakeItem("BRASS LAMP"));
 
-        result.ShouldBeOfType<Results.ItemPickedUpResult>();
+        result.ShouldBeOfType<Results.ItemTaken>();
     }
 
     [Fact]
@@ -61,9 +61,9 @@ public class GetCommandHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
-        var handler = new GetCommandHandler();
+        var handler = new TakeItemHandler();
 
-        var result = handler.Execute(state, new Commands.GetCommand("brass lamp"));
+        var result = handler.Execute(state, new Commands.TakeItem("brass lamp"));
 
         result.Message.ShouldContain("brass lamp");
     }

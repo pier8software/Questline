@@ -35,12 +35,12 @@ public static class ServiceCollectionExtensions
 
     private static void RegisterCommandHandlers(IServiceCollection services)
     {
-        services.AddSingleton<ICommandHandler<Commands.LookCommand>, LookCommandHandler>();
-        services.AddSingleton<ICommandHandler<Commands.GoCommand>, GoCommandHandler>();
-        services.AddSingleton<ICommandHandler<Commands.GetCommand>, GetCommandHandler>();
-        services.AddSingleton<ICommandHandler<Commands.DropCommand>, DropCommandHandler>();
-        services.AddSingleton<ICommandHandler<Commands.InventoryCommand>, InventoryCommandHandler>();
-        services.AddSingleton<ICommandHandler<Commands.QuitCommand>, QuitCommandHandler>();
+        services.AddSingleton<ICommandHandler<Commands.ViewRoom>, ViewRoomHandler>();
+        services.AddSingleton<ICommandHandler<Commands.MovePlayer>, MovePlayerHandler>();
+        services.AddSingleton<ICommandHandler<Commands.TakeItem>, TakeItemHandler>();
+        services.AddSingleton<ICommandHandler<Commands.DropItem>, DropItemHandler>();
+        services.AddSingleton<ICommandHandler<Commands.LoadInventory>, LoadInventoryHandler>();
+        services.AddSingleton<ICommandHandler<Commands.QuitGame>, QuitGameHandler>();
 
         services.AddSingleton<CommandDispatcher>();
     }
@@ -48,26 +48,26 @@ public static class ServiceCollectionExtensions
     private static void RegisterInputParser(IServiceCollection services)
     {
         var parser = new ParserBuilder()
-            .RegisterCommand<Commands.LookCommand>(["look", "l"], _ => new Commands.LookCommand())
-            .RegisterCommand<Commands.GoCommand>(["go", "walk", "move"], args =>
+            .RegisterCommand<Commands.ViewRoom>(["look", "l"], _ => new Commands.ViewRoom())
+            .RegisterCommand<Commands.MovePlayer>(["go", "walk", "move"], args =>
             {
                 if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
                 {
                     return new ParseError("Invalid direction.");
                 }
 
-                return new Commands.GoCommand(dir);
+                return new Commands.MovePlayer(dir);
             })
-            .RegisterCommand<Commands.GetCommand>(["get", "take"],
+            .RegisterCommand<Commands.TakeItem>(["get", "take"],
                 args => args.Length == 0
                     ? new ParseError("Item name required.")
-                    : new Commands.GetCommand(string.Join(" ", args)))
-            .RegisterCommand<Commands.DropCommand>(["drop"], args =>
+                    : new Commands.TakeItem(string.Join(" ", args)))
+            .RegisterCommand<Commands.DropItem>(["drop"], args =>
                 args.Length == 0
                     ? new ParseError("Item name required.")
-                    : new Commands.DropCommand(string.Join(" ", args)))
-            .RegisterCommand<Commands.InventoryCommand>(["inventory", "inv", "i"], _ => new Commands.InventoryCommand())
-            .RegisterCommand<Commands.QuitCommand>(["quit", "exit", "q"], _ => new Commands.QuitCommand())
+                    : new Commands.DropItem(string.Join(" ", args)))
+            .RegisterCommand<Commands.LoadInventory>(["inventory", "inv", "i"], _ => new Commands.LoadInventory())
+            .RegisterCommand<Commands.QuitGame>(["quit", "exit", "q"], _ => new Commands.QuitGame())
             .Build();
 
         services.AddSingleton(parser);

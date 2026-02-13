@@ -4,7 +4,7 @@ using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
-public class QuitCommandHandlerTests
+public class QuitGameHandlerTests
 {
     [Fact]
     public void Returns_successful_quit_result()
@@ -13,11 +13,11 @@ public class QuitCommandHandlerTests
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
-        var handler = new QuitCommandHandler();
+        var handler = new QuitGameHandler();
 
-        var result = handler.Execute(state, new Commands.QuitCommand());
+        var result = handler.Execute(state, new Commands.QuitGame());
 
-        result.ShouldBeOfType<Results.QuitResult>();
+        result.ShouldBeOfType<Results.GameQuited>();
         result.Success.ShouldBeTrue();
     }
 
@@ -28,9 +28,9 @@ public class QuitCommandHandlerTests
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
-        var handler = new QuitCommandHandler();
+        var handler = new QuitGameHandler();
 
-        var result = handler.Execute(state, new Commands.QuitCommand());
+        var result = handler.Execute(state, new Commands.QuitGame());
 
         result.Message.ShouldBe("Goodbye!");
     }

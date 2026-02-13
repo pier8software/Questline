@@ -4,14 +4,14 @@ using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Handlers;
 
-public class InventoryCommandHandler : ICommandHandler<Commands.InventoryCommand>
+public class LoadInventoryHandler : ICommandHandler<Commands.LoadInventory>
 {
-    public CommandResult Execute(GameState state, Commands.InventoryCommand command)
+    public CommandResult Execute(GameState state, Commands.LoadInventory command)
     {
         var items = state.Player.Inventory.Items
             .Select(i => i.Name)
             .ToList();
 
-        return new Results.InventoryResult(items);
+        return new Results.InventoryLoaded(items);
     }
 }

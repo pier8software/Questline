@@ -4,7 +4,7 @@ using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
-public class DropCommandHandlerTests
+public class DropItemHandlerTests
 {
     [Fact]
     public void Item_moves_from_inventory_to_room()
@@ -15,11 +15,11 @@ public class DropCommandHandlerTests
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         state.Player.Inventory.Add(lamp);
-        var handler = new DropCommandHandler();
+        var handler = new DropItemHandler();
 
-        var result = handler.Execute(state, new Commands.DropCommand("brass lamp"));
+        var result = handler.Execute(state, new Commands.DropItem("brass lamp"));
 
-        result.ShouldBeOfType<Results.ItemDroppedResult>();
+        result.ShouldBeOfType<Results.ItemDropped>();
         state.Player.Inventory.IsEmpty.ShouldBeTrue();
         world.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBe(lamp);
     }
@@ -31,11 +31,11 @@ public class DropCommandHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
-        var handler = new DropCommandHandler();
+        var handler = new DropItemHandler();
 
-        var result = handler.Execute(state, new Commands.DropCommand("lamp"));
+        var result = handler.Execute(state, new Commands.DropItem("lamp"));
 
-        result.ShouldBeOfType<Results.ErrorResult>();
+        result.ShouldBeOfType<Results.CommandError>();
         result.Success.ShouldBeFalse();
     }
 
@@ -48,9 +48,9 @@ public class DropCommandHandlerTests
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         state.Player.Inventory.Add(lamp);
-        var handler = new DropCommandHandler();
+        var handler = new DropItemHandler();
 
-        var result = handler.Execute(state, new Commands.DropCommand("brass lamp"));
+        var result = handler.Execute(state, new Commands.DropItem("brass lamp"));
 
         result.Message.ShouldContain("brass lamp");
     }

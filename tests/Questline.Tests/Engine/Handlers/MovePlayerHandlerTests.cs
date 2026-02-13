@@ -4,7 +4,7 @@ using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
-public class GoCommandHandlerTests
+public class MovePlayerHandlerTests
 {
     [Fact]
     public void Player_moves_to_destination_when_exit_exists()
@@ -15,12 +15,12 @@ public class GoCommandHandlerTests
             .Build();
         var player = new Player { Id = "player1", Location = "start" };
         var state = new GameState(world, player);
-        var handler = new GoCommandHandler();
+        var handler = new MovePlayerHandler();
 
-        var result = handler.Execute(state, new Commands.GoCommand(Direction.North));
+        var result = handler.Execute(state, new Commands.MovePlayer(Direction.North));
 
         player.Location.ShouldBe("end");
-        var moved = result.ShouldBeOfType<Results.MovedResult>();
+        var moved = result.ShouldBeOfType<Results.PlayerMoved>();
         moved.RoomName.ShouldBe("End Room");
         moved.Description.ShouldBe("The end room.");
     }
@@ -33,12 +33,12 @@ public class GoCommandHandlerTests
             .Build();
         var player = new Player { Id = "player1", Location = "sealed" };
         var state = new GameState(world, player);
-        var handler = new GoCommandHandler();
+        var handler = new MovePlayerHandler();
 
-        var result = handler.Execute(state, new Commands.GoCommand(Direction.North));
+        var result = handler.Execute(state, new Commands.MovePlayer(Direction.North));
 
         player.Location.ShouldBe("sealed");
-        result.ShouldBeOfType<Results.ErrorResult>();
+        result.ShouldBeOfType<Results.CommandError>();
         result.Success.ShouldBeFalse();
     }
 
@@ -55,11 +55,11 @@ public class GoCommandHandlerTests
             .WithRoom("c", "Room C", "Third room.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "a" });
-        var handler = new GoCommandHandler();
+        var handler = new MovePlayerHandler();
 
-        var result = handler.Execute(state, new Commands.GoCommand(Direction.East));
+        var result = handler.Execute(state, new Commands.MovePlayer(Direction.East));
 
-        var moved = result.ShouldBeOfType<Results.MovedResult>();
+        var moved = result.ShouldBeOfType<Results.PlayerMoved>();
         moved.Exits.ShouldContain("West");
         moved.Exits.ShouldContain("North");
     }
@@ -73,11 +73,11 @@ public class GoCommandHandlerTests
             .WithRoom("b", "Room B", "Second room.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "a" });
-        var handler = new GoCommandHandler();
+        var handler = new MovePlayerHandler();
 
-        var result = handler.Execute(state, new Commands.GoCommand(Direction.North));
+        var result = handler.Execute(state, new Commands.MovePlayer(Direction.North));
 
-        var moved = result.ShouldBeOfType<Results.MovedResult>();
+        var moved = result.ShouldBeOfType<Results.PlayerMoved>();
         moved.Items.ShouldContain("brass lamp");
         moved.Message.ShouldContain("You can see");
     }

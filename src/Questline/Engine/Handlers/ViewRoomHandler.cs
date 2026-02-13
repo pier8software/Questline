@@ -4,13 +4,13 @@ using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Handlers;
 
-public class LookCommandHandler : ICommandHandler<Commands.LookCommand>
+public class ViewRoomHandler : ICommandHandler<Commands.ViewRoom>
 {
-    public CommandResult Execute(GameState state, Commands.LookCommand command)
+    public CommandResult Execute(GameState state, Commands.ViewRoom command)
     {
         var room = state.World.GetRoom(state.Player.Location);
         var exits = room.Exits.Keys.Select(d => d.ToString()).ToList();
         var items = room.Items.Items.Select(i => i.Name).ToList();
-        return new Results.LookResult(room.Name, room.Description, exits, items);
+        return new Results.RoomViewed(room.Name, room.Description, exits, items);
     }
 }

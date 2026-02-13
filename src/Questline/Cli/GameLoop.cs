@@ -25,11 +25,11 @@ public class GameLoop(IConsole console, Parser parser, CommandDispatcher dispatc
             var parseOutput = parser.Parse(input);
             var result = parseOutput.Match(
                 command => dispatcher.Dispatch(state, command),
-                error => new Results.ErrorResult(error.Message));
+                error => new Results.CommandError(error.Message));
 
             console.WriteLine(result.Message);
 
-            if (result is Results.QuitResult)
+            if (result is Results.GameQuited)
             {
                 break;
             }
@@ -41,7 +41,7 @@ public class GameLoop(IConsole console, Parser parser, CommandDispatcher dispatc
         var room = state.World.GetRoom(state.Player.Location);
         var exits = room.Exits.Keys.Select(d => d.ToString()).ToList();
         var items = room.Items.Items.Select(i => i.Name).ToList();
-        var lookResult = new Results.LookResult(room.Name, room.Description, exits, items);
+        var lookResult = new Results.RoomViewed(room.Name, room.Description, exits, items);
         console.WriteLine(lookResult.Message);
     }
 }

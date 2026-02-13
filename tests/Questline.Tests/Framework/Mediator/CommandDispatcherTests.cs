@@ -17,14 +17,14 @@ public class CommandDispatcherTests
         var state = new GameState(world, new Player { Id = "player1", Location = "start" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<ICommandHandler<Commands.LookCommand>, LookCommandHandler>()
+            .AddSingleton<ICommandHandler<Commands.ViewRoom>, ViewRoomHandler>()
             .BuildServiceProvider();
 
 
         var dispatcher = new CommandDispatcher(serviceProvider);
 
-        var result = dispatcher.Dispatch(state, new Commands.LookCommand());
+        var result = dispatcher.Dispatch(state, new Commands.ViewRoom());
 
-        result.ShouldBeOfType<Results.LookResult>();
+        result.ShouldBeOfType<Results.RoomViewed>();
     }
 }
