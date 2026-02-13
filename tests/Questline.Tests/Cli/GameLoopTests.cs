@@ -1,8 +1,13 @@
+using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
 using Questline.Domain;
-using Questline.Engine;
-using Questline.Engine.Commands;
+using Questline.Domain.Entities;
+using Questline.Domain.Shared;
 using Questline.Engine.Handlers;
+using Questline.Engine.InputParsers;
+using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
+using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Cli;
 
@@ -10,7 +15,7 @@ public class GameLoopTests
 {
     private static (GameLoop loop, FakeConsole console) CreateGameLoop()
     {
-        var world = new WorldBuilder()
+        var world = new GameBuilder()
             .WithRoom("entrance", "Dungeon Entrance", "A dark entrance to the dungeon.", r =>
                 r.WithExit(Direction.North, "hallway"))
             .WithRoom("hallway", "Torch-Lit Hallway", "A hallway lined with flickering torches.", r =>
@@ -24,21 +29,30 @@ public class GameLoopTests
 
         var state = new GameState(world, new Player { Id = "player1", Location = "entrance" });
 
-        var dispatcher = new CommandDispatcher();
-        dispatcher.Register(["look", "l"], new LookCommandHandler(), _ => new LookCommand());
-        dispatcher.Register(["go", "walk", "move"], new GoCommandHandler(), args =>
-        {
-            if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
-            {
-                return null;
-            }
+        var serviceProvider = new ServiceCollection()
+            .AddSingleton<ICommandHandler<Commands.ViewRoom>, ViewRoomHandler>()
+            .AddSingleton<ICommandHandler<Commands.MovePlayer>, MovePlayerHandler>()
+            .AddSingleton<ICommandHandler<Commands.QuitGame>, QuitGameHandler>()
+            .BuildServiceProvider();
 
-            return new GoCommand(dir);
-        });
-        dispatcher.Register(["quit", "exit", "q"], new QuitCommandHandler(), _ => new QuitCommand());
+        var dispatcher = new CommandDispatcher(serviceProvider);
+
 
         var console = new FakeConsole();
-        var parser = new Parser();
+        var parser = new ParserBuilder()
+            .RegisterCommand<Commands.ViewRoom>(["look", "l"], _ => new Commands.ViewRoom())
+            .RegisterCommand<Commands.MovePlayer>(["go", "walk", "move"], args =>
+            {
+                if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
+                {
+                    return new ParseError("Invalid direction.");
+                }
+
+                return new Commands.MovePlayer(dir);
+            })
+            .RegisterCommand<Commands.QuitGame>(["quit", "exit", "q"], _ => new Commands.QuitGame())
+            .Build();
+
         var loop = new GameLoop(console, parser, dispatcher, state);
 
         return (loop, console);

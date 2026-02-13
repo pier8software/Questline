@@ -1,4 +1,6 @@
 using Questline.Domain;
+using Questline.Domain.Entities;
+using Questline.Domain.Shared;
 
 namespace Questline.Tests.Domain;
 

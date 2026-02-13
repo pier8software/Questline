@@ -1,4 +1,7 @@
-namespace Questline.Domain;
+using Questline.Domain;
+using Questline.Domain.Entities;
+
+namespace Questline.Tests.Domain;
 
 public class RoomTests
 {

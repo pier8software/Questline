@@ -1,7 +1,0 @@
-{
-  "id": "five-room-dungeon",
-  "name": "The Goblin's Lair",
-  "description": "A short adventure to test your mettle.",
-  "startingRoomId": "entrance",
-  "version": "1.0"
-}
