@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
 using Questline.Domain;
+using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.InputParsers;
 using Questline.Engine.Messages;

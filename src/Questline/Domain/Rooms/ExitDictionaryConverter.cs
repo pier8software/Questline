@@ -1,14 +1,15 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Questline.Domain.Rooms.Data;
 
 namespace Questline.Framework.Content.Dtos;
 
-public class ExitDictionaryConverter : JsonConverter<Dictionary<string, ExitDto>>
+public class ExitDictionaryConverter : JsonConverter<Dictionary<string, ExitData>>
 {
-    public override Dictionary<string, ExitDto> Read(
+    public override Dictionary<string, ExitData> Read(
         ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var result = new Dictionary<string, ExitDto>(StringComparer.OrdinalIgnoreCase);
+        var result = new Dictionary<string, ExitData>(StringComparer.OrdinalIgnoreCase);
 
         if (reader.TokenType != JsonTokenType.StartObject)
         {
@@ -25,10 +26,10 @@ public class ExitDictionaryConverter : JsonConverter<Dictionary<string, ExitDto>
             var direction = reader.GetString()!;
             reader.Read();
 
-            ExitDto exit = reader.TokenType switch
+            ExitData exit = reader.TokenType switch
             {
-                JsonTokenType.String => new ExitDto { Destination = reader.GetString()! },
-                JsonTokenType.StartObject => JsonSerializer.Deserialize<ExitDto>(ref reader, options)!,
+                JsonTokenType.String => new ExitData { Destination = reader.GetString()! },
+                JsonTokenType.StartObject => JsonSerializer.Deserialize<ExitData>(ref reader, options)!,
                 _ => throw new JsonException(
                     $"Exit '{direction}' must be a string (room ID) or an object with 'destination'.")
             };
@@ -40,7 +41,7 @@ public class ExitDictionaryConverter : JsonConverter<Dictionary<string, ExitDto>
     }
 
     public override void Write(
-        Utf8JsonWriter writer, Dictionary<string, ExitDto> value, JsonSerializerOptions options)
+        Utf8JsonWriter writer, Dictionary<string, ExitData> value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
         foreach (var (direction, exit) in value)

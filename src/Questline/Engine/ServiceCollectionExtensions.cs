@@ -5,6 +5,7 @@ using Questline.Engine.Handlers;
 using Questline.Engine.InputParsers;
 using Questline.Engine.Messages;
 using Questline.Framework.Content;
+using Questline.Framework.FileSystem;
 using Questline.Framework.Mediator;
 
 namespace Questline.Engine;
@@ -13,15 +14,9 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddQuestlineEngine(this IServiceCollection services)
     {
-        // Load adventure from content files
-        var contentPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "content", "adventures",
-            "five-room-dungeon");
-        contentPath = Path.GetFullPath(contentPath);
+        var loader = new GameContentLoader(new JsonFileLoader());
+        var state = loader.Load();
 
-        var loader = new FileSystemAdventureLoader();
-        var adventure = loader.Load(contentPath);
-
-        GameState state = new(adventure.World, new Player { Id = "player1", Location = adventure.StartingRoomId });
         services.AddSingleton(state);
 
         RegisterInputParser(services);

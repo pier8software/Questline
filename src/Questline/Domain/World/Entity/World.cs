@@ -1,3 +1,5 @@
+using Questline.Domain.Rooms.Entity;
+
 namespace Questline.Domain;
 
 public class World(Dictionary<string, Room> rooms)

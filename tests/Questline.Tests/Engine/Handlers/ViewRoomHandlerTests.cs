@@ -1,4 +1,5 @@
 using Questline.Domain;
+using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 
