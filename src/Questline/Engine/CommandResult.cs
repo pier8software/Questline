@@ -11,7 +11,9 @@ public record LookResult(string RoomName, string Description, IReadOnlyList<stri
         var parts = new List<string> { roomName, description };
 
         if (items.Count > 0)
+        {
             parts.Add($"You can see: {string.Join(", ", items)}");
+        }
 
         parts.Add($"Exits: {string.Join(", ", exits)}");
 
@@ -28,7 +30,9 @@ public record MovedResult(string RoomName, string Description, IReadOnlyList<str
         var parts = new List<string> { roomName, description };
 
         if (items.Count > 0)
+        {
             parts.Add($"You can see: {string.Join(", ", items)}");
+        }
 
         parts.Add($"Exits: {string.Join(", ", exits)}");
 

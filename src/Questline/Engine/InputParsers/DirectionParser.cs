@@ -1,6 +1,6 @@
 using Questline.Domain;
 
-namespace Questline.Engine;
+namespace Questline.Engine.InputParsers;
 
 public static class DirectionParser
 {

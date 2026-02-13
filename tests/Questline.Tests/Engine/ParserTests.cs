@@ -1,62 +1,93 @@
 using Questline.Engine;
+using Questline.Engine.InputParsers;
 
 namespace Questline.Tests.Engine;
 
 public class ParserTests
 {
-    private readonly Parser _parser = new();
+    private readonly Parser _parser;
+
+    public ParserTests()
+    {
+        _parser = new ParserBuilder()
+            .RegisterCommand<VerbNoArgsCommand>(["verb", "v"], _ => new VerbNoArgsCommand())
+            .RegisterCommand<VerbWithArgsCommand>(["args"], args => new VerbWithArgsCommand(args))
+            .Build();
+    }
 
     [Fact]
     public void Single_word_returns_verb_with_no_args()
     {
-        var result = _parser.Parse("look");
+        var result = _parser.Parse("verb");
 
-        result.Verb.ShouldBe("look");
-        result.Args.ShouldBeEmpty();
+        result.AsT0.ShouldBeOfType<VerbNoArgsCommand>();
+    }
+
+    [Fact]
+    public void Alias_parsed_to_the_same_command()
+    {
+        var result = _parser.Parse("v");
+
+        result.AsT0.ShouldBeOfType<VerbNoArgsCommand>();
     }
 
     [Fact]
     public void Verb_with_argument_splits_correctly()
     {
-        var result = _parser.Parse("go north");
+        var result = _parser.Parse("args example");
 
-        result.Verb.ShouldBe("go");
-        result.Args.ShouldBe(new[] { "north" });
+        result.IsT0.ShouldBeTrue();
+        var command = result.AsT0 as VerbWithArgsCommand;
+        command!.Args.ShouldBe(["example"]);
     }
 
     [Fact]
     public void Input_is_converted_to_lowercase()
     {
-        var result = _parser.Parse("GO North");
+        var result = _parser.Parse("ARGS Example");
 
-        result.Verb.ShouldBe("go");
-        result.Args.ShouldBe(new[] { "north" });
+        result.IsT0.ShouldBeTrue();
+        var command = result.AsT0 as VerbWithArgsCommand;
+        command!.Args.ShouldBe(["example"]);
     }
 
     [Fact]
     public void Leading_and_trailing_whitespace_is_trimmed()
     {
-        var result = _parser.Parse("  look  ");
+        var result = _parser.Parse("  verb  ");
 
-        result.Verb.ShouldBe("look");
-        result.Args.ShouldBeEmpty();
+        result.AsT0.ShouldBeOfType<VerbNoArgsCommand>();
     }
 
     [Fact]
     public void Extra_whitespace_between_words_is_ignored()
     {
-        var result = _parser.Parse("go   north");
+        var result = _parser.Parse("args   example");
 
-        result.Verb.ShouldBe("go");
-        result.Args.ShouldBe(new[] { "north" });
+        result.IsT0.ShouldBeTrue();
+        var command = result.AsT0 as VerbWithArgsCommand;
+        command!.Args.ShouldBe(["example"]);
     }
 
     [Fact]
-    public void Empty_input_returns_empty_verb_and_no_args()
+    public void Empty_input_returns_parse_error()
     {
         var result = _parser.Parse("");
 
-        result.Verb.ShouldBe("");
-        result.Args.ShouldBeEmpty();
+        result.AsT1.ShouldBeOfType<ParseError>();
+        result.AsT1.Message.ShouldBe("Please enter a command.");
+    }
+
+    [Fact]
+    public void Unknown_verb_returns_error()
+    {
+        var result = _parser.Parse("error");
+
+        result.AsT1.ShouldBeOfType<ParseError>();
+        result.AsT1.Message.ShouldBe("I don't understand 'error'. Type 'help' for available commands.");
     }
 }
+
+public record VerbNoArgsCommand : ICommand;
+
+public record VerbWithArgsCommand(string[] Args) : ICommand;

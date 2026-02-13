@@ -11,12 +11,16 @@ public class ExitDictionaryConverter : JsonConverter<Dictionary<string, ExitDto>
         var result = new Dictionary<string, ExitDto>(StringComparer.OrdinalIgnoreCase);
 
         if (reader.TokenType != JsonTokenType.StartObject)
+        {
             throw new JsonException("Expected start of object for exits.");
+        }
 
         while (reader.Read())
         {
             if (reader.TokenType == JsonTokenType.EndObject)
+            {
                 return result;
+            }
 
             var direction = reader.GetString()!;
             reader.Read();
@@ -51,6 +55,7 @@ public class ExitDictionaryConverter : JsonConverter<Dictionary<string, ExitDto>
                 JsonSerializer.Serialize(writer, exit, options);
             }
         }
+
         writer.WriteEndObject();
     }
 }

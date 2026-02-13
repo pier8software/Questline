@@ -1,5 +1,6 @@
 using Questline.Domain;
 using Questline.Engine;
+using Questline.Engine.InputParsers;
 
 namespace Questline.Cli;
 
@@ -19,8 +20,10 @@ public class GameLoop(IConsole console, Parser parser, CommandDispatcher dispatc
                 break;
             }
 
-            var parsed = parser.Parse(input);
-            var result = dispatcher.Dispatch(state, parsed);
+            var parseOutput = parser.Parse(input);
+            var result = parseOutput.Match(
+                command => dispatcher.Dispatch(state, command),
+                error => new ErrorResult(error.Message));
 
             console.WriteLine(result.Message);
 

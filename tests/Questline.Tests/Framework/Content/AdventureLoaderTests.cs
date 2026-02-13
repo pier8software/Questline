@@ -6,8 +6,8 @@ namespace Questline.Tests.Framework.Content;
 
 public class AdventureLoaderTests : IDisposable
 {
-    private readonly string _tempDir;
     private readonly FileSystemAdventureLoader _loader = new();
+    private readonly string _tempDir;
 
     public AdventureLoaderTests()
     {
@@ -18,7 +18,9 @@ public class AdventureLoaderTests : IDisposable
     public void Dispose()
     {
         if (Directory.Exists(_tempDir))
-            Directory.Delete(_tempDir, recursive: true);
+        {
+            Directory.Delete(_tempDir, true);
+        }
     }
 
     private void WriteAdventureJson(string id = "test", string name = "Test Adventure",
@@ -26,14 +28,14 @@ public class AdventureLoaderTests : IDisposable
     {
         File.WriteAllText(Path.Combine(_tempDir, "adventure.json"),
             $$"""
-            {
-              "id": "{{id}}",
-              "name": "{{name}}",
-              "description": "{{description}}",
-              "startingRoomId": "{{startingRoomId}}",
-              "version": "{{version}}"
-            }
-            """);
+              {
+                "id": "{{id}}",
+                "name": "{{name}}",
+                "description": "{{description}}",
+                "startingRoomId": "{{startingRoomId}}",
+                "version": "{{version}}"
+              }
+              """);
     }
 
     private void WriteRoomsJson(string json) =>
@@ -46,31 +48,31 @@ public class AdventureLoaderTests : IDisposable
     {
         WriteAdventureJson(startingRoomId: "room-1");
         WriteRoomsJson("""
-            {
-              "rooms": [
-                {
-                  "id": "room-1",
-                  "name": "First Room",
-                  "description": "The first room.",
-                  "exits": { "north": "room-2" },
-                  "items": ["sword"]
-                },
-                {
-                  "id": "room-2",
-                  "name": "Second Room",
-                  "description": "The second room.",
-                  "exits": { "south": "room-1" }
-                }
-              ]
-            }
-            """);
+                       {
+                         "rooms": [
+                           {
+                             "id": "room-1",
+                             "name": "First Room",
+                             "description": "The first room.",
+                             "exits": { "north": "room-2" },
+                             "items": ["sword"]
+                           },
+                           {
+                             "id": "room-2",
+                             "name": "Second Room",
+                             "description": "The second room.",
+                             "exits": { "south": "room-1" }
+                           }
+                         ]
+                       }
+                       """);
         WriteItemsJson("""
-            {
-              "items": [
-                { "id": "sword", "name": "iron sword", "description": "A sturdy blade." }
-              ]
-            }
-            """);
+                       {
+                         "items": [
+                           { "id": "sword", "name": "iron sword", "description": "A sturdy blade." }
+                         ]
+                       }
+                       """);
     }
 
     [Fact]
@@ -115,25 +117,25 @@ public class AdventureLoaderTests : IDisposable
     {
         WriteAdventureJson(startingRoomId: "room-a");
         WriteRoomsJson("""
-            {
-              "rooms": [
-                {
-                  "id": "room-a",
-                  "name": "Room A",
-                  "description": "First.",
-                  "exits": {
-                    "north": { "destination": "room-b", "barrier": "locked-door" }
-                  }
-                },
-                {
-                  "id": "room-b",
-                  "name": "Room B",
-                  "description": "Second.",
-                  "exits": { "south": "room-a" }
-                }
-              ]
-            }
-            """);
+                       {
+                         "rooms": [
+                           {
+                             "id": "room-a",
+                             "name": "Room A",
+                             "description": "First.",
+                             "exits": {
+                               "north": { "destination": "room-b", "barrier": "locked-door" }
+                             }
+                           },
+                           {
+                             "id": "room-b",
+                             "name": "Room B",
+                             "description": "Second.",
+                             "exits": { "south": "room-a" }
+                           }
+                         ]
+                       }
+                       """);
         WriteItemsJson("""{ "items": [] }""");
 
         var adventure = _loader.Load(_tempDir);
@@ -168,17 +170,17 @@ public class AdventureLoaderTests : IDisposable
     {
         WriteAdventureJson(startingRoomId: "room-1");
         WriteRoomsJson("""
-            {
-              "rooms": [
-                {
-                  "id": "room-1",
-                  "name": "Only Room",
-                  "description": "Alone.",
-                  "exits": { "north": "no-such-room" }
-                }
-              ]
-            }
-            """);
+                       {
+                         "rooms": [
+                           {
+                             "id": "room-1",
+                             "name": "Only Room",
+                             "description": "Alone.",
+                             "exits": { "north": "no-such-room" }
+                           }
+                         ]
+                       }
+                       """);
         WriteItemsJson("""{ "items": [] }""");
 
         var ex = Should.Throw<ContentValidationException>(() => _loader.Load(_tempDir));
@@ -190,17 +192,17 @@ public class AdventureLoaderTests : IDisposable
     {
         WriteAdventureJson(startingRoomId: "room-1");
         WriteRoomsJson("""
-            {
-              "rooms": [
-                {
-                  "id": "room-1",
-                  "name": "Room",
-                  "description": "A room.",
-                  "items": ["ghost-item"]
-                }
-              ]
-            }
-            """);
+                       {
+                         "rooms": [
+                           {
+                             "id": "room-1",
+                             "name": "Room",
+                             "description": "A room.",
+                             "items": ["ghost-item"]
+                           }
+                         ]
+                       }
+                       """);
         WriteItemsJson("""{ "items": [] }""");
 
         var ex = Should.Throw<ContentValidationException>(() => _loader.Load(_tempDir));
@@ -212,16 +214,16 @@ public class AdventureLoaderTests : IDisposable
     {
         WriteAdventureJson(startingRoomId: "nonexistent");
         WriteRoomsJson("""
-            {
-              "rooms": [
-                {
-                  "id": "room-1",
-                  "name": "Room",
-                  "description": "A room."
-                }
-              ]
-            }
-            """);
+                       {
+                         "rooms": [
+                           {
+                             "id": "room-1",
+                             "name": "Room",
+                             "description": "A room."
+                           }
+                         ]
+                       }
+                       """);
         WriteItemsJson("""{ "items": [] }""");
 
         var ex = Should.Throw<ContentValidationException>(() => _loader.Load(_tempDir));
@@ -233,21 +235,21 @@ public class AdventureLoaderTests : IDisposable
     {
         WriteAdventureJson(startingRoomId: "room-1");
         WriteRoomsJson("""
-            {
-              "rooms": [
-                {
-                  "id": "room-1",
-                  "name": "Start",
-                  "description": "Starting room."
-                },
-                {
-                  "id": "orphan",
-                  "name": "Orphaned Room",
-                  "description": "Cannot be reached."
-                }
-              ]
-            }
-            """);
+                       {
+                         "rooms": [
+                           {
+                             "id": "room-1",
+                             "name": "Start",
+                             "description": "Starting room."
+                           },
+                           {
+                             "id": "orphan",
+                             "name": "Orphaned Room",
+                             "description": "Cannot be reached."
+                           }
+                         ]
+                       }
+                       """);
         WriteItemsJson("""{ "items": [] }""");
 
         var ex = Should.Throw<ContentValidationException>(() => _loader.Load(_tempDir));
@@ -259,17 +261,17 @@ public class AdventureLoaderTests : IDisposable
     {
         WriteAdventureJson(startingRoomId: "room-1");
         WriteRoomsJson("""
-            {
-              "rooms": [
-                {
-                  "id": "room-1",
-                  "name": "Room",
-                  "description": "A room.",
-                  "exits": { "sideways": "room-1" }
-                }
-              ]
-            }
-            """);
+                       {
+                         "rooms": [
+                           {
+                             "id": "room-1",
+                             "name": "Room",
+                             "description": "A room.",
+                             "exits": { "sideways": "room-1" }
+                           }
+                         ]
+                       }
+                       """);
         WriteItemsJson("""{ "items": [] }""");
 
         var ex = Should.Throw<ContentValidationException>(() => _loader.Load(_tempDir));

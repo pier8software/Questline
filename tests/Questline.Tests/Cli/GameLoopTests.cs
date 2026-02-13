@@ -1,8 +1,10 @@
+using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
 using Questline.Domain;
 using Questline.Engine;
 using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
+using Questline.Engine.InputParsers;
 
 namespace Questline.Tests.Cli;
 
@@ -24,21 +26,30 @@ public class GameLoopTests
 
         var state = new GameState(world, new Player { Id = "player1", Location = "entrance" });
 
-        var dispatcher = new CommandDispatcher();
-        dispatcher.Register(["look", "l"], new LookCommandHandler(), _ => new LookCommand());
-        dispatcher.Register(["go", "walk", "move"], new GoCommandHandler(), args =>
-        {
-            if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
-            {
-                return null;
-            }
+        var serviceProvider = new ServiceCollection()
+            .AddSingleton<ICommandHandler<LookCommand>, LookCommandHandler>()
+            .AddSingleton<ICommandHandler<GoCommand>, GoCommandHandler>()
+            .AddSingleton<ICommandHandler<QuitCommand>, QuitCommandHandler>()
+            .BuildServiceProvider();
 
-            return new GoCommand(dir);
-        });
-        dispatcher.Register(["quit", "exit", "q"], new QuitCommandHandler(), _ => new QuitCommand());
+        var dispatcher = new CommandDispatcher(serviceProvider);
+
 
         var console = new FakeConsole();
-        var parser = new Parser();
+        var parser = new ParserBuilder()
+            .RegisterCommand<LookCommand>(["look", "l"], _ => new LookCommand())
+            .RegisterCommand<GoCommand>(["go", "walk", "move"], args =>
+            {
+                if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
+                {
+                    return new ParseError("Invalid direction.");
+                }
+
+                return new GoCommand(dir);
+            })
+            .RegisterCommand<QuitCommand>(["quit", "exit", "q"], _ => new QuitCommand())
+            .Build();
+
         var loop = new GameLoop(console, parser, dispatcher, state);
 
         return (loop, console);

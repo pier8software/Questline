@@ -45,7 +45,9 @@ public class FileSystemAdventureLoader : IAdventureLoader
     {
         var filePath = Path.Combine(adventurePath, fileName);
         if (!File.Exists(filePath))
+        {
             throw new FileNotFoundException($"Required content file not found: {fileName}", filePath);
+        }
 
         var json = File.ReadAllText(filePath);
         return JsonSerializer.Deserialize<T>(json, JsonOptions)
@@ -55,25 +57,34 @@ public class FileSystemAdventureLoader : IAdventureLoader
     private static void ValidateStartingRoom(string startingRoomId, Dictionary<string, RoomDto> rooms)
     {
         if (!rooms.ContainsKey(startingRoomId))
+        {
             throw new ContentValidationException(
                 $"Starting room '{startingRoomId}' does not exist in rooms.json.");
+        }
     }
 
     private static void ValidateExitReferences(Dictionary<string, RoomDto> rooms)
     {
         foreach (var room in rooms.Values)
         {
-            if (room.Exits is null) continue;
+            if (room.Exits is null)
+            {
+                continue;
+            }
 
             foreach (var (directionStr, exit) in room.Exits)
             {
                 if (!Enum.TryParse<Direction>(directionStr, ignoreCase: true, out _))
+                {
                     throw new ContentValidationException(
                         $"Room '{room.Id}' has invalid direction '{directionStr}'.");
+                }
 
                 if (!rooms.ContainsKey(exit.Destination))
+                {
                     throw new ContentValidationException(
                         $"Room '{room.Id}' has exit to non-existent room '{exit.Destination}'.");
+                }
             }
         }
     }
@@ -83,13 +94,18 @@ public class FileSystemAdventureLoader : IAdventureLoader
     {
         foreach (var room in rooms.Values)
         {
-            if (room.Items is null) continue;
+            if (room.Items is null)
+            {
+                continue;
+            }
 
             foreach (var itemId in room.Items)
             {
                 if (!items.ContainsKey(itemId))
+                {
                     throw new ContentValidationException(
                         $"Room '{room.Id}' references unknown item '{itemId}'.");
+                }
             }
         }
     }
@@ -106,19 +122,26 @@ public class FileSystemAdventureLoader : IAdventureLoader
             var currentId = queue.Dequeue();
             var room = rooms[currentId];
 
-            if (room.Exits is null) continue;
+            if (room.Exits is null)
+            {
+                continue;
+            }
 
             foreach (var exit in room.Exits.Values)
             {
                 if (visited.Add(exit.Destination))
+                {
                     queue.Enqueue(exit.Destination);
+                }
             }
         }
 
         var orphans = rooms.Keys.Where(id => !visited.Contains(id)).ToList();
         if (orphans.Count > 0)
+        {
             throw new ContentValidationException(
                 $"Rooms unreachable from starting room: {string.Join(", ", orphans.Select(id => $"'{id}'"))}.");
+        }
     }
 
     private static Dictionary<string, Item> BuildItems(Dictionary<string, ItemDto> itemDtos)
@@ -133,6 +156,7 @@ public class FileSystemAdventureLoader : IAdventureLoader
                 Description = dto.Description!
             };
         }
+
         return items;
     }
 

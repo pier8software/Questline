@@ -1,5 +1,6 @@
 using Questline.Domain;
 using Questline.Engine;
+using Questline.Engine.InputParsers;
 
 namespace Questline.Tests.Engine;
 
