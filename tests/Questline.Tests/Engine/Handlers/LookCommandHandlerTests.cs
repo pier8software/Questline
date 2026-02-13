@@ -1,7 +1,6 @@
 using Questline.Domain;
-using Questline.Engine;
-using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -16,9 +15,9 @@ public class LookCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
         var handler = new LookCommandHandler();
 
-        var result = handler.Execute(state, new LookCommand());
+        var result = handler.Execute(state, new Commands.LookCommand());
 
-        var lookResult = result.ShouldBeOfType<LookResult>();
+        var lookResult = result.ShouldBeOfType<Results.LookResult>();
         lookResult.RoomName.ShouldBe("The Tavern");
         lookResult.Description.ShouldBe("A cozy tavern with a roaring fire.");
     }
@@ -38,9 +37,9 @@ public class LookCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "hallway" });
         var handler = new LookCommandHandler();
 
-        var result = handler.Execute(state, new LookCommand());
+        var result = handler.Execute(state, new Commands.LookCommand());
 
-        var lookResult = result.ShouldBeOfType<LookResult>();
+        var lookResult = result.ShouldBeOfType<Results.LookResult>();
         lookResult.Exits.ShouldContain("North");
         lookResult.Exits.ShouldContain("South");
     }
@@ -54,9 +53,9 @@ public class LookCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "sealed-room" });
         var handler = new LookCommandHandler();
 
-        var result = handler.Execute(state, new LookCommand());
+        var result = handler.Execute(state, new Commands.LookCommand());
 
-        var lookResult = result.ShouldBeOfType<LookResult>();
+        var lookResult = result.ShouldBeOfType<Results.LookResult>();
         lookResult.Exits.ShouldBeEmpty();
     }
 
@@ -70,9 +69,9 @@ public class LookCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new LookCommandHandler();
 
-        var result = handler.Execute(state, new LookCommand());
+        var result = handler.Execute(state, new Commands.LookCommand());
 
-        var lookResult = result.ShouldBeOfType<LookResult>();
+        var lookResult = result.ShouldBeOfType<Results.LookResult>();
         lookResult.Items.ShouldContain("brass lamp");
         lookResult.Message.ShouldContain("You can see");
     }
@@ -86,7 +85,7 @@ public class LookCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new LookCommandHandler();
 
-        var result = handler.Execute(state, new LookCommand());
+        var result = handler.Execute(state, new Commands.LookCommand());
 
         result.Message.ShouldNotContain("You can see");
     }

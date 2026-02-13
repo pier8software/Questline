@@ -1,9 +1,10 @@
 using Questline.Domain;
-using Questline.Engine.Commands;
+using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Handlers;
 
-public class QuitCommandHandler : ICommandHandler<QuitCommand>
+public class QuitCommandHandler : ICommandHandler<Commands.QuitCommand>
 {
-    public CommandResult Execute(GameState state, QuitCommand command) => new QuitResult();
+    public CommandResult Execute(GameState state, Commands.QuitCommand command) => new Results.QuitResult();
 }

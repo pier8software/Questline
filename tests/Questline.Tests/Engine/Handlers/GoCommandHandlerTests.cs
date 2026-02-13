@@ -1,7 +1,6 @@
 using Questline.Domain;
-using Questline.Engine;
-using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -18,10 +17,10 @@ public class GoCommandHandlerTests
         var state = new GameState(world, player);
         var handler = new GoCommandHandler();
 
-        var result = handler.Execute(state, new GoCommand(Direction.North));
+        var result = handler.Execute(state, new Commands.GoCommand(Direction.North));
 
         player.Location.ShouldBe("end");
-        var moved = result.ShouldBeOfType<MovedResult>();
+        var moved = result.ShouldBeOfType<Results.MovedResult>();
         moved.RoomName.ShouldBe("End Room");
         moved.Description.ShouldBe("The end room.");
     }
@@ -36,10 +35,10 @@ public class GoCommandHandlerTests
         var state = new GameState(world, player);
         var handler = new GoCommandHandler();
 
-        var result = handler.Execute(state, new GoCommand(Direction.North));
+        var result = handler.Execute(state, new Commands.GoCommand(Direction.North));
 
         player.Location.ShouldBe("sealed");
-        result.ShouldBeOfType<ErrorResult>();
+        result.ShouldBeOfType<Results.ErrorResult>();
         result.Success.ShouldBeFalse();
     }
 
@@ -58,9 +57,9 @@ public class GoCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "a" });
         var handler = new GoCommandHandler();
 
-        var result = handler.Execute(state, new GoCommand(Direction.East));
+        var result = handler.Execute(state, new Commands.GoCommand(Direction.East));
 
-        var moved = result.ShouldBeOfType<MovedResult>();
+        var moved = result.ShouldBeOfType<Results.MovedResult>();
         moved.Exits.ShouldContain("West");
         moved.Exits.ShouldContain("North");
     }
@@ -76,9 +75,9 @@ public class GoCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "a" });
         var handler = new GoCommandHandler();
 
-        var result = handler.Execute(state, new GoCommand(Direction.North));
+        var result = handler.Execute(state, new Commands.GoCommand(Direction.North));
 
-        var moved = result.ShouldBeOfType<MovedResult>();
+        var moved = result.ShouldBeOfType<Results.MovedResult>();
         moved.Items.ShouldContain("brass lamp");
         moved.Message.ShouldContain("You can see");
     }

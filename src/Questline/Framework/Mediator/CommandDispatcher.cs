@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Domain;
 
-namespace Questline.Engine;
+namespace Questline.Framework.Mediator;
 
 public class CommandDispatcher(IServiceProvider serviceProvider)
 {

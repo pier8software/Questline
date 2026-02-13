@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Domain;
-using Questline.Engine;
-using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 
-namespace Questline.Tests.Engine;
+namespace Questline.Tests.Framework.Mediator;
 
 public class CommandDispatcherTests
 {
@@ -17,14 +17,14 @@ public class CommandDispatcherTests
         var state = new GameState(world, new Player { Id = "player1", Location = "start" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<ICommandHandler<LookCommand>, LookCommandHandler>()
+            .AddSingleton<ICommandHandler<Commands.LookCommand>, LookCommandHandler>()
             .BuildServiceProvider();
 
 
         var dispatcher = new CommandDispatcher(serviceProvider);
 
-        var result = dispatcher.Dispatch(state, new LookCommand());
+        var result = dispatcher.Dispatch(state, new Commands.LookCommand());
 
-        result.ShouldBeOfType<LookResult>();
+        result.ShouldBeOfType<Results.LookResult>();
     }
 }

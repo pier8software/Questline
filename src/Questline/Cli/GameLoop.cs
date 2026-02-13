@@ -1,6 +1,8 @@
 using Questline.Domain;
 using Questline.Engine;
 using Questline.Engine.InputParsers;
+using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 
 namespace Questline.Cli;
 
@@ -23,11 +25,11 @@ public class GameLoop(IConsole console, Parser parser, CommandDispatcher dispatc
             var parseOutput = parser.Parse(input);
             var result = parseOutput.Match(
                 command => dispatcher.Dispatch(state, command),
-                error => new ErrorResult(error.Message));
+                error => new Results.ErrorResult(error.Message));
 
             console.WriteLine(result.Message);
 
-            if (result is QuitResult)
+            if (result is Results.QuitResult)
             {
                 break;
             }
@@ -39,7 +41,7 @@ public class GameLoop(IConsole console, Parser parser, CommandDispatcher dispatc
         var room = state.World.GetRoom(state.Player.Location);
         var exits = room.Exits.Keys.Select(d => d.ToString()).ToList();
         var items = room.Items.Items.Select(i => i.Name).ToList();
-        var lookResult = new LookResult(room.Name, room.Description, exits, items);
+        var lookResult = new Results.LookResult(room.Name, room.Description, exits, items);
         console.WriteLine(lookResult.Message);
     }
 }

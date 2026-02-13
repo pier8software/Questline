@@ -1,5 +1,5 @@
-using Questline.Engine;
 using Questline.Engine.InputParsers;
+using Questline.Framework.Mediator;
 
 namespace Questline.Tests.Engine;
 

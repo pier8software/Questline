@@ -1,7 +1,6 @@
 using Questline.Domain;
-using Questline.Engine;
-using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -17,9 +16,9 @@ public class GetCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new GetCommandHandler();
 
-        var result = handler.Execute(state, new GetCommand("brass lamp"));
+        var result = handler.Execute(state, new Commands.GetCommand("brass lamp"));
 
-        result.ShouldBeOfType<ItemPickedUpResult>();
+        result.ShouldBeOfType<Results.ItemPickedUpResult>();
         state.Player.Inventory.Items.ShouldContain(lamp);
         world.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBeNull();
     }
@@ -33,9 +32,9 @@ public class GetCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new GetCommandHandler();
 
-        var result = handler.Execute(state, new GetCommand("lamp"));
+        var result = handler.Execute(state, new Commands.GetCommand("lamp"));
 
-        result.ShouldBeOfType<ErrorResult>();
+        result.ShouldBeOfType<Results.ErrorResult>();
         result.Success.ShouldBeFalse();
     }
 
@@ -49,9 +48,9 @@ public class GetCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new GetCommandHandler();
 
-        var result = handler.Execute(state, new GetCommand("BRASS LAMP"));
+        var result = handler.Execute(state, new Commands.GetCommand("BRASS LAMP"));
 
-        result.ShouldBeOfType<ItemPickedUpResult>();
+        result.ShouldBeOfType<Results.ItemPickedUpResult>();
     }
 
     [Fact]
@@ -64,7 +63,7 @@ public class GetCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new GetCommandHandler();
 
-        var result = handler.Execute(state, new GetCommand("brass lamp"));
+        var result = handler.Execute(state, new Commands.GetCommand("brass lamp"));
 
         result.Message.ShouldContain("brass lamp");
     }

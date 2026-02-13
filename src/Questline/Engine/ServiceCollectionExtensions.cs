@@ -1,9 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
 using Questline.Domain;
-using Questline.Engine.Commands;
 using Questline.Engine.InputParsers;
+using Questline.Engine.Messages;
 using Questline.Framework.Content;
+using Questline.Framework.Mediator;
 
 namespace Questline.Engine;
 
@@ -23,24 +24,24 @@ public static class ServiceCollectionExtensions
 
         // Build Parser
         var parser = new ParserBuilder()
-            .RegisterCommand<LookCommand>(["look", "l"], _ => new LookCommand())
-            .RegisterCommand<GoCommand>(["go", "walk", "move"], args =>
+            .RegisterCommand<Commands.LookCommand>(["look", "l"], _ => new Commands.LookCommand())
+            .RegisterCommand<Commands.GoCommand>(["go", "walk", "move"], args =>
             {
                 if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
                 {
                     return new ParseError("Invalid direction.");
                 }
 
-                return new GoCommand(dir);
+                return new Commands.GoCommand(dir);
             })
-            .RegisterCommand<GetCommand>(["get", "take"],
+            .RegisterCommand<Commands.GetCommand>(["get", "take"],
                 args => args.Length == 0
                     ? new ParseError("Item name required.")
-                    : new GetCommand(string.Join(" ", args)))
-            .RegisterCommand<DropCommand>(["drop"], args =>
-                args.Length == 0 ? new ParseError("Item name required.") : new DropCommand(string.Join(" ", args)))
-            .RegisterCommand<InventoryCommand>(["inventory", "inv", "i"], _ => new InventoryCommand())
-            .RegisterCommand<QuitCommand>(["quit", "exit", "q"], _ => new QuitCommand())
+                    : new Commands.GetCommand(string.Join(" ", args)))
+            .RegisterCommand<Commands.DropCommand>(["drop"], args =>
+                args.Length == 0 ? new ParseError("Item name required.") : new Commands.DropCommand(string.Join(" ", args)))
+            .RegisterCommand<Commands.InventoryCommand>(["inventory", "inv", "i"], _ => new Commands.InventoryCommand())
+            .RegisterCommand<Commands.QuitCommand>(["quit", "exit", "q"], _ => new Commands.QuitCommand())
             .Build();
 
         services.AddSingleton(state);

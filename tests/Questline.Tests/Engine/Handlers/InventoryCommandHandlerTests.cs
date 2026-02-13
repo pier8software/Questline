@@ -1,7 +1,6 @@
 using Questline.Domain;
-using Questline.Engine;
-using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -20,9 +19,9 @@ public class InventoryCommandHandlerTests
         state.Player.Inventory.Add(key);
         var handler = new InventoryCommandHandler();
 
-        var result = handler.Execute(state, new InventoryCommand());
+        var result = handler.Execute(state, new Commands.InventoryCommand());
 
-        var inventoryResult = result.ShouldBeOfType<InventoryResult>();
+        var inventoryResult = result.ShouldBeOfType<Results.InventoryResult>();
         inventoryResult.Items.ShouldContain("brass lamp");
         inventoryResult.Items.ShouldContain("rusty key");
     }
@@ -36,7 +35,7 @@ public class InventoryCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new InventoryCommandHandler();
 
-        var result = handler.Execute(state, new InventoryCommand());
+        var result = handler.Execute(state, new Commands.InventoryCommand());
 
         result.Message.ShouldContain("not carrying anything");
     }
@@ -52,11 +51,11 @@ public class InventoryCommandHandlerTests
         var getHandler = new GetCommandHandler();
         var dropHandler = new DropCommandHandler();
 
-        getHandler.Execute(state, new GetCommand("brass lamp"));
+        getHandler.Execute(state, new Commands.GetCommand("brass lamp"));
         state.Player.Inventory.Items.ShouldContain(lamp);
         world.GetRoom("cellar").Items.IsEmpty.ShouldBeTrue();
 
-        dropHandler.Execute(state, new DropCommand("brass lamp"));
+        dropHandler.Execute(state, new Commands.DropCommand("brass lamp"));
         state.Player.Inventory.IsEmpty.ShouldBeTrue();
         world.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBe(lamp);
     }

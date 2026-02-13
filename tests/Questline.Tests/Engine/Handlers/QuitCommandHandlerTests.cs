@@ -1,7 +1,6 @@
 using Questline.Domain;
-using Questline.Engine;
-using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -16,9 +15,9 @@ public class QuitCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
         var handler = new QuitCommandHandler();
 
-        var result = handler.Execute(state, new QuitCommand());
+        var result = handler.Execute(state, new Commands.QuitCommand());
 
-        result.ShouldBeOfType<QuitResult>();
+        result.ShouldBeOfType<Results.QuitResult>();
         result.Success.ShouldBeTrue();
     }
 
@@ -31,7 +30,7 @@ public class QuitCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
         var handler = new QuitCommandHandler();
 
-        var result = handler.Execute(state, new QuitCommand());
+        var result = handler.Execute(state, new Commands.QuitCommand());
 
         result.Message.ShouldBe("Goodbye!");
     }

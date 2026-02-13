@@ -1,10 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
 using Questline.Domain;
-using Questline.Engine;
-using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
 using Questline.Engine.InputParsers;
+using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 
 namespace Questline.Tests.Cli;
 
@@ -27,9 +27,9 @@ public class GameLoopTests
         var state = new GameState(world, new Player { Id = "player1", Location = "entrance" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<ICommandHandler<LookCommand>, LookCommandHandler>()
-            .AddSingleton<ICommandHandler<GoCommand>, GoCommandHandler>()
-            .AddSingleton<ICommandHandler<QuitCommand>, QuitCommandHandler>()
+            .AddSingleton<ICommandHandler<Commands.LookCommand>, LookCommandHandler>()
+            .AddSingleton<ICommandHandler<Commands.GoCommand>, GoCommandHandler>()
+            .AddSingleton<ICommandHandler<Commands.QuitCommand>, QuitCommandHandler>()
             .BuildServiceProvider();
 
         var dispatcher = new CommandDispatcher(serviceProvider);
@@ -37,17 +37,17 @@ public class GameLoopTests
 
         var console = new FakeConsole();
         var parser = new ParserBuilder()
-            .RegisterCommand<LookCommand>(["look", "l"], _ => new LookCommand())
-            .RegisterCommand<GoCommand>(["go", "walk", "move"], args =>
+            .RegisterCommand<Commands.LookCommand>(["look", "l"], _ => new Commands.LookCommand())
+            .RegisterCommand<Commands.GoCommand>(["go", "walk", "move"], args =>
             {
                 if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
                 {
                     return new ParseError("Invalid direction.");
                 }
 
-                return new GoCommand(dir);
+                return new Commands.GoCommand(dir);
             })
-            .RegisterCommand<QuitCommand>(["quit", "exit", "q"], _ => new QuitCommand())
+            .RegisterCommand<Commands.QuitCommand>(["quit", "exit", "q"], _ => new Commands.QuitCommand())
             .Build();
 
         var loop = new GameLoop(console, parser, dispatcher, state);

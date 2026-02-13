@@ -1,7 +1,6 @@
 using Questline.Domain;
-using Questline.Engine;
-using Questline.Engine.Commands;
 using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -18,9 +17,9 @@ public class DropCommandHandlerTests
         state.Player.Inventory.Add(lamp);
         var handler = new DropCommandHandler();
 
-        var result = handler.Execute(state, new DropCommand("brass lamp"));
+        var result = handler.Execute(state, new Commands.DropCommand("brass lamp"));
 
-        result.ShouldBeOfType<ItemDroppedResult>();
+        result.ShouldBeOfType<Results.ItemDroppedResult>();
         state.Player.Inventory.IsEmpty.ShouldBeTrue();
         world.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBe(lamp);
     }
@@ -34,9 +33,9 @@ public class DropCommandHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new DropCommandHandler();
 
-        var result = handler.Execute(state, new DropCommand("lamp"));
+        var result = handler.Execute(state, new Commands.DropCommand("lamp"));
 
-        result.ShouldBeOfType<ErrorResult>();
+        result.ShouldBeOfType<Results.ErrorResult>();
         result.Success.ShouldBeFalse();
     }
 
@@ -51,7 +50,7 @@ public class DropCommandHandlerTests
         state.Player.Inventory.Add(lamp);
         var handler = new DropCommandHandler();
 
-        var result = handler.Execute(state, new DropCommand("brass lamp"));
+        var result = handler.Execute(state, new Commands.DropCommand("brass lamp"));
 
         result.Message.ShouldContain("brass lamp");
     }
