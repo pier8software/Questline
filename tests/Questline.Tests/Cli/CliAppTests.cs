@@ -7,17 +7,18 @@ using Questline.Domain.Players.Handlers;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Rooms.Queries;
 using Questline.Domain.Shared.Data;
+using Questline.Engine;
 using Questline.Engine.InputParsers;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Cli;
 
-public class GameLoopTests
+public class CliAppTests
 {
-    private static (GameLoop loop, FakeConsole console) CreateGameLoop()
+    private static (CliApp app, FakeConsole console) CreateCliApp()
     {
-        var world = new GameBuilder()
+        var rooms = new GameBuilder()
             .WithRoom("entrance", "Dungeon Entrance", "A dark entrance to the dungeon.", r =>
                 r.WithExit(Direction.North, "hallway"))
             .WithRoom("hallway", "Torch-Lit Hallway", "A hallway lined with flickering torches.", r =>
@@ -29,7 +30,7 @@ public class GameLoopTests
                 r.WithExit(Direction.South, "hallway"))
             .Build();
 
-        var state = new GameState(world, new Player { Id = "player1", Location = "entrance" });
+        var state = new GameState(rooms, new Player { Id = "player1", Location = "entrance" });
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton<ICommandHandler<Questline.Domain.Rooms.Messages.Commands.ViewRoom>, ViewRoomQuery>()
@@ -55,15 +56,15 @@ public class GameLoopTests
             .RegisterCommand<Commands.QuitGame>(["quit", "exit", "q"], _ => new Commands.QuitGame())
             .Build();
 
-        var loop = new GameLoop(console, parser, dispatcher, state);
+        var app = new CliApp(console, new GameEngine(parser, dispatcher, state));
 
-        return (loop, console);
+        return (app, console);
     }
 
     [Fact]
     public void Displays_initial_room_on_start()
     {
-        var (loop, console) = CreateGameLoop();
+        var (loop, console) = CreateCliApp();
         console.QueueInput("quit");
 
         loop.Run();
@@ -75,7 +76,7 @@ public class GameLoopTests
     [Fact]
     public void Displays_command_prompt()
     {
-        var (loop, console) = CreateGameLoop();
+        var (loop, console) = CreateCliApp();
         console.QueueInput("quit");
 
         loop.Run();
@@ -86,7 +87,7 @@ public class GameLoopTests
     [Fact]
     public void Look_command_displays_room_info()
     {
-        var (loop, console) = CreateGameLoop();
+        var (loop, console) = CreateCliApp();
         console.QueueInput("look", "quit");
 
         loop.Run();
@@ -100,7 +101,7 @@ public class GameLoopTests
     [Fact]
     public void Go_command_moves_and_displays_new_room()
     {
-        var (loop, console) = CreateGameLoop();
+        var (loop, console) = CreateCliApp();
         console.QueueInput("go north", "quit");
 
         loop.Run();
@@ -111,7 +112,7 @@ public class GameLoopTests
     [Fact]
     public void Unknown_command_displays_error()
     {
-        var (loop, console) = CreateGameLoop();
+        var (loop, console) = CreateCliApp();
         console.QueueInput("dance", "quit");
 
         loop.Run();
@@ -122,7 +123,7 @@ public class GameLoopTests
     [Fact]
     public void Quit_command_exits_gracefully()
     {
-        var (loop, console) = CreateGameLoop();
+        var (loop, console) = CreateCliApp();
         console.QueueInput("quit");
 
         loop.Run();
@@ -133,7 +134,7 @@ public class GameLoopTests
     [Fact]
     public void Null_input_exits_loop()
     {
-        var (loop, console) = CreateGameLoop();
+        var (loop, console) = CreateCliApp();
         // No input queued, ReadLine returns null
 
         loop.Run();

@@ -10,6 +10,9 @@ public class CliAppBuilder
 
     public CliAppBuilder ConfigureServices()
     {
+        _services.AddSingleton<IConsole, SystemConsole>();
+        _services.AddSingleton<CliApp>();
+
         _services.AddQuestlineEngine();
         return this;
     }
@@ -19,8 +22,7 @@ public class CliAppBuilder
     public CliApp Build()
     {
         var provider = _services.BuildServiceProvider();
-        var gameLoop = provider.GetRequiredService<GameLoop>();
 
-        return new CliApp(gameLoop);
+        return provider.GetRequiredService<CliApp>();
     }
 }

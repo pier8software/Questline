@@ -24,8 +24,7 @@ public static class ServiceCollectionExtensions
         RegisterInputParser(services);
         RegisterCommandHandlers(services);
 
-        services.AddSingleton<IConsole, SystemConsole>();
-        services.AddSingleton<GameLoop>();
+        services.AddSingleton<GameEngine>();
 
         return services;
     }
