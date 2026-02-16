@@ -35,8 +35,11 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ICommandHandler<Domain.Rooms.Messages.Commands.ViewRoom>, ViewRoomQuery>();
         services.AddSingleton<ICommandHandler<Domain.Players.Messages.Commands.MovePlayer>, MovePlayerHandler>();
         services.AddSingleton<ICommandHandler<Domain.Rooms.Messages.Commands.TakeRoomItem>, TakeRoomItemHandler>();
-        services.AddSingleton<ICommandHandler<Domain.Players.Messages.Commands.DropPlayerItem>, DropPlayerItemHandler>();
-        services.AddSingleton<ICommandHandler<Domain.Players.Messages.Commands.LoadPlayerInventory>, LoadPlayerInventoryQuery>();
+        services
+            .AddSingleton<ICommandHandler<Domain.Players.Messages.Commands.DropPlayerItem>, DropPlayerItemHandler>();
+        services
+            .AddSingleton<ICommandHandler<Domain.Players.Messages.Commands.LoadPlayerInventory>,
+                LoadPlayerInventoryQuery>();
         services.AddSingleton<ICommandHandler<Commands.QuitGame>, QuitGameHandler>();
 
         services.AddSingleton<CommandDispatcher>();
@@ -45,7 +48,8 @@ public static class ServiceCollectionExtensions
     private static void RegisterInputParser(IServiceCollection services)
     {
         var parser = new ParserBuilder()
-            .RegisterCommand<Domain.Rooms.Messages.Commands.ViewRoom>(["look", "l"], _ => new Domain.Rooms.Messages.Commands.ViewRoom())
+            .RegisterCommand<Domain.Rooms.Messages.Commands.ViewRoom>(["look", "l"],
+                _ => new Domain.Rooms.Messages.Commands.ViewRoom())
             .RegisterCommand<Domain.Players.Messages.Commands.MovePlayer>(["go", "walk", "move"], args =>
             {
                 if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
@@ -63,7 +67,8 @@ public static class ServiceCollectionExtensions
                 args.Length == 0
                     ? new ParseError("Item name required.")
                     : new Domain.Players.Messages.Commands.DropPlayerItem(string.Join(" ", args)))
-            .RegisterCommand<Domain.Players.Messages.Commands.LoadPlayerInventory>(["inventory", "inv", "i"], _ => new Domain.Players.Messages.Commands.LoadPlayerInventory())
+            .RegisterCommand<Domain.Players.Messages.Commands.LoadPlayerInventory>(["inventory", "inv", "i"],
+                _ => new Domain.Players.Messages.Commands.LoadPlayerInventory())
             .RegisterCommand<Commands.QuitGame>(["quit", "exit", "q"], _ => new Commands.QuitGame())
             .Build();
 

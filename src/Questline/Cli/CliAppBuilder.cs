@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Engine;
 
@@ -6,7 +5,7 @@ namespace Questline.Cli;
 
 public class CliAppBuilder
 {
-    private readonly ServiceCollection _services = new ServiceCollection();
+    private readonly ServiceCollection _services = new();
     //private IConfiguration _configuration;
 
     public CliAppBuilder ConfigureServices()

@@ -26,7 +26,7 @@ public class ExitDictionaryConverter : JsonConverter<Dictionary<string, ExitData
             var direction = reader.GetString()!;
             reader.Read();
 
-            ExitData exit = reader.TokenType switch
+            var exit = reader.TokenType switch
             {
                 JsonTokenType.String => new ExitData { Destination = reader.GetString()! },
                 JsonTokenType.StartObject => JsonSerializer.Deserialize<ExitData>(ref reader, options)!,

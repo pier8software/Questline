@@ -6,7 +6,7 @@ namespace Questline.Domain.Players.Queries;
 
 public class LoadPlayerInventoryQuery : ICommandHandler<Commands.LoadPlayerInventory>
 {
-    public CommandResult Execute(GameState state, Messages.Commands.LoadPlayerInventory command)
+    public CommandResult Execute(GameState state, Commands.LoadPlayerInventory command)
     {
         var items = state.Player.Inventory.Items
             .Select(i => i.Name)

@@ -1,7 +1,6 @@
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Data;
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Framework.FileSystem;
@@ -38,7 +37,7 @@ public class GameContentLoader(JsonFileLoader loader)
             {
                 foreach (var (directionStr, exitDto) in roomDetail.Exits)
                 {
-                    var direction = Enum.Parse<Direction>(directionStr, ignoreCase: true);
+                    var direction = Enum.Parse<Direction>(directionStr, true);
                     exits[direction] = new Exit(exitDto.Destination, exitDto.Barrier);
                 }
             }

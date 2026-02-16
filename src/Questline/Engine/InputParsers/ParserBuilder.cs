@@ -5,7 +5,8 @@ namespace Questline.Engine.InputParsers;
 
 public class ParserBuilder
 {
-    private readonly Dictionary<string, Func<string[], OneOf<ICommand, ParseError>>> _parsers = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Func<string[], OneOf<ICommand, ParseError>>> _parsers =
+        new(StringComparer.OrdinalIgnoreCase);
 
     public ParserBuilder RegisterCommand<TCommand>(string[] verbs, Func<string[], OneOf<ICommand, ParseError>> factory)
     {

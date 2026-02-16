@@ -8,7 +8,7 @@ namespace Questline.Domain.Players.Handlers;
 
 public class DropPlayerItemHandler : ICommandHandler<Commands.DropPlayerItem>
 {
-    public CommandResult Execute(GameState state, Messages.Commands.DropPlayerItem command)
+    public CommandResult Execute(GameState state, Commands.DropPlayerItem command)
     {
         var item = state.Player.Inventory.FindByName(command.ItemName);
 
