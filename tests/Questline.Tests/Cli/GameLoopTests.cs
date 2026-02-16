@@ -1,10 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
-using Questline.Domain;
-using Questline.Domain.Entities;
 using Questline.Domain.Handlers;
 using Questline.Domain.Messages;
-using Questline.Domain.Shared;
+using Questline.Domain.Players.Entity;
+using Questline.Domain.Players.Handlers;
+using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Rooms.Queries;
+using Questline.Domain.Shared.Data;
 using Questline.Engine.InputParsers;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
@@ -30,8 +32,8 @@ public class GameLoopTests
         var state = new GameState(world, new Player { Id = "player1", Location = "entrance" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<ICommandHandler<Commands.ViewRoom>, ViewRoomHandler>()
-            .AddSingleton<ICommandHandler<Commands.MovePlayer>, MovePlayerHandler>()
+            .AddSingleton<ICommandHandler<Questline.Domain.Rooms.Messages.Commands.ViewRoom>, ViewRoomQuery>()
+            .AddSingleton<ICommandHandler<Questline.Domain.Players.Messages.Commands.MovePlayer>, MovePlayerHandler>()
             .AddSingleton<ICommandHandler<Commands.QuitGame>, QuitGameHandler>()
             .BuildServiceProvider();
 
@@ -40,15 +42,15 @@ public class GameLoopTests
 
         var console = new FakeConsole();
         var parser = new ParserBuilder()
-            .RegisterCommand<Commands.ViewRoom>(["look", "l"], _ => new Commands.ViewRoom())
-            .RegisterCommand<Commands.MovePlayer>(["go", "walk", "move"], args =>
+            .RegisterCommand<Questline.Domain.Rooms.Messages.Commands.ViewRoom>(["look", "l"], _ => new Questline.Domain.Rooms.Messages.Commands.ViewRoom())
+            .RegisterCommand<Questline.Domain.Players.Messages.Commands.MovePlayer>(["go", "walk", "move"], args =>
             {
                 if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
                 {
                     return new ParseError("Invalid direction.");
                 }
 
-                return new Commands.MovePlayer(dir);
+                return new Questline.Domain.Players.Messages.Commands.MovePlayer(dir);
             })
             .RegisterCommand<Commands.QuitGame>(["quit", "exit", "q"], _ => new Commands.QuitGame())
             .Build();

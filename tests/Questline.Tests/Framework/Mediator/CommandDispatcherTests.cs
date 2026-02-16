@@ -1,11 +1,15 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Domain;
-using Questline.Domain.Entities;
 using Questline.Domain.Handlers;
 using Questline.Domain.Messages;
+using Questline.Domain.Players.Entity;
+using Questline.Domain.Rooms.Messages;
+using Questline.Domain.Rooms.Queries;
 using Questline.Domain.Shared;
+using Questline.Domain.Shared.Data;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
+using Commands = Questline.Domain.Rooms.Messages.Commands;
 
 namespace Questline.Tests.Framework.Mediator;
 
@@ -20,7 +24,7 @@ public class CommandDispatcherTests
         var state = new GameState(world, new Player { Id = "player1", Location = "start" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<ICommandHandler<Commands.ViewRoom>, ViewRoomHandler>()
+            .AddSingleton<ICommandHandler<Questline.Domain.Rooms.Messages.Commands.ViewRoom>, ViewRoomQuery>()
             .BuildServiceProvider();
 
 
@@ -28,6 +32,6 @@ public class CommandDispatcherTests
 
         var result = dispatcher.Dispatch(state, new Commands.ViewRoom());
 
-        result.ShouldBeOfType<Results.RoomViewed>();
+        result.ShouldBeOfType<Events.RoomViewed>();
     }
 }

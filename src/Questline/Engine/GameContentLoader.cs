@@ -1,6 +1,9 @@
-using Questline.Domain.Data;
-using Questline.Domain.Entities;
+using Questline.Domain.Players.Entity;
+using Questline.Domain.Rooms.Data;
+using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared;
+using Questline.Domain.Shared.Data;
+using Questline.Domain.Shared.Entity;
 using Questline.Framework.FileSystem;
 
 namespace Questline.Engine;

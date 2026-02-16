@@ -1,4 +1,4 @@
-using Questline.Domain.Entities;
+using Questline.Domain.Rooms.Entity;
 
 namespace Questline.Tests.TestHelpers.Builders;
 

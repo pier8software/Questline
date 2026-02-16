@@ -1,4 +1,4 @@
-using Questline.Domain.Entities;
+using Questline.Domain.Rooms.Entity;
 using Questline.Engine.InputParsers;
 
 namespace Questline.Tests.Engine;

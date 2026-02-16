@@ -1,5 +1,7 @@
 using Questline.Domain.Messages;
+using Questline.Domain.Rooms.Messages;
 using Questline.Domain.Shared;
+using Questline.Domain.Shared.Data;
 using Questline.Engine.InputParsers;
 using Questline.Framework.Mediator;
 
@@ -40,7 +42,7 @@ public class GameLoop(IConsole console, Parser parser, CommandDispatcher dispatc
         var room = state.GetRoom(state.Player.Location);
         var exits = room.Exits.Keys.Select(d => d.ToString()).ToList();
         var items = room.Items.Items.Select(i => i.Name).ToList();
-        var lookResult = new Results.RoomViewed(room.Name, room.Description, exits, items);
+        var lookResult = new Events.RoomViewed(room.Name, room.Description, exits, items);
         console.WriteLine(lookResult.Message);
     }
 }

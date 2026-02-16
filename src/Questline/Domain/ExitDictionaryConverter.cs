@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Questline.Domain.Data;
+using Questline.Domain.Rooms.Data;
 
 namespace Questline.Domain;
 

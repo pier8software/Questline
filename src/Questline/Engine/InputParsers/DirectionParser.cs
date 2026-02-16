@@ -1,5 +1,5 @@
 using Questline.Domain;
-using Questline.Domain.Entities;
+using Questline.Domain.Rooms.Entity;
 
 namespace Questline.Engine.InputParsers;
 

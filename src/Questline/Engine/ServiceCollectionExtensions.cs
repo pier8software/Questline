@@ -2,6 +2,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
 using Questline.Domain.Handlers;
 using Questline.Domain.Messages;
+using Questline.Domain.Players.Handlers;
+using Questline.Domain.Players.Queries;
+using Questline.Domain.Rooms.Handlers;
+using Questline.Domain.Rooms.Queries;
 using Questline.Engine.InputParsers;
 using Questline.Framework.FileSystem;
 using Questline.Framework.Mediator;
@@ -28,11 +32,11 @@ public static class ServiceCollectionExtensions
 
     private static void RegisterCommandHandlers(IServiceCollection services)
     {
-        services.AddSingleton<ICommandHandler<Commands.ViewRoom>, ViewRoomHandler>();
-        services.AddSingleton<ICommandHandler<Commands.MovePlayer>, MovePlayerHandler>();
-        services.AddSingleton<ICommandHandler<Commands.TakeItem>, TakeItemHandler>();
-        services.AddSingleton<ICommandHandler<Commands.DropItem>, DropItemHandler>();
-        services.AddSingleton<ICommandHandler<Commands.LoadInventory>, LoadInventoryHandler>();
+        services.AddSingleton<ICommandHandler<Domain.Rooms.Messages.Commands.ViewRoom>, ViewRoomQuery>();
+        services.AddSingleton<ICommandHandler<Domain.Players.Messages.Commands.MovePlayer>, MovePlayerHandler>();
+        services.AddSingleton<ICommandHandler<Domain.Rooms.Messages.Commands.TakeRoomItem>, TakeRoomItemHandler>();
+        services.AddSingleton<ICommandHandler<Domain.Players.Messages.Commands.DropPlayerItem>, DropPlayerItemHandler>();
+        services.AddSingleton<ICommandHandler<Domain.Players.Messages.Commands.LoadPlayerInventory>, LoadPlayerInventoryQuery>();
         services.AddSingleton<ICommandHandler<Commands.QuitGame>, QuitGameHandler>();
 
         services.AddSingleton<CommandDispatcher>();
@@ -41,25 +45,25 @@ public static class ServiceCollectionExtensions
     private static void RegisterInputParser(IServiceCollection services)
     {
         var parser = new ParserBuilder()
-            .RegisterCommand<Commands.ViewRoom>(["look", "l"], _ => new Commands.ViewRoom())
-            .RegisterCommand<Commands.MovePlayer>(["go", "walk", "move"], args =>
+            .RegisterCommand<Domain.Rooms.Messages.Commands.ViewRoom>(["look", "l"], _ => new Domain.Rooms.Messages.Commands.ViewRoom())
+            .RegisterCommand<Domain.Players.Messages.Commands.MovePlayer>(["go", "walk", "move"], args =>
             {
                 if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
                 {
                     return new ParseError("Invalid direction.");
                 }
 
-                return new Commands.MovePlayer(dir);
+                return new Domain.Players.Messages.Commands.MovePlayer(dir);
             })
-            .RegisterCommand<Commands.TakeItem>(["get", "take"],
+            .RegisterCommand<Domain.Rooms.Messages.Commands.TakeRoomItem>(["get", "take"],
                 args => args.Length == 0
                     ? new ParseError("Item name required.")
-                    : new Commands.TakeItem(string.Join(" ", args)))
-            .RegisterCommand<Commands.DropItem>(["drop"], args =>
+                    : new Domain.Rooms.Messages.Commands.TakeRoomItem(string.Join(" ", args)))
+            .RegisterCommand<Domain.Players.Messages.Commands.DropPlayerItem>(["drop"], args =>
                 args.Length == 0
                     ? new ParseError("Item name required.")
-                    : new Commands.DropItem(string.Join(" ", args)))
-            .RegisterCommand<Commands.LoadInventory>(["inventory", "inv", "i"], _ => new Commands.LoadInventory())
+                    : new Domain.Players.Messages.Commands.DropPlayerItem(string.Join(" ", args)))
+            .RegisterCommand<Domain.Players.Messages.Commands.LoadPlayerInventory>(["inventory", "inv", "i"], _ => new Domain.Players.Messages.Commands.LoadPlayerInventory())
             .RegisterCommand<Commands.QuitGame>(["quit", "exit", "q"], _ => new Commands.QuitGame())
             .Build();
 
