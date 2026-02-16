@@ -1,6 +1,6 @@
 using Questline.Framework.Mediator;
 
-namespace Questline.Engine.Messages;
+namespace Questline.Domain.Messages;
 
 public static class Results
 {

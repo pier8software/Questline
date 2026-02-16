@@ -1,7 +1,6 @@
-using Questline.Domain;
 using Questline.Domain.Entities;
 
-namespace Questline.Tests.Domain;
+namespace Questline.Tests.Domain.Entities;
 
 public class PlayerTests
 {

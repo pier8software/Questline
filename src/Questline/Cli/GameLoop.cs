@@ -1,6 +1,6 @@
+using Questline.Domain.Messages;
 using Questline.Domain.Shared;
 using Questline.Engine.InputParsers;
-using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
 namespace Questline.Cli;

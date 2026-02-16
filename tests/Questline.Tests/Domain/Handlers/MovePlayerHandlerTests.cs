@@ -1,10 +1,10 @@
 using Questline.Domain.Entities;
+using Questline.Domain.Handlers;
+using Questline.Domain.Messages;
 using Questline.Domain.Shared;
-using Questline.Engine.Handlers;
-using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Domain.Handlers;
 
 public class MovePlayerHandlerTests
 {

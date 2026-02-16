@@ -2,10 +2,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
 using Questline.Domain;
 using Questline.Domain.Entities;
+using Questline.Domain.Handlers;
+using Questline.Domain.Messages;
 using Questline.Domain.Shared;
-using Questline.Engine.Handlers;
 using Questline.Engine.InputParsers;
-using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 

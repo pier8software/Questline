@@ -1,9 +1,8 @@
-using Questline.Domain;
+using Questline.Domain.Messages;
 using Questline.Domain.Shared;
-using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
-namespace Questline.Engine.Handlers;
+namespace Questline.Domain.Handlers;
 
 public class ViewRoomHandler : ICommandHandler<Commands.ViewRoom>
 {

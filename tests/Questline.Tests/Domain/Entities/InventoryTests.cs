@@ -1,8 +1,7 @@
-using Questline.Domain;
 using Questline.Domain.Entities;
 using Questline.Domain.Shared;
 
-namespace Questline.Tests.Domain;
+namespace Questline.Tests.Domain.Entities;
 
 public class InventoryTests
 {
