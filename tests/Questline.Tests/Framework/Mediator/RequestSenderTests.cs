@@ -21,8 +21,7 @@ public class RequestSenderTests
         var state = new GameState(world, new Player { Id = "player1", Location = "start" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<IRequestHandler<Requests.GetRoomDetailsQuery, Responses.RoomDetailsResponse>,
-                GetRoomDetailsHandler>()
+            .AddSingleton<IRequestHandler<Requests.GetRoomDetailsQuery>, GetRoomDetailsHandler>()
             .BuildServiceProvider();
 
 

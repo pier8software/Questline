@@ -4,9 +4,9 @@ using Questline.Framework.Mediator;
 
 namespace Questline.Domain.Players.Handlers;
 
-public class GetPlayerInventoryQueryHandler : IRequestHandler<Requests.GetPlayerInventoryQuery, Responses.PlayerInventoryResponse>
+public class GetPlayerInventoryQueryHandler : IRequestHandler<Requests.GetPlayerInventoryQuery>
 {
-    public Responses.PlayerInventoryResponse Handle(GameState state, Requests.GetPlayerInventoryQuery command)
+    public IResponse Handle(GameState state, Requests.GetPlayerInventoryQuery command)
     {
         var items = state.Player.Inventory.Items
             .Select(i => i.Name)

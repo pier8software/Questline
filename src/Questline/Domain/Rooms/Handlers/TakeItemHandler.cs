@@ -5,9 +5,9 @@ using Responses = Questline.Domain.Rooms.Messages.Responses;
 
 namespace Questline.Domain.Rooms.Handlers;
 
-public class TakeRoomItemHandler : IRequestHandler<Requests.TakeRoomItemCommand, Responses.ItemTakenResponse>
+public class TakeItemHandler : IRequestHandler<Requests.TakeItemCommand>
 {
-    public Responses.ItemTakenResponse Handle(GameState state, Requests.TakeRoomItemCommand request)
+    public IResponse Handle(GameState state, Requests.TakeItemCommand request)
     {
         var room = state.GetRoom(state.Player.Location);
         var item = room.Items.FindByName(request.ItemName);

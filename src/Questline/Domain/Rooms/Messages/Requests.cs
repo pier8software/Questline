@@ -7,9 +7,9 @@ namespace Questline.Domain.Rooms.Messages;
 public static class Requests
 {
     [Verbs("take", "get")]
-    public record TakeRoomItemCommand(string ItemName) : IRequest
+    public record TakeItemCommand(string ItemName) : IRequest
     {
-        public static IRequest CreateRequest(string[] args) => new TakeRoomItemCommand(string.Join(" ", args));
+        public static IRequest CreateRequest(string[] args) => new TakeItemCommand(string.Join(" ", args));
     }
 
     [Verbs("look", "l")]

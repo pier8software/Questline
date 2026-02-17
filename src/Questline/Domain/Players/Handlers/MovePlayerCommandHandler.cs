@@ -5,9 +5,9 @@ using Responses = Questline.Domain.Players.Messages.Responses;
 
 namespace Questline.Domain.Players.Handlers;
 
-public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerCommand, Responses.PlayerMovedResponse>
+public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerCommand>
 {
-    public Responses.PlayerMovedResponse Handle(GameState state, Requests.MovePlayerCommand command)
+    public IResponse Handle(GameState state, Requests.MovePlayerCommand command)
     {
         var currentRoom = state.GetRoom(state.Player.Location);
 

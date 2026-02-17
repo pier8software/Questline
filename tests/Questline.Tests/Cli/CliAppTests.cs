@@ -6,11 +6,14 @@ using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Rooms.Handlers;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Handlers;
-using Questline.Domain.Shared.Messages;
 using Questline.Engine;
 using Questline.Engine.InputParsers;
 using Questline.Framework.Mediator;
+using Questline.Tests.TestHelpers;
 using Questline.Tests.TestHelpers.Builders;
+using static Questline.Domain.Rooms.Messages.Requests;
+using static Questline.Domain.Players.Messages.Requests;
+using static Questline.Domain.Shared.Messages.Requests;
 
 namespace Questline.Tests.Cli;
 
@@ -33,30 +36,19 @@ public class CliAppTests
         var state = new GameState(rooms, new Player { Id = "player1", Location = "entrance" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<IRequestHandler<Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery>, GetRoomDetailsHandler>()
-            .AddSingleton<IRequestHandler<Questline.Domain.Players.Messages.Requests.MovePlayerCommand>, MovePlayerCommandHandler>()
-            .AddSingleton<IRequestHandler<Requests.QuitGame>, QuitGameHandler>()
+            .AddSingleton<IRequestHandler<GetRoomDetailsQuery>, GetRoomDetailsHandler>()
+            .AddSingleton<IRequestHandler<MovePlayerCommand>, MovePlayerCommandHandler>()
+            .AddSingleton<IRequestHandler<QuitGame>, QuitGameHandler>()
             .BuildServiceProvider();
 
         var dispatcher = new RequestSender(serviceProvider);
 
 
         var console = new FakeConsole();
-        var parser = new ParserBuilder()
-            .RegisterCommand<Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery>(["look", "l"], _ => new Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery())
-            .RegisterCommand<Questline.Domain.Players.Messages.Requests.MovePlayerCommand>(["go", "walk", "move"], args =>
-            {
-                if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
-                {
-                    return new ParseError("Invalid direction.");
-                }
+        var parser = new Parser();
+        var gameEngine = new GameEngine(parser, dispatcher, state);
 
-                return new Questline.Domain.Players.Messages.Requests.MovePlayerCommand(dir);
-            })
-            .RegisterCommand<Requests.QuitGame>(["quit", "exit", "q"], _ => new Requests.QuitGame())
-            .Build();
-
-        var app = new CliApp(console, new GameEngine(parser, dispatcher, state));
+        var app = new CliApp(console, gameEngine);
 
         return (app, console);
     }

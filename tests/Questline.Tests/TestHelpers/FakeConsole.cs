@@ -1,6 +1,6 @@
 using Questline.Cli;
 
-namespace Questline.Tests.Cli;
+namespace Questline.Tests.TestHelpers;
 
 public class FakeConsole : IConsole
 {

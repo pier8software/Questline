@@ -7,12 +7,13 @@ public class RequestSender(IServiceProvider serviceProvider)
 {
     public IResponse Send(GameState state, IRequest request)
     {
-        var commandType = request.GetType();
-        var commandHandlerType = typeof(IRequestHandler<,>).MakeGenericType(commandType);
-        var commandExecuteMethod = commandHandlerType.GetMethod(nameof(IRequestHandler<,>.Handle))!;
+        var requestType = request.GetType();
 
-        var handler = serviceProvider.GetRequiredService(commandHandlerType);
+        var requestHandlerType = typeof(IRequestHandler<>).MakeGenericType(requestType);
+        var handleMethod = requestHandlerType.GetMethod(nameof(IRequestHandler<>.Handle))!;
 
-        return (IResponse)commandExecuteMethod.Invoke(handler, [state, request])!;
+        var handler = serviceProvider.GetRequiredService(requestHandlerType);
+
+        return (IResponse)handleMethod.Invoke(handler, [state, request])!;
     }
 }

@@ -1,72 +1,64 @@
+using Questline.Domain.Rooms.Messages;
 using Questline.Engine.InputParsers;
-using Questline.Framework.Mediator;
 
-namespace Questline.Tests.Engine;
+namespace Questline.Tests.Engine.InputParser;
 
 public class ParserTests
 {
-    private readonly Parser _parser;
+    private readonly Parser _parser = new();
 
-    public ParserTests()
+    [Fact]
+    public void Single_successfully_parse_verb()
     {
-        _parser = new ParserBuilder()
-            .RegisterCommand<VerbNoArgsRequest>(["verb", "v"], _ => new VerbNoArgsRequest())
-            .RegisterCommand<VerbWithArgsRequest>(["args"], args => new VerbWithArgsRequest(args))
-            .Build();
+        var result = _parser.Parse("look");
+
+        result.IsSuccess.ShouldBeTrue();
+        result.Request.ShouldBeOfType<Requests.GetRoomDetailsQuery>();
     }
 
     [Fact]
-    public void Single_word_returns_verb_with_no_args()
+    public void Alias_parsed_to_the_same_request()
     {
-        var result = _parser.Parse("verb");
+        var result = _parser.Parse("l");
 
-        result.AsT0.ShouldBeOfType<VerbNoArgsRequest>();
-    }
-
-    [Fact]
-    public void Alias_parsed_to_the_same_command()
-    {
-        var result = _parser.Parse("v");
-
-        result.AsT0.ShouldBeOfType<VerbNoArgsRequest>();
+        result.IsSuccess.ShouldBeTrue();
+        result.Request.ShouldBeOfType<Requests.GetRoomDetailsQuery>();
     }
 
     [Fact]
     public void Verb_with_argument_splits_correctly()
     {
-        var result = _parser.Parse("args example");
+        var result = _parser.Parse("take lamp");
 
-        result.IsT0.ShouldBeTrue();
-        var command = result.AsT0 as VerbWithArgsRequest;
-        command!.Args.ShouldBe(["example"]);
+        result.IsSuccess.ShouldBeTrue();
+        var command = result.Request.ShouldBeOfType<Requests.TakeItemCommand>();
+        command.ItemName.ShouldBe("lamp");
     }
 
     [Fact]
     public void Input_is_converted_to_lowercase()
     {
-        var result = _parser.Parse("ARGS Example");
+        var result = _parser.Parse("TAKE LaMp");
 
-        result.IsT0.ShouldBeTrue();
-        var command = result.AsT0 as VerbWithArgsRequest;
-        command!.Args.ShouldBe(["example"]);
+        var command = result.Request.ShouldBeOfType<Requests.TakeItemCommand>();
+        command.ItemName.ShouldBe("lamp");
     }
 
     [Fact]
     public void Leading_and_trailing_whitespace_is_trimmed()
     {
-        var result = _parser.Parse("  verb  ");
+        var result = _parser.Parse("  look  ");
 
-        result.AsT0.ShouldBeOfType<VerbNoArgsRequest>();
+        result.Request.ShouldBeOfType<Requests.GetRoomDetailsQuery>();
     }
 
     [Fact]
     public void Extra_whitespace_between_words_is_ignored()
     {
-        var result = _parser.Parse("args   example");
+        var result = _parser.Parse("take   lamp");
 
-        result.IsT0.ShouldBeTrue();
-        var command = result.AsT0 as VerbWithArgsRequest;
-        command!.Args.ShouldBe(["example"]);
+        var command = result.Request.ShouldBeOfType<Requests.TakeItemCommand>();
+        command.ItemName.ShouldBe("lamp");
     }
 
     [Fact]
@@ -74,8 +66,9 @@ public class ParserTests
     {
         var result = _parser.Parse("");
 
-        result.AsT1.ShouldBeOfType<ParseError>();
-        result.AsT1.Message.ShouldBe("Please enter a command.");
+        result.IsSuccess.ShouldBeFalse();
+        result.Error.ShouldNotBeNull();
+        result.Error.Message.ShouldBe("Please enter a command.");
     }
 
     [Fact]
@@ -83,11 +76,7 @@ public class ParserTests
     {
         var result = _parser.Parse("error");
 
-        result.AsT1.ShouldBeOfType<ParseError>();
-        result.AsT1.Message.ShouldBe("I don't understand 'error'. Type 'help' for available commands.");
+        result.IsSuccess.ShouldBeFalse();
+        result.Error!.Message.ShouldBe("I don't understand 'error'.");
     }
 }
-
-public record VerbNoArgsRequest : IRequest;
-
-public record VerbWithArgsRequest(string[] Args) : IRequest;

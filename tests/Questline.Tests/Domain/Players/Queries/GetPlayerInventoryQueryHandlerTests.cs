@@ -52,10 +52,10 @@ public class GetPlayerInventoryQueryHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(rooms, new Player { Id = "player1", Location = "cellar" });
-        var getHandler = new TakeRoomItemHandler();
+        var getHandler = new TakeItemHandler();
         var dropHandler = new DropItemCommandHandler();
 
-        getHandler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.TakeRoomItemCommand("brass lamp"));
+        getHandler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.TakeItemCommand("brass lamp"));
         state.Player.Inventory.Items.ShouldContain(lamp);
         state.GetRoom("cellar").Items.IsEmpty.ShouldBeTrue();
 

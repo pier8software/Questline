@@ -5,9 +5,9 @@ using Responses = Questline.Domain.Players.Messages.Responses;
 
 namespace Questline.Domain.Players.Handlers;
 
-public class DropItemCommandHandler : IRequestHandler<Requests.DropItemCommand, Responses.ItemDroppedResponse>
+public class DropItemCommandHandler : IRequestHandler<Requests.DropItemCommand>
 {
-    public Responses.ItemDroppedResponse Handle(GameState state, Requests.DropItemCommand command)
+    public IResponse Handle(GameState state, Requests.DropItemCommand command)
     {
         var item = state.Player.Inventory.FindByName(command.ItemName);
 

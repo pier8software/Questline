@@ -4,7 +4,7 @@ using Questline.Framework.Mediator;
 
 namespace Questline.Domain.Shared.Handlers;
 
-public class QuitGameHandler : IRequestHandler<Requests.QuitGame, Responses.GameQuited>
+public class QuitGameHandler : IRequestHandler<Requests.QuitGame>
 {
-    public Responses.GameQuited Handle(GameState state, Requests.QuitGame request) => new();
+    public IResponse Handle(GameState state, Requests.QuitGame request) => new Responses.GameQuited();
 }

@@ -32,14 +32,12 @@ public static class ServiceCollectionExtensions
 
     private static void RegisterCommandHandlers(IServiceCollection services)
     {
-        services.AddSingleton<IRequestHandler<GetRoomDetailsQuery, RoomDetailsResponse>, GetRoomDetailsHandler>();
-        services.AddSingleton<IRequestHandler<MovePlayerCommand, PlayerMovedResponse>, MovePlayerCommandHandler>();
-        services.AddSingleton<IRequestHandler<TakeRoomItemCommand, ItemTakenResponse>, TakeRoomItemHandler>();
-        services.AddSingleton<IRequestHandler<DropItemCommand, ItemDroppedResponse>, DropItemCommandHandler>();
-        services
-            .AddSingleton<IRequestHandler<GetPlayerInventoryQuery, PlayerInventoryResponse>,
-                GetPlayerInventoryQueryHandler>();
-        services.AddSingleton<IRequestHandler<QuitGame, GameQuited>, QuitGameHandler>();
+        services.AddSingleton<IRequestHandler<GetRoomDetailsQuery>, GetRoomDetailsHandler>();
+        services.AddSingleton<IRequestHandler<MovePlayerCommand>, MovePlayerCommandHandler>();
+        services.AddSingleton<IRequestHandler<TakeItemCommand>, TakeItemHandler>();
+        services.AddSingleton<IRequestHandler<DropItemCommand>, DropItemCommandHandler>();
+        services.AddSingleton<IRequestHandler<GetPlayerInventoryQuery>, GetPlayerInventoryQueryHandler>();
+        services.AddSingleton<IRequestHandler<QuitGame>, QuitGameHandler>();
 
         services.AddSingleton<RequestSender>();
     }
