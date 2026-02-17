@@ -1,8 +1,8 @@
-using Questline.Domain.Handlers;
-using Questline.Domain.Messages;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Shared;
 using Questline.Domain.Shared.Data;
+using Questline.Domain.Shared.Handlers;
+using Questline.Domain.Shared.Messages;
 using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Domain.Handlers;
@@ -18,9 +18,9 @@ public class QuitGameHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
         var handler = new QuitGameHandler();
 
-        var result = handler.Execute(state, new Commands.QuitGame());
+        var result = handler.Handle(state, new Requests.QuitGame());
 
-        result.ShouldBeOfType<Results.GameQuited>();
+        result.ShouldBeOfType<Responses.GameQuited>();
         result.Success.ShouldBeTrue();
     }
 
@@ -33,7 +33,7 @@ public class QuitGameHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
         var handler = new QuitGameHandler();
 
-        var result = handler.Execute(state, new Commands.QuitGame());
+        var result = handler.Handle(state, new Requests.QuitGame());
 
         result.Message.ShouldBe("Goodbye!");
     }

@@ -1,12 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
-using Questline.Domain.Handlers;
-using Questline.Domain.Messages;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Players.Handlers;
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Rooms.Queries;
+using Questline.Domain.Rooms.Handlers;
 using Questline.Domain.Shared.Data;
+using Questline.Domain.Shared.Handlers;
+using Questline.Domain.Shared.Messages;
 using Questline.Engine;
 using Questline.Engine.InputParsers;
 using Questline.Framework.Mediator;
@@ -33,27 +33,27 @@ public class CliAppTests
         var state = new GameState(rooms, new Player { Id = "player1", Location = "entrance" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<ICommandHandler<Questline.Domain.Rooms.Messages.Commands.ViewRoom>, ViewRoomQuery>()
-            .AddSingleton<ICommandHandler<Questline.Domain.Players.Messages.Commands.MovePlayer>, MovePlayerHandler>()
-            .AddSingleton<ICommandHandler<Commands.QuitGame>, QuitGameHandler>()
+            .AddSingleton<IRequestHandler<Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery>, GetRoomDetailsHandler>()
+            .AddSingleton<IRequestHandler<Questline.Domain.Players.Messages.Requests.MovePlayerCommand>, MovePlayerCommandHandler>()
+            .AddSingleton<IRequestHandler<Requests.QuitGame>, QuitGameHandler>()
             .BuildServiceProvider();
 
-        var dispatcher = new CommandDispatcher(serviceProvider);
+        var dispatcher = new RequestSender(serviceProvider);
 
 
         var console = new FakeConsole();
         var parser = new ParserBuilder()
-            .RegisterCommand<Questline.Domain.Rooms.Messages.Commands.ViewRoom>(["look", "l"], _ => new Questline.Domain.Rooms.Messages.Commands.ViewRoom())
-            .RegisterCommand<Questline.Domain.Players.Messages.Commands.MovePlayer>(["go", "walk", "move"], args =>
+            .RegisterCommand<Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery>(["look", "l"], _ => new Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery())
+            .RegisterCommand<Questline.Domain.Players.Messages.Requests.MovePlayerCommand>(["go", "walk", "move"], args =>
             {
                 if (args.Length == 0 || !DirectionParser.TryParse(args[0], out var dir))
                 {
                     return new ParseError("Invalid direction.");
                 }
 
-                return new Questline.Domain.Players.Messages.Commands.MovePlayer(dir);
+                return new Questline.Domain.Players.Messages.Requests.MovePlayerCommand(dir);
             })
-            .RegisterCommand<Commands.QuitGame>(["quit", "exit", "q"], _ => new Commands.QuitGame())
+            .RegisterCommand<Requests.QuitGame>(["quit", "exit", "q"], _ => new Requests.QuitGame())
             .Build();
 
         var app = new CliApp(console, new GameEngine(parser, dispatcher, state));

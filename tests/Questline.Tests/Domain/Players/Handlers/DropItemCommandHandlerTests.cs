@@ -1,14 +1,15 @@
-using Questline.Domain.Messages;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Players.Handlers;
 using Questline.Domain.Players.Messages;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
+using Questline.Domain.Shared.Messages;
 using Questline.Tests.TestHelpers.Builders;
+using Responses = Questline.Domain.Players.Messages.Responses;
 
 namespace Questline.Tests.Domain.Players.Handlers;
 
-public class DropPlayerItemHandlerTests
+public class DropItemCommandHandlerTests
 {
     [Fact]
     public void Item_moves_from_inventory_to_room()
@@ -19,11 +20,11 @@ public class DropPlayerItemHandlerTests
             .Build();
         var state = new GameState(rooms, new Player { Id = "player1", Location = "cellar" });
         state.Player.Inventory.Add(lamp);
-        var handler = new DropPlayerItemHandler();
+        var handler = new DropItemCommandHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Players.Messages.Commands.DropPlayerItem("brass lamp"));
+        var result = handler.Handle(state, new Questline.Domain.Players.Messages.Requests.DropItemCommand("brass lamp"));
 
-        result.ShouldBeOfType<Events.PlayerItemDropped>();
+        result.ShouldBeOfType<Responses.ItemDroppedResponse>();
         state.Player.Inventory.IsEmpty.ShouldBeTrue();
         state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBe(lamp);
     }
@@ -35,11 +36,11 @@ public class DropPlayerItemHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
         var state = new GameState(rooms, new Player { Id = "player1", Location = "cellar" });
-        var handler = new DropPlayerItemHandler();
+        var handler = new DropItemCommandHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Players.Messages.Commands.DropPlayerItem("lamp"));
+        var result = handler.Handle(state, new Questline.Domain.Players.Messages.Requests.DropItemCommand("lamp"));
 
-        result.ShouldBeOfType<Results.CommandError>();
+        result.ShouldBeOfType<Questline.Domain.Shared.Messages.Responses.CommandError>();
         result.Success.ShouldBeFalse();
     }
 
@@ -52,9 +53,9 @@ public class DropPlayerItemHandlerTests
             .Build();
         var state = new GameState(rooms, new Player { Id = "player1", Location = "cellar" });
         state.Player.Inventory.Add(lamp);
-        var handler = new DropPlayerItemHandler();
+        var handler = new DropItemCommandHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Players.Messages.Commands.DropPlayerItem("brass lamp"));
+        var result = handler.Handle(state, new Questline.Domain.Players.Messages.Requests.DropItemCommand("brass lamp"));
 
         result.Message.ShouldContain("brass lamp");
     }

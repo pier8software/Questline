@@ -1,15 +1,16 @@
-using Questline.Domain.Messages;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Players.Handlers;
 using Questline.Domain.Players.Messages;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
+using Questline.Domain.Shared.Messages;
 using Questline.Tests.TestHelpers.Builders;
+using Responses = Questline.Domain.Players.Messages.Responses;
 
 namespace Questline.Tests.Domain.Players.Handlers;
 
-public class MovePlayerHandlerTests
+public class MovePlayerCommandHandlerTests
 {
     [Fact]
     public void Player_moves_to_destination_when_exit_exists()
@@ -20,12 +21,12 @@ public class MovePlayerHandlerTests
             .Build();
         var player = new Player { Id = "player1", Location = "start" };
         var state = new GameState(world, player);
-        var handler = new MovePlayerHandler();
+        var handler = new MovePlayerCommandHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Players.Messages.Commands.MovePlayer(Direction.North));
+        var result = handler.Handle(state, new Questline.Domain.Players.Messages.Requests.MovePlayerCommand(Direction.North));
 
         player.Location.ShouldBe("end");
-        var moved = result.ShouldBeOfType<Events.PlayerMoved>();
+        var moved = result.ShouldBeOfType<Responses.PlayerMovedResponse>();
         moved.RoomName.ShouldBe("End Room");
         moved.Description.ShouldBe("The end room.");
     }
@@ -38,12 +39,12 @@ public class MovePlayerHandlerTests
             .Build();
         var player = new Player { Id = "player1", Location = "sealed" };
         var state = new GameState(world, player);
-        var handler = new MovePlayerHandler();
+        var handler = new MovePlayerCommandHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Players.Messages.Commands.MovePlayer(Direction.North));
+        var result = handler.Handle(state, new Questline.Domain.Players.Messages.Requests.MovePlayerCommand(Direction.North));
 
         player.Location.ShouldBe("sealed");
-        result.ShouldBeOfType<Results.CommandError>();
+        result.ShouldBeOfType<Questline.Domain.Shared.Messages.Responses.CommandError>();
         result.Success.ShouldBeFalse();
     }
 
@@ -60,11 +61,11 @@ public class MovePlayerHandlerTests
             .WithRoom("c", "Room C", "Third room.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "a" });
-        var handler = new MovePlayerHandler();
+        var handler = new MovePlayerCommandHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Players.Messages.Commands.MovePlayer(Direction.East));
+        var result = handler.Handle(state, new Questline.Domain.Players.Messages.Requests.MovePlayerCommand(Direction.East));
 
-        var moved = result.ShouldBeOfType<Events.PlayerMoved>();
+        var moved = result.ShouldBeOfType<Responses.PlayerMovedResponse>();
         moved.Exits.ShouldContain("West");
         moved.Exits.ShouldContain("North");
     }
@@ -78,11 +79,11 @@ public class MovePlayerHandlerTests
             .WithRoom("b", "Room B", "Second room.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "a" });
-        var handler = new MovePlayerHandler();
+        var handler = new MovePlayerCommandHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Players.Messages.Commands.MovePlayer(Direction.North));
+        var result = handler.Handle(state, new Questline.Domain.Players.Messages.Requests.MovePlayerCommand(Direction.North));
 
-        var moved = result.ShouldBeOfType<Events.PlayerMoved>();
+        var moved = result.ShouldBeOfType<Responses.PlayerMovedResponse>();
         moved.Items.ShouldContain("brass lamp");
         moved.Message.ShouldContain("You can see");
     }

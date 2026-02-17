@@ -1,20 +1,19 @@
-using Questline.Domain.Messages;
-using Questline.Domain.Players.Messages;
 using Questline.Domain.Shared.Data;
 using Questline.Framework.Mediator;
-using Commands = Questline.Domain.Players.Messages.Commands;
+using Requests = Questline.Domain.Players.Messages.Requests;
+using Responses = Questline.Domain.Players.Messages.Responses;
 
 namespace Questline.Domain.Players.Handlers;
 
-public class MovePlayerHandler : ICommandHandler<Commands.MovePlayer>
+public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerCommand, Responses.PlayerMovedResponse>
 {
-    public CommandResult Execute(GameState state, Commands.MovePlayer command)
+    public Responses.PlayerMovedResponse Handle(GameState state, Requests.MovePlayerCommand command)
     {
         var currentRoom = state.GetRoom(state.Player.Location);
 
         if (!currentRoom.Exits.TryGetValue(command.Direction, out var exit))
         {
-            return new Results.CommandError($"There is no exit to the {command.Direction}.");
+            return Responses.PlayerMovedResponse.Error($"There is no exit to the {command.Direction}.");
         }
 
         state.Player.Location = exit.Destination;
@@ -22,6 +21,7 @@ public class MovePlayerHandler : ICommandHandler<Commands.MovePlayer>
         var newRoom = state.GetRoom(exit.Destination);
         var exits = newRoom.Exits.Keys.Select(d => d.ToString()).ToList();
         var items = newRoom.Items.Items.Select(i => i.Name).ToList();
-        return new Events.PlayerMoved(newRoom.Name, newRoom.Description, exits, items);
+
+        return Responses.PlayerMovedResponse.Success(newRoom.Name, newRoom.Description, exits, items);
     }
 }

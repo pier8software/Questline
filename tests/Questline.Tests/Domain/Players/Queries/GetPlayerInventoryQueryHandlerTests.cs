@@ -1,7 +1,6 @@
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Players.Handlers;
 using Questline.Domain.Players.Messages;
-using Questline.Domain.Players.Queries;
 using Questline.Domain.Rooms.Handlers;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
@@ -9,7 +8,7 @@ using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Domain.Players.Queries;
 
-public class LoadPlayerInventoryQueryTests
+public class GetPlayerInventoryQueryHandlerTests
 {
     [Fact]
     public void Lists_carried_items()
@@ -22,11 +21,11 @@ public class LoadPlayerInventoryQueryTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         state.Player.Inventory.Add(lamp);
         state.Player.Inventory.Add(key);
-        var handler = new LoadPlayerInventoryQuery();
+        var handler = new GetPlayerInventoryQueryHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Players.Messages.Commands.LoadPlayerInventory());
+        var result = handler.Handle(state, new Questline.Domain.Players.Messages.Requests.GetPlayerInventoryQuery());
 
-        var inventoryResult = result.ShouldBeOfType<Events.PlayerInventoryLoaded>();
+        var inventoryResult = result.ShouldBeOfType<Responses.PlayerInventoryResponse>();
         inventoryResult.Items.ShouldContain("brass lamp");
         inventoryResult.Items.ShouldContain("rusty key");
     }
@@ -38,9 +37,9 @@ public class LoadPlayerInventoryQueryTests
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
-        var handler = new LoadPlayerInventoryQuery();
+        var handler = new GetPlayerInventoryQueryHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Players.Messages.Commands.LoadPlayerInventory());
+        var result = handler.Handle(state, new Questline.Domain.Players.Messages.Requests.GetPlayerInventoryQuery());
 
         result.Message.ShouldContain("not carrying anything");
     }
@@ -54,13 +53,13 @@ public class LoadPlayerInventoryQueryTests
             .Build();
         var state = new GameState(rooms, new Player { Id = "player1", Location = "cellar" });
         var getHandler = new TakeRoomItemHandler();
-        var dropHandler = new DropPlayerItemHandler();
+        var dropHandler = new DropItemCommandHandler();
 
-        getHandler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.TakeRoomItem("brass lamp"));
+        getHandler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.TakeRoomItemCommand("brass lamp"));
         state.Player.Inventory.Items.ShouldContain(lamp);
         state.GetRoom("cellar").Items.IsEmpty.ShouldBeTrue();
 
-        dropHandler.Execute(state, new Questline.Domain.Players.Messages.Commands.DropPlayerItem("brass lamp"));
+        dropHandler.Handle(state, new Questline.Domain.Players.Messages.Requests.DropItemCommand("brass lamp"));
         state.Player.Inventory.IsEmpty.ShouldBeTrue();
         state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBe(lamp);
     }

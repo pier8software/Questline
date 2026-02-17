@@ -1,10 +1,11 @@
-using Questline.Domain.Messages;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Handlers;
 using Questline.Domain.Rooms.Messages;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
+using Questline.Domain.Shared.Messages;
 using Questline.Tests.TestHelpers.Builders;
+using Responses = Questline.Domain.Rooms.Messages.Responses;
 
 namespace Questline.Tests.Domain.Rooms.Handlers;
 
@@ -20,9 +21,9 @@ public class TakeRoomItemHandlerTests
         var state = new GameState(rooms, new Player { Id = "player1", Location = "cellar" });
         var handler = new TakeRoomItemHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.TakeRoomItem("brass lamp"));
+        var result = handler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.TakeRoomItemCommand("brass lamp"));
 
-        result.ShouldBeOfType<Events.RoomItemTaken>();
+        result.ShouldBeOfType<Responses.ItemTakenResponse>();
         state.Player.Inventory.Items.ShouldContain(lamp);
         state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBeNull();
     }
@@ -36,9 +37,9 @@ public class TakeRoomItemHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new TakeRoomItemHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.TakeRoomItem("lamp"));
+        var result = handler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.TakeRoomItemCommand("lamp"));
 
-        result.ShouldBeOfType<Results.CommandError>();
+        result.ShouldBeOfType<Questline.Domain.Shared.Messages.Responses.CommandError>();
         result.Success.ShouldBeFalse();
     }
 
@@ -52,9 +53,9 @@ public class TakeRoomItemHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new TakeRoomItemHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.TakeRoomItem("BRASS LAMP"));
+        var result = handler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.TakeRoomItemCommand("BRASS LAMP"));
 
-        result.ShouldBeOfType<Events.RoomItemTaken>();
+        result.ShouldBeOfType<Responses.ItemTakenResponse>();
     }
 
     [Fact]
@@ -67,7 +68,7 @@ public class TakeRoomItemHandlerTests
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
         var handler = new TakeRoomItemHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.TakeRoomItem("brass lamp"));
+        var result = handler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.TakeRoomItemCommand("brass lamp"));
 
         result.Message.ShouldContain("brass lamp");
     }

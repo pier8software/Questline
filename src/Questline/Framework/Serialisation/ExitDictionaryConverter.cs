@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Questline.Domain.Rooms.Data;
 
-namespace Questline.Domain;
+namespace Questline.Framework.Serialisation;
 
 public class ExitDictionaryConverter : JsonConverter<Dictionary<string, ExitData>>
 {

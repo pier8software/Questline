@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Questline.Framework.Serialisation;
 
 namespace Questline.Domain.Rooms.Data;
 

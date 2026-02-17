@@ -10,8 +10,8 @@ public class ParserTests
     public ParserTests()
     {
         _parser = new ParserBuilder()
-            .RegisterCommand<VerbNoArgsCommand>(["verb", "v"], _ => new VerbNoArgsCommand())
-            .RegisterCommand<VerbWithArgsCommand>(["args"], args => new VerbWithArgsCommand(args))
+            .RegisterCommand<VerbNoArgsRequest>(["verb", "v"], _ => new VerbNoArgsRequest())
+            .RegisterCommand<VerbWithArgsRequest>(["args"], args => new VerbWithArgsRequest(args))
             .Build();
     }
 
@@ -20,7 +20,7 @@ public class ParserTests
     {
         var result = _parser.Parse("verb");
 
-        result.AsT0.ShouldBeOfType<VerbNoArgsCommand>();
+        result.AsT0.ShouldBeOfType<VerbNoArgsRequest>();
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class ParserTests
     {
         var result = _parser.Parse("v");
 
-        result.AsT0.ShouldBeOfType<VerbNoArgsCommand>();
+        result.AsT0.ShouldBeOfType<VerbNoArgsRequest>();
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class ParserTests
         var result = _parser.Parse("args example");
 
         result.IsT0.ShouldBeTrue();
-        var command = result.AsT0 as VerbWithArgsCommand;
+        var command = result.AsT0 as VerbWithArgsRequest;
         command!.Args.ShouldBe(["example"]);
     }
 
@@ -47,7 +47,7 @@ public class ParserTests
         var result = _parser.Parse("ARGS Example");
 
         result.IsT0.ShouldBeTrue();
-        var command = result.AsT0 as VerbWithArgsCommand;
+        var command = result.AsT0 as VerbWithArgsRequest;
         command!.Args.ShouldBe(["example"]);
     }
 
@@ -56,7 +56,7 @@ public class ParserTests
     {
         var result = _parser.Parse("  verb  ");
 
-        result.AsT0.ShouldBeOfType<VerbNoArgsCommand>();
+        result.AsT0.ShouldBeOfType<VerbNoArgsRequest>();
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class ParserTests
         var result = _parser.Parse("args   example");
 
         result.IsT0.ShouldBeTrue();
-        var command = result.AsT0 as VerbWithArgsCommand;
+        var command = result.AsT0 as VerbWithArgsRequest;
         command!.Args.ShouldBe(["example"]);
     }
 
@@ -88,6 +88,6 @@ public class ParserTests
     }
 }
 
-public record VerbNoArgsCommand : ICommand;
+public record VerbNoArgsRequest : IRequest;
 
-public record VerbWithArgsCommand(string[] Args) : ICommand;
+public record VerbWithArgsRequest(string[] Args) : IRequest;

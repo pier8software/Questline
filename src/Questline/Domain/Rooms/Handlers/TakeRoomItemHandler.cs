@@ -1,25 +1,25 @@
-using Questline.Domain.Messages;
 using Questline.Domain.Rooms.Messages;
 using Questline.Domain.Shared.Data;
 using Questline.Framework.Mediator;
+using Responses = Questline.Domain.Rooms.Messages.Responses;
 
 namespace Questline.Domain.Rooms.Handlers;
 
-public class TakeRoomItemHandler : ICommandHandler<Messages.Commands.TakeRoomItem>
+public class TakeRoomItemHandler : IRequestHandler<Requests.TakeRoomItemCommand, Responses.ItemTakenResponse>
 {
-    public CommandResult Execute(GameState state, Messages.Commands.TakeRoomItem command)
+    public Responses.ItemTakenResponse Handle(GameState state, Requests.TakeRoomItemCommand request)
     {
         var room = state.GetRoom(state.Player.Location);
-        var item = room.Items.FindByName(command.ItemName);
+        var item = room.Items.FindByName(request.ItemName);
 
         if (item is null)
         {
-            return new Results.CommandError($"There is no '{command.ItemName}' here.");
+            return Responses.ItemTakenResponse.Error($"There is no '{request.ItemName}' here.");
         }
 
         room.Items.Remove(item);
         state.Player.Inventory.Add(item);
 
-        return new Events.RoomItemTaken(item.Name);
+        return Responses.ItemTakenResponse.Success(item.Name);
     }
 }

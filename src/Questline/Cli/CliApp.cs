@@ -1,4 +1,4 @@
-using Questline.Domain.Messages;
+using Questline.Domain.Shared.Messages;
 using Questline.Engine;
 
 namespace Questline.Cli;
@@ -7,7 +7,7 @@ public class CliApp(IConsole console, GameEngine engine)
 {
     public void Run()
     {
-        var initialRoom = engine.GetInitialRoom();
+        var initialRoom = engine.ProcessInput("look");
         console.WriteLine(initialRoom.Message);
 
         while (true)
@@ -24,7 +24,7 @@ public class CliApp(IConsole console, GameEngine engine)
 
             console.WriteLine(result.Message);
 
-            if (result is Results.GameQuited)
+            if (result is Responses.GameQuited)
             {
                 break;
             }

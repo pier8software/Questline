@@ -1,19 +1,16 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Domain;
-using Questline.Domain.Handlers;
-using Questline.Domain.Messages;
 using Questline.Domain.Players.Entity;
+using Questline.Domain.Rooms.Handlers;
 using Questline.Domain.Rooms.Messages;
-using Questline.Domain.Rooms.Queries;
 using Questline.Domain.Shared;
 using Questline.Domain.Shared.Data;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
-using Commands = Questline.Domain.Rooms.Messages.Commands;
 
 namespace Questline.Tests.Framework.Mediator;
 
-public class CommandDispatcherTests
+public class RequestSenderTests
 {
     [Fact]
     public void Registered_verb_executes_its_handler()
@@ -24,14 +21,15 @@ public class CommandDispatcherTests
         var state = new GameState(world, new Player { Id = "player1", Location = "start" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<ICommandHandler<Questline.Domain.Rooms.Messages.Commands.ViewRoom>, ViewRoomQuery>()
+            .AddSingleton<IRequestHandler<Requests.GetRoomDetailsQuery, Responses.RoomDetailsResponse>,
+                GetRoomDetailsHandler>()
             .BuildServiceProvider();
 
 
-        var dispatcher = new CommandDispatcher(serviceProvider);
+        var dispatcher = new RequestSender(serviceProvider);
 
-        var result = dispatcher.Dispatch(state, new Commands.ViewRoom());
+        var result = dispatcher.Send(state, new Requests.GetRoomDetailsQuery());
 
-        result.ShouldBeOfType<Events.RoomViewed>();
+        result.ShouldBeOfType<Responses.RoomDetailsResponse>();
     }
 }

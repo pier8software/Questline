@@ -1,14 +1,14 @@
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Rooms.Handlers;
 using Questline.Domain.Rooms.Messages;
-using Questline.Domain.Rooms.Queries;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Domain.Rooms.Queries;
 
-public class ViewRoomQueryTests
+public class GetRoomDetailsHandlerTests
 {
     [Fact]
     public void Returns_room_name_and_description()
@@ -17,11 +17,11 @@ public class ViewRoomQueryTests
             .WithRoom("tavern", "The Tavern", "A cozy tavern with a roaring fire.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
-        var handler = new ViewRoomQuery();
+        var handler = new GetRoomDetailsHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.ViewRoom());
+        var result = handler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery());
 
-        var lookResult = result.ShouldBeOfType<Events.RoomViewed>();
+        var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.RoomName.ShouldBe("The Tavern");
         lookResult.Description.ShouldBe("A cozy tavern with a roaring fire.");
     }
@@ -39,11 +39,11 @@ public class ViewRoomQueryTests
             .WithRoom("entrance", "Entrance", "The entrance.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "hallway" });
-        var handler = new ViewRoomQuery();
+        var handler = new GetRoomDetailsHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.ViewRoom());
+        var result = handler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery());
 
-        var lookResult = result.ShouldBeOfType<Events.RoomViewed>();
+        var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.Exits.ShouldContain("North");
         lookResult.Exits.ShouldContain("South");
     }
@@ -55,11 +55,11 @@ public class ViewRoomQueryTests
             .WithRoom("sealed-room", "Sealed Room", "No way out.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "sealed-room" });
-        var handler = new ViewRoomQuery();
+        var handler = new GetRoomDetailsHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.ViewRoom());
+        var result = handler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery());
 
-        var lookResult = result.ShouldBeOfType<Events.RoomViewed>();
+        var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.Exits.ShouldBeEmpty();
     }
 
@@ -71,11 +71,11 @@ public class ViewRoomQueryTests
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
-        var handler = new ViewRoomQuery();
+        var handler = new GetRoomDetailsHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.ViewRoom());
+        var result = handler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery());
 
-        var lookResult = result.ShouldBeOfType<Events.RoomViewed>();
+        var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.Items.ShouldContain("brass lamp");
         lookResult.Message.ShouldContain("You can see");
     }
@@ -87,9 +87,9 @@ public class ViewRoomQueryTests
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
         var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
-        var handler = new ViewRoomQuery();
+        var handler = new GetRoomDetailsHandler();
 
-        var result = handler.Execute(state, new Questline.Domain.Rooms.Messages.Commands.ViewRoom());
+        var result = handler.Handle(state, new Questline.Domain.Rooms.Messages.Requests.GetRoomDetailsQuery());
 
         result.Message.ShouldNotContain("You can see");
     }
