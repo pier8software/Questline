@@ -75,8 +75,6 @@ context: |
     `Domain/` is organised by feature: `Players/`, `Rooms/`, `Shared/`.
     Each feature folder uses the same internal layout:
     - `Entity/` — domain entities and value objects (e.g. `Player`, `Room`, `Item`)
-    - `Handlers/` — `IRequestHandler<T>` implementations (one handler per request)
-    - `Messages/` — `Requests.cs` (commands/queries) and `Responses.cs`
     - `Data/` — data-transfer objects for JSON deserialisation (where applicable)
     `Shared/` holds cross-cutting concerns: `Item`, `Inventory`, `GameState`, `AdventureData`.
     New features get their own top-level folder under `Domain/` following this layout.
@@ -103,11 +101,11 @@ context: |
     - Test namespaces mirror source: `Questline.Tests.<Layer>.<Feature>.Handlers`
 
     ## New Feature Checklist
-    1. Create request record with `[Verbs]` in `Domain/<Feature>/Messages/Requests.cs`
-    2. Create response record with factory methods in `Domain/<Feature>/Messages/Responses.cs`
-    3. Create handler implementing `IRequestHandler<T>` in `Domain/<Feature>/Handlers/`
+    1. Create request record with `[Verbs]` in `Engine/Messages/Requests.cs`
+    2. Create response record with factory methods in `Engine/Messages/Responses.cs`
+    3. Create handler implementing `IRequestHandler<T>` in `Engine/Handlers/`
     4. Register handler in `Engine/ServiceCollectionExtensions.RegisterCommandHandlers()`
-    5. Write tests using `GameBuilder`/`RoomBuilder` in `tests/Questline.Tests/Domain/<Feature>/Handlers/`
+    5. Write tests using `GameBuilder`/`RoomBuilder` in `tests/Questline.Tests/Engine/Handlers/`
 
 rules:
     spec:

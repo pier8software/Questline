@@ -1,8 +1,8 @@
 using Questline.Domain.Shared.Data;
-using Questline.Domain.Shared.Messages;
+using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
-namespace Questline.Domain.Shared.Handlers;
+namespace Questline.Engine.Handlers;
 
 public class QuitGameHandler : IRequestHandler<Requests.QuitGame>
 {

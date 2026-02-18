@@ -1,10 +1,10 @@
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Shared.Data;
-using Questline.Domain.Shared.Handlers;
-using Questline.Domain.Shared.Messages;
+using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
 
-namespace Questline.Tests.Domain.Shared.Handlers;
+namespace Questline.Tests.Engine.Handlers;
 
 public class QuitGameHandlerTests
 {

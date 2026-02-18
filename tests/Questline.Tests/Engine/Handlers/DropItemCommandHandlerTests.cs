@@ -1,12 +1,11 @@
 using Questline.Domain.Players.Entity;
-using Questline.Domain.Players.Handlers;
-using Questline.Domain.Players.Messages;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
+using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using Responses = Questline.Domain.Players.Messages.Responses;
 
-namespace Questline.Tests.Domain.Players.Handlers;
+namespace Questline.Tests.Engine.Handlers;
 
 public class DropItemCommandHandlerTests
 {

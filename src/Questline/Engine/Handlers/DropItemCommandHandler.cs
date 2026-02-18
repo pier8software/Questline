@@ -1,9 +1,8 @@
 using Questline.Domain.Shared.Data;
+using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
-using Requests = Questline.Domain.Players.Messages.Requests;
-using Responses = Questline.Domain.Players.Messages.Responses;
 
-namespace Questline.Domain.Players.Handlers;
+namespace Questline.Engine.Handlers;
 
 public class DropItemCommandHandler : IRequestHandler<Requests.DropItemCommand>
 {

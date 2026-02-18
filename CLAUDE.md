@@ -10,11 +10,12 @@ Questline text adventure game engine evolving toward a cooperative MUD platform.
 
 This is a monorepo containing multiple projects and folders.
 
-| Path | Purpose |
-| `src/Questline/` | the core application code containing the game engine |
-| `tests/Questline.Tests/` | the tests for the application code |
-| `openspec/` | OpenSpec configuration, specs, and change tracking |
-| `content/adventures/` | JSON adventure content |
+| Path                     | Purpose                                              |
+|--------------------------|------------------------------------------------------|
+| `src/Questline/`         | the core application code containing the game engine |
+| `tests/Questline.Tests/` | the tests for the application code                   |
+| `openspec/`              | OpenSpec configuration, specs, and change tracking   |
+| `content/adventures/`    | JSON adventure content                               |
 
 ## `src/Questline/`: Application Code
 
@@ -31,12 +32,10 @@ This is a monorepo containing multiple projects and folders.
 
 `Domain/` is organised by feature: `Players/`, `Rooms/`, `Shared/`. Each feature folder uses the same internal layout:
 
-| Sub-folder  | Contents                                            |
-|-------------|-----------------------------------------------------|
-| `Entity/`   | Domain entities and value objects                   |
-| `Handlers/` | `IRequestHandler<T>` implementations                |
-| `Messages/` | `Requests.cs` (commands/queries) and `Responses.cs` |
-| `Data/`     | Data objects (where applicable)                     |
+| Sub-folder | Contents                          |
+|------------|-----------------------------------|
+| `Entity/`  | Domain entities and value objects |
+| `Data/`    | Data objects (where applicable)   |
 
 ## `tests/Questline.Tests/`: Application Test Suite
 

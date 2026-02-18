@@ -1,11 +1,11 @@
 using Questline.Domain.Players.Entity;
-using Questline.Domain.Rooms.Handlers;
-using Questline.Domain.Rooms.Messages;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
+using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
 
-namespace Questline.Tests.Domain.Rooms.Handlers;
+namespace Questline.Tests.Engine.Handlers;
 
 public class TakeItemHandlerTests
 {

@@ -1,8 +1,8 @@
-using Questline.Domain.Players.Messages;
 using Questline.Domain.Shared.Data;
+using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
-namespace Questline.Domain.Players.Handlers;
+namespace Questline.Engine.Handlers;
 
 public class GetPlayerInventoryQueryHandler : IRequestHandler<Requests.GetPlayerInventoryQuery>
 {

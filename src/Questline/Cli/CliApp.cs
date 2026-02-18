@@ -1,5 +1,5 @@
-using Questline.Domain.Shared.Messages;
 using Questline.Engine;
+using Questline.Engine.Messages;
 
 namespace Questline.Cli;
 

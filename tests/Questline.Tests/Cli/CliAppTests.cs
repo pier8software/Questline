@@ -1,19 +1,15 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
 using Questline.Domain.Players.Entity;
-using Questline.Domain.Players.Handlers;
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Rooms.Handlers;
 using Questline.Domain.Shared.Data;
-using Questline.Domain.Shared.Handlers;
 using Questline.Engine;
+using Questline.Engine.Handlers;
 using Questline.Engine.InputParsers;
+using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Domain.Rooms.Messages.Requests;
-using static Questline.Domain.Players.Messages.Requests;
-using static Questline.Domain.Shared.Messages.Requests;
 
 namespace Questline.Tests.Cli;
 
@@ -36,9 +32,9 @@ public class CliAppTests
         var state = new GameState(rooms, new Player { Id = "player1", Location = "entrance" });
 
         var serviceProvider = new ServiceCollection()
-            .AddSingleton<IRequestHandler<GetRoomDetailsQuery>, GetRoomDetailsHandler>()
-            .AddSingleton<IRequestHandler<MovePlayerCommand>, MovePlayerCommandHandler>()
-            .AddSingleton<IRequestHandler<QuitGame>, QuitGameHandler>()
+            .AddSingleton<IRequestHandler<Requests.GetRoomDetailsQuery>, GetRoomDetailsHandler>()
+            .AddSingleton<IRequestHandler<Requests.MovePlayerCommand>, MovePlayerCommandHandler>()
+            .AddSingleton<IRequestHandler<Requests.QuitGame>, QuitGameHandler>()
             .BuildServiceProvider();
 
         var dispatcher = new RequestSender(serviceProvider);

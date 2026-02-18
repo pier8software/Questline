@@ -1,10 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
-using Questline.Domain;
 using Questline.Domain.Players.Entity;
-using Questline.Domain.Rooms.Handlers;
-using Questline.Domain.Rooms.Messages;
-using Questline.Domain.Shared;
 using Questline.Domain.Shared.Data;
+using Questline.Engine.Handlers;
+using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 

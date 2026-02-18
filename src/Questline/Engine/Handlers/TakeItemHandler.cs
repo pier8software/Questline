@@ -1,9 +1,8 @@
-using Questline.Domain.Rooms.Messages;
 using Questline.Domain.Shared.Data;
+using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
-using Responses = Questline.Domain.Rooms.Messages.Responses;
 
-namespace Questline.Domain.Rooms.Handlers;
+namespace Questline.Engine.Handlers;
 
 public class TakeItemHandler : IRequestHandler<Requests.TakeItemCommand>
 {
