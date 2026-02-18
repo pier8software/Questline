@@ -24,6 +24,8 @@ public class ParserTests
     [InlineData("quit", typeof(QuitGame))]
     [InlineData("exit", typeof(QuitGame))]
     [InlineData("use", typeof(UseItemCommand))]
+    [InlineData("version", typeof(VersionQuery))]
+    [InlineData("ver", typeof(VersionQuery))]
     public void Input_is_parsed_correctly(string input, Type expectedType)
     {
         var result = _parser.Parse(input);

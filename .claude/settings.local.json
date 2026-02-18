@@ -7,7 +7,8 @@
       "Bash(openspec list:*)",
       "Bash(npx openspec:*)",
       "Bash(openspec create:*)",
-      "Bash(openspec:*)"
+      "Bash(openspec:*)",
+      "Bash(dotnet msbuild:*)"
     ]
   }
 }

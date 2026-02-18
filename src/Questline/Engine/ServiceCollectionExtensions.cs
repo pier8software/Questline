@@ -33,6 +33,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRequestHandler<QuitGame>, QuitGameHandler>();
         services.AddSingleton<IRequestHandler<UseItemCommand>, UseItemCommandHandler>();
         services.AddSingleton<IRequestHandler<ExamineCommand>, ExamineCommandHandler>();
+        services.AddSingleton<IRequestHandler<VersionQuery>, VersionQueryHandler>();
 
         services.AddSingleton<RequestSender>();
     }

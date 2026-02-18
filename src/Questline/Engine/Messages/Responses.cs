@@ -129,6 +129,11 @@ public static class Responses
         public static ItemTakenResponse Success(string item) => new($"You pick up the {item}.");
         public static ItemTakenResponse Error(string errorMessage) => new(errorMessage);
     }
+    public record VersionResponse(string Version) : IResponse
+    {
+        public string Message => $"Questline v{Version}";
+    }
+
     public record GameQuited : IResponse
     {
         public string Message => "Goodbye!";

@@ -50,6 +50,12 @@ public static class Requests
         public static IRequest CreateRequest(string[] args) => new QuitGame();
     }
 
+    [Verbs("version", "ver")]
+    public record VersionQuery : IRequest
+    {
+        public static IRequest CreateRequest(string[] args) => new VersionQuery();
+    }
+
     [Verbs("use")]
     public record UseItemCommand(string ItemName, string? TargetName) : IRequest
     {
