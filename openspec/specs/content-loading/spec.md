@@ -26,12 +26,22 @@ The adventure manifest SHALL contain `id`, `name`, `description`, `startingRoomI
 
 ### Requirement: Loader constructs World from content files
 
-The adventure loader SHALL read the JSON files and construct a World with rooms, exits, and items.
+The adventure loader SHALL read the JSON files and construct a World with rooms, exits, items, features, and barriers.
 
 #### Scenario: Load valid adventure
 
 - **WHEN** the loader processes valid adventure files
 - **THEN** the resulting World SHALL contain all defined rooms with their exits and items
+
+#### Scenario: Load adventure with barriers
+
+- **WHEN** the adventure JSON contains a `barriers` array with an entry for "iron-door"
+- **THEN** the loaded GameState SHALL contain a Barrier with Id "iron-door" and its properties
+
+#### Scenario: Load adventure with room features
+
+- **WHEN** a room definition contains a `features` array with an entry for "strange-symbols"
+- **THEN** the loaded Room SHALL contain a Feature with that Id, name, keywords, and description
 
 ### Requirement: Exit formats — string and object
 
@@ -87,9 +97,14 @@ Malformed JSON or missing required fields SHALL produce clear error messages ind
 
 ### Requirement: Five-room dungeon adventure
 
-A complete 5-room dungeon adventure SHALL be defined in content files, following the classic 5-room dungeon structure (entrance, puzzle, setback, climax, reward).
+A complete 5-room dungeon adventure SHALL be defined in content files, following the classic 5-room dungeon structure (entrance, puzzle, setback, climax, reward). The puzzle room SHALL define barriers and features.
 
 #### Scenario: Dungeon completeness
 
 - **WHEN** the five-room-dungeon adventure is loaded
 - **THEN** the World SHALL contain at least 5 rooms connected in a navigable graph
+
+#### Scenario: Puzzle room has barrier and features
+
+- **WHEN** the five-room-dungeon adventure is loaded
+- **THEN** the puzzle room SHALL have an exit with a barrier reference and at least one examinable feature
