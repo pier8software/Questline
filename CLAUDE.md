@@ -1,192 +1,76 @@
-# CLAUDE.md
+# CLAUDE.md - Questline
 
-This file provides instructions for Claude Code when working on the Questline project.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-Questline is a parser-driven text adventure engine built in C# (.NET 10). The long-term vision is a cooperative MUD platform, but development follows an incremental roadmap starting with a single-player experience.
+Questline text adventure game engine evolving toward a cooperative MUD platform.
 
-**Current Phase:** 0 (Foundation)
+## Repository Overview
 
-The goal of Phase 0 is to build a playable 5-room dungeon that proves the core loop works, using architecture that supports future multiplayer.
+This is a monorepo containing multiple projects and folders.
 
-## Key Files
+| Path | Purpose |
+| `src/Questline/` | the core application code containing the game engine |
+| `tests/Questline.Tests/` | the tests for the application code |
+| `openspec/` | OpenSpec configuration, specs, and change tracking |
+| `content/adventures/` | JSON adventure content |
 
-| Location | Purpose |
-|----------|---------|
-| `openspec/config.yaml` | Project context, tech stack, architecture summary, rules |
-| `openspec/specs/` | Capability specifications (requirements, scenarios) |
-| `src/Questline/` | Main application code |
-| `tests/Questline.Tests/` | Test project |
-| `content/adventures/` | JSON content files for adventures |
+## `src/Questline/`: Application Code
 
-## Development Workflow
+### Folder Structure
 
-### 1. Read the Spec First
+- `Cli/` - The entry point for the terminal - Composition root, a thin client running the game engine
+- `Domain/` - Game Rules - Entities, data objects, value objects, domain commands, domain events, command handlers and
+  validators
+- `Engine/` - The game engine - Loading content, parsing commands and dispatching commands to handelers
+- `Framework/` - Core abstractions and utilities - This is where code for interacting with external systems lives,
+  project agnostic code
 
-Before implementing anything, read the relevant capability spec in `openspec/specs/<capability>/spec.md`. Each spec contains:
+### Domain Feature-Folder Convention
 
-- Purpose
-- Requirements (SHALL language with WHEN/THEN scenarios)
-- Implementation Notes (for planned capabilities)
+`Domain/` is organised by feature: `Players/`, `Rooms/`, `Shared/`. Each feature folder uses the same internal layout:
 
-### 2. Test First, Always
+| Sub-folder  | Contents                                            |
+|-------------|-----------------------------------------------------|
+| `Entity/`   | Domain entities and value objects                   |
+| `Handlers/` | `IRequestHandler<T>` implementations                |
+| `Messages/` | `Requests.cs` (commands/queries) and `Responses.cs` |
+| `Data/`     | Data objects (where applicable)                     |
 
-No production code without a failing test.
-Write test names as clear, declarative statements that describe behavior from a business perspective.
-Use class names to represent the subject and method names to describe scenarios, improving readability and grouping
-Example Test Class:
+## `tests/Questline.Tests/`: Application Test Suite
 
-```csharp
-public class RoomTests
-{
-    // Good Test Name
-    [Fact]
-    public void Next_Room_Loaded_When_Player_Exits_Room() { /* ... */ }
+Follows a similar structure to the main application code project, i.e. tests for componentns of the game engine will
+live in the `Engine/` folder.
 
-    // Bad Test Name
-    [Fact]
-    public void GoCommandHandler_CallsRoomRepository_WithCorrectId() { /* ... */ }
-}
-```
+## `openspec/`: OpenSpec
 
-Use Shouldly for assertions:
+This project uses OpenSpec to follow a Spec-Driven Development methodology. This folder contains configuration,
+generated `specs/**/SPEC.md` files for features and detailed plans for the feature in the `changes/` folder. Specs are
+updated via OpenSpec change workflow, not edited directly.
 
-```csharp
-player.Location.ShouldBe("tavern");
-result.ShouldBeOfType<ItemPickedUpEvent>();
-inventory.Items.ShouldContain(item => item.Name == "lamp");
-```
+## Development Commands
 
-### 3. Implementation Order
+- `dotnet build` - Builds the solution
+- `dotnet test --no-build` - Run all tests
+- `dotnet run --project src/Questline` - Run the game
 
-For each acceptance criterion:
+### GitHub Workflows
 
-1. Write a failing test
-2. Implement the minimum code to pass
-3. Refactor if needed
-4. Move to next criterion
+- **Create a PR**: `gh pr create -a @me -t "<SHORT TILE OF THE CHANGES>"`
+- Workflow definitions are located in `.github/workflows/`
 
-### 4. Update the Spec
+## Technical Guidelines
 
-Specs are updated through the OpenSpec change workflow:
+### C# Conventions
 
-1. Create a change with a proposal and delta-spec for any new or modified requirements
-2. Implement the change
-3. Archive the change (syncs delta-spec into the main spec)
+- .Net 10 (LTS)
+- Use latest language features
+- **File-scoped namespaces** - `namespace Foo.Bar;` (no braces)
+- **Records** - Use for requests, responses, and immutable value types
+- **Primary constructors** - Use on classes (handlers, builders, attributes) not just records
+- **`static abstract` interface members** - `IRequest.CreateRequest` enforces a static factory contract
 
-## Code Patterns
+## Additional Resources
 
-### Namespace Structure
-
-```
-Questline.Cli       → Entry point, game loop, terminal I/O
-Questline.Domain    → Entities, value objects, game rules (no dependencies)
-Questline.Engine    → Parser, command pipeline, handlers
-Questline.Framework → Persistence, serialisation, messaging
-```
-
-**Critical:** Domain has no dependencies on other namespaces. All dependencies flow inward.
-
-### Command Handler Pattern
-
-Commands flow through: Input → Parser → Command → Handler → Event → Output
-
-```csharp
-public interface ICommandHandler<TCommand> where TCommand : ICommand
-{
-    CommandResult Execute(GameState state, TCommand command);
-}
-```
-
-Handlers:
-- Receive a command object (not raw string input)
-- Return a result/event (not write directly to console)
-- Are registered with the dispatcher by verb
-
-### Entities vs Value Objects
-
-- **Entities** have identity (Room, Item, Character) — use `required string Id`
-- **Value Objects** are compared by value (Direction, DamageRange) — use records
-
-### Content as Data
-
-Define content in JSON, not code. Behaviour that can't be expressed declaratively should be implemented as named handlers referenced from content.
-
-## Before You Commit
-
-- [ ] All tests pass (`dotnet test`)
-- [ ] Code builds without warnings (`dotnet build`)
-- [ ] No commented-out code
-- [ ] No `Console.WriteLine` debugging left behind
-- [ ] Changes align with relevant OpenSpec specs
-
-## Updating Specs
-
-Specs live in `openspec/specs/<capability>/spec.md` and are updated through the OpenSpec change workflow — not edited directly.
-
-### Creating a New Spec
-
-Create `openspec/specs/<capability-name>/spec.md` following this format:
-
-```markdown
-# <capability-name> Specification
-
-## Purpose
-
-What this capability does and why it matters.
-
-## Requirements
-
-### Requirement: <descriptive name>
-
-The system SHALL <behaviour>.
-
-#### Scenario: <descriptive name>
-
-- **WHEN** <precondition and action>
-- **THEN** <expected outcome using SHALL>
-
-## Implementation Notes (planned capabilities only)
-
-Key models, patterns, and design guidance.
-```
-
-### Guidelines
-
-- Use SHALL for requirements
-- Every requirement must have at least one WHEN/THEN scenario
-- Implemented specs: requirements only (code is the source of truth)
-- Planned specs: include Implementation Notes with key models and patterns
-
-## Common Tasks
-
-### Adding a New Command
-
-1. Create command record in `Engine/Commands/`
-2. Create handler in `Engine/Handlers/`
-3. Register with dispatcher (verb + aliases)
-4. Add tests for success and error cases
-5. Update `help` command metadata
-
-### Adding a New Entity
-
-1. Define in `Domain/Entities/`
-2. Add JSON serialisation support if persisted
-3. Update content schema if defined in adventure files
-4. Add to save/load if state must persist
-
-### Adding Content
-
-1. Edit JSON files in `content/adventures/[adventure-name]/`
-2. Validate references (room IDs, item IDs)
-3. Test by playing through
-
-## Questions?
-
-If unclear on approach, check in this order:
-
-1. Capability spec for the current work (`openspec/specs/<capability>/spec.md`)
-2. `openspec/config.yaml` for architecture, conventions, and project context
-3. Existing code for precedent
-4. Ask for clarification if still uncertain
+- Consult `docs/` for detailed documentation
