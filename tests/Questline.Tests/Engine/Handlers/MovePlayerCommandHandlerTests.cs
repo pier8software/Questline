@@ -49,7 +49,7 @@ public class MovePlayerCommandHandlerTests
     }
 
     [Fact]
-    public void Player_location_is_updated_after_successful_move()
+    public void Player_location_is_updated_after_moving()
     {
         var rooms = new GameBuilder()
             .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
@@ -67,7 +67,7 @@ public class MovePlayerCommandHandlerTests
     }
 
     [Fact]
-    public void Player_location_is_not_updated_if_move_is_not_possible()
+    public void Player_location_is_not_updated_if_direction_is_invalid()
     {
         var world = new GameBuilder()
             .WithRoom("sealed", "Sealed Room", "No way north.")
@@ -84,7 +84,7 @@ public class MovePlayerCommandHandlerTests
     }
 
     [Fact]
-    public void Locked_barrier_blocks_movement()
+    public void Player_location_is_not_updated_if_exit_is_blocked()
     {
         var barrier = new Barrier
         {
@@ -112,7 +112,7 @@ public class MovePlayerCommandHandlerTests
     }
 
     [Fact]
-    public void Unlocked_barrier_allows_movement()
+    public void Player_location_is_updated_when_barrier_is_unlocked()
     {
         var barrier = new Barrier
         {
@@ -130,23 +130,6 @@ public class MovePlayerCommandHandlerTests
                 r => r.WithExit(Direction.North, new Exit("end", "iron-door")))
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .WithBarrier(barrier)
-            .BuildState("player1", "start");
-
-        var handler = new MovePlayerCommandHandler();
-
-        var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
-
-        var parts = result.Message.Split("\n");
-        parts[0].ShouldBe("End Room");
-        state.Player.Location.ShouldBe("end");
-    }
-
-    [Fact]
-    public void Exit_without_barrier_allows_movement()
-    {
-        var state = new GameBuilder()
-            .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
-            .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .BuildState("player1", "start");
 
         var handler = new MovePlayerCommandHandler();
