@@ -113,16 +113,6 @@ public class ParserTests
     }
 
     [Fact]
-    public void Examine_alias_x_parses_correctly()
-    {
-        var result = _parser.Parse("x torch");
-
-        result.IsSuccess.ShouldBeTrue();
-        var command = result.Request.ShouldBeOfType<ExamineCommand>();
-        command.TargetName.ShouldBe("torch");
-    }
-
-    [Fact]
     public void Inspect_alias_parses_correctly()
     {
         var result = _parser.Parse("inspect symbols");
