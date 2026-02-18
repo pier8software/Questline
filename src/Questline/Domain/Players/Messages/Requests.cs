@@ -10,7 +10,7 @@ public static class Requests
     [Verbs("go", "move", "walk")]
     public record MovePlayerCommand(Direction Direction) : IRequest
     {
-        public static IRequest CreateRequest(string[] args) => new MovePlayerCommand(Enum.Parse<Direction>(args[0]));
+        public static IRequest CreateRequest(string[] args) => new MovePlayerCommand(Enum.Parse<Direction>(args[0], true));
     }
 
     [Verbs("drop")]
