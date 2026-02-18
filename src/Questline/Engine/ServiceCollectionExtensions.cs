@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Engine.Handlers;
-using Questline.Engine.InputParsers;
+using Questline.Engine.Parsers;
 using Questline.Framework.FileSystem;
 using Questline.Framework.Mediator;
 using static Questline.Engine.Messages.Requests;

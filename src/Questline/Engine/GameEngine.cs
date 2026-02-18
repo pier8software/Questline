@@ -1,5 +1,5 @@
 using Questline.Domain.Shared.Data;
-using Questline.Engine.InputParsers;
+using Questline.Engine.Parsers;
 using Questline.Framework.Mediator;
 
 namespace Questline.Engine;
