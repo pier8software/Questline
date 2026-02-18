@@ -81,6 +81,28 @@ Place test doubles alongside tests in the same namespace:
 
 Keep fakes minimal — only implement what tests require.
 
+Shared test infrastructure lives in `TestHelpers/` (with builders in `TestHelpers/Builders/`).
+
+## Test Builders
+
+`GameBuilder` and `RoomBuilder` provide a fluent API for constructing game state in tests. Handler tests use these to set up `GameState` without coupling to data-loading internals.
+
+```csharp
+var rooms = new GameBuilder()
+    .WithRoom("start", "Hall", "A dusty hall.", room => room
+        .WithExit(Direction.North, "garden")
+        .WithItem(new Item { Id = "key", Name = "key", Description = "A rusty key." }))
+    .WithRoom("garden", "Garden", "A sunny garden.", room => room
+        .WithExit(Direction.South, "start"))
+    .Build();
+
+var state = new GameState(rooms, new Player { Location = "start" });
+```
+
+- `GameBuilder.WithRoom(id, name, description, configure?)` — adds a room, optionally configuring it via a `RoomBuilder` callback
+- `RoomBuilder.WithExit(direction, destinationId)` — adds an exit
+- `RoomBuilder.WithItem(item)` — places an item in the room
+
 ## Spec-Driven Tests
 
 Each spec requirement should have corresponding tests. Map scenarios to test methods:
