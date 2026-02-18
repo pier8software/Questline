@@ -29,6 +29,14 @@
             },
             "items": [
                 "torch"
+            ],
+            "features": [
+                {
+                    "id": "strange-symbols",
+                    "name": "strange symbols",
+                    "keywords": ["symbols", "carvings", "runes"],
+                    "description": "Ancient runes etched into the stone walls. They seem to depict a key turning in a lock."
+                }
             ]
         },
         {
@@ -93,6 +101,15 @@
             "name": "goblin idol",
             "description": "A crude stone idol depicting a snarling goblin face."
         }
+    ],
+    "barriers": [
+        {
+            "id": "iron-door",
+            "name": "iron door",
+            "description": "A locked iron door blocks the way North.",
+            "blockedMessage": "The iron door is locked tight.",
+            "unlockItemId": "rusty-key",
+            "unlockMessage": "The rusty key turns in the lock and the iron door swings open."
+        }
     ]
 }
-

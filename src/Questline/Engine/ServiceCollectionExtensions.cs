@@ -1,16 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
-using Questline.Domain.Players.Handlers;
-using Questline.Domain.Rooms.Handlers;
-using Questline.Domain.Shared.Handlers;
-using Questline.Engine.InputParsers;
+using Questline.Engine.Handlers;
+using Questline.Engine.Parsers;
 using Questline.Framework.FileSystem;
 using Questline.Framework.Mediator;
-using static Questline.Domain.Rooms.Messages.Requests;
-using static Questline.Domain.Rooms.Messages.Responses;
-using static Questline.Domain.Players.Messages.Requests;
-using static Questline.Domain.Players.Messages.Responses;
-using static Questline.Domain.Shared.Messages.Requests;
-using static Questline.Domain.Shared.Messages.Responses;
+using static Questline.Engine.Messages.Requests;
 
 namespace Questline.Engine;
 
@@ -38,6 +31,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRequestHandler<DropItemCommand>, DropItemCommandHandler>();
         services.AddSingleton<IRequestHandler<GetPlayerInventoryQuery>, GetPlayerInventoryQueryHandler>();
         services.AddSingleton<IRequestHandler<QuitGame>, QuitGameHandler>();
+        services.AddSingleton<IRequestHandler<UseItemCommand>, UseItemCommandHandler>();
+        services.AddSingleton<IRequestHandler<ExamineCommand>, ExamineCommandHandler>();
 
         services.AddSingleton<RequestSender>();
     }

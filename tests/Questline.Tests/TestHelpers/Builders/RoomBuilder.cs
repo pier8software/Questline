@@ -7,6 +7,7 @@ public class RoomBuilder(string id, string name, string description)
 {
     private readonly Dictionary<Direction, Exit> _exits = new();
     private readonly List<Item> _items = new();
+    private readonly List<Feature> _features = new();
 
     public RoomBuilder WithExit(Direction direction, string destinationId)
         => WithExit(direction, new Exit(destinationId));
@@ -23,6 +24,12 @@ public class RoomBuilder(string id, string name, string description)
         return this;
     }
 
+    public RoomBuilder WithFeature(Feature feature)
+    {
+        _features.Add(feature);
+        return this;
+    }
+
     public Room Build()
     {
         var room = new Room
@@ -30,7 +37,8 @@ public class RoomBuilder(string id, string name, string description)
             Id = id,
             Name = name,
             Description = description,
-            Exits = new Dictionary<Direction, Exit>(_exits)
+            Exits = new Dictionary<Direction, Exit>(_exits),
+            Features = new List<Feature>(_features)
         };
 
         foreach (var item in _items)

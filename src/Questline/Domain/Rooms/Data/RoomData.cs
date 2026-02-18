@@ -13,6 +13,7 @@ public class RoomData
     public Dictionary<string, ExitData> Exits { get; init; } = new();
 
     public string[] Items { get; init; } = [];
+    public FeatureData[] Features { get; init; } = [];
 }
 
 public class ExitData

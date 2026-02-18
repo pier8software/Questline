@@ -5,7 +5,9 @@
       "Bash(python3 -c \"import sys, json; import yaml; json.dumps\\(yaml.safe_load\\(sys.stdin\\)\\); print\\(''YAML is valid''\\)\")",
       "Bash(openspec instructions apply:*)",
       "Bash(openspec list:*)",
-      "Bash(npx openspec:*)"
+      "Bash(npx openspec:*)",
+      "Bash(openspec create:*)",
+      "Bash(openspec:*)"
     ]
   }
 }

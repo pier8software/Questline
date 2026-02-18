@@ -5,6 +5,8 @@ using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Framework.FileSystem;
 
+using Barrier = Questline.Domain.Rooms.Entity.Barrier;
+
 namespace Questline.Engine;
 
 public class GameContentLoader(JsonFileLoader loader)
@@ -19,11 +21,21 @@ public class GameContentLoader(JsonFileLoader loader)
             Description = i.Description,
             Name = i.Name
         });
+
+        var barriers = adventureData.Barriers.ToDictionary(b => b.Id, b => new Barrier
+        {
+            Id = b.Id,
+            Name = b.Name,
+            Description = b.Description,
+            BlockedMessage = b.BlockedMessage,
+            UnlockItemId = b.UnlockItemId,
+            UnlockMessage = b.UnlockMessage
+        });
+
         var rooms = BuildRooms(adventureData.Rooms, itemsDictionary);
 
-        return new GameState(rooms, new Player { Id = "Player1", Location = adventureData.StartingRoomId });
+        return new GameState(rooms, new Player { Id = "Player1", Location = adventureData.StartingRoomId }, barriers);
     }
-
 
     private static Dictionary<string, Room> BuildRooms(
         RoomData[] roomData, Dictionary<string, Item> items)
@@ -42,12 +54,21 @@ public class GameContentLoader(JsonFileLoader loader)
                 }
             }
 
+            var features = roomDetail.Features.Select(f => new Feature
+            {
+                Id = f.Id,
+                Name = f.Name,
+                Keywords = f.Keywords,
+                Description = f.Description
+            }).ToList();
+
             var room = new Room
             {
                 Id = roomDetail.Id,
                 Name = roomDetail.Name,
                 Description = roomDetail.Description,
-                Exits = exits
+                Exits = exits,
+                Features = features
             };
 
             if (roomDetail.Items.Length > 0)

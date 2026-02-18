@@ -9,6 +9,7 @@ public class Room
     public required string Description { get; init; }
     public Dictionary<Direction, Exit> Exits { get; init; } = new();
     public Inventory Items { get; init; } = new();
+    public List<Feature> Features { get; init; } = new();
 }
 
 public record Exit(string Destination, string? BarrierId = null);
