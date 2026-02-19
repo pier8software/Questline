@@ -24,15 +24,10 @@ The character name SHALL be validated: non-empty, 2-24 characters, alphanumeric 
 - **WHEN** the player enters "Thorin"
 - **THEN** the character SHALL be created with name "Thorin"
 
-#### Scenario: Empty name
+#### Scenario: Invalid name
 
-- **WHEN** the player enters an empty string
-- **THEN** a validation error SHALL be returned
-
-#### Scenario: Name too long
-
-- **WHEN** the player enters a name longer than 24 characters
-- **THEN** a validation error SHALL be returned
+- **WHEN** the player enters an empty string, a name shorter than 2 characters, longer than 24 characters, or containing invalid characters
+- **THEN** a validation error SHALL be returned with message: "Please give your character a name"
 
 ### Requirement: Default race and class
 
@@ -45,12 +40,14 @@ A new character SHALL be created with race Human and class Fighter by default.
 
 ### Requirement: Character has base stats
 
-A new character SHALL have base stats (MaxHealth, CurrentHealth, Strength, Dexterity, Intelligence, Wisdom) derived from the default race/class combination.
+A new character SHALL have 6 ability scores (STR, INT, WIS, DEX, CON, CHA) and health values. Each ability score is rolled by summing 3d6, assigned in order: STR, INT, WIS, DEX, CON, CHA. MaxHealth is 8 (Fighter hit die ceiling at level 1). CurrentHealth is a 1d8 roll (character may start below max). Stats do NOT vary by race or class (out of scope for this feature).
 
-#### Scenario: Default Human Fighter stats
+#### Scenario: Rolled stats
 
 - **WHEN** a default Human Fighter is created
-- **THEN** MaxHealth SHALL be 20, Strength 14, Dexterity 12, Intelligence 10, Wisdom 10
+- **THEN** STR, INT, WIS, DEX, CON, CHA SHALL each be the sum of 3d6 (range 3-18)
+- **AND** MaxHealth SHALL be 8
+- **AND** CurrentHealth SHALL be a 1d8 roll (range 1-8)
 
 ### Requirement: Stats command displays character information
 
@@ -59,11 +56,11 @@ The `stats` command SHALL display the character's name, race, class, level, and 
 #### Scenario: Stats output
 
 - **WHEN** the player executes `stats`
-- **THEN** the result SHALL contain the character name, "Human Fighter", "Level 1", and all stat values
+- **THEN** the result SHALL contain the character name, race, class, level, and all stat values
 
 ### Requirement: Player and Character are separate models
 
-Player (the human) and Character (the in-game avatar) SHALL be separate models. Player has a Character, an Inventory, and a current room.
+Player (the human) and Character (the in-game avatar) SHALL be separate models. Player has an Id, a Character, and a Location.
 
 #### Scenario: Player owns character
 
@@ -84,28 +81,26 @@ On starting a new game, the welcome message SHALL include the character's name.
 ### Character Model
 
 ```csharp
-public class Character
-{
-    public required string Name { get; init; }
-    public required Race Race { get; init; }
-    public required CharacterClass Class { get; init; }
-    public int Level { get; set; } = 1;
-    public int Experience { get; set; } = 0;
-    public CharacterStats Stats { get; init; } = new();
-}
+public record Character(
+    string Name,
+    Race Race,
+    CharacterClass Class,
+    int Level = 1,
+    int Experience = 0,
+    CharacterStats? Stats = null);
 
 public enum Race { Human, Elf, Dwarf, Halfling }
 public enum CharacterClass { Fighter, Wizard, Rogue, Cleric }
 
-public class CharacterStats
-{
-    public int MaxHealth { get; set; }
-    public int CurrentHealth { get; set; }
-    public int Strength { get; set; }
-    public int Dexterity { get; set; }
-    public int Intelligence { get; set; }
-    public int Wisdom { get; set; }
-}
+public record CharacterStats(
+    int MaxHealth,
+    int CurrentHealth,
+    int STR,
+    int INT,
+    int WIS,
+    int DEX,
+    int CON,
+    int CHA);
 ```
 
 ### Player vs Character Separation
@@ -113,17 +108,22 @@ public class CharacterStats
 ```csharp
 public class Player
 {
+    public required Guid Id { get; init; }
     public required Character Character { get; init; }
-    public Inventory Inventory { get; init; } = new();
-    public required string CurrentRoomId { get; set; }
+    public required string Location { get; set; }
 }
 ```
+
+### Dice Rolling
+
+Stats use dice notation NdX: roll N dice with X sides and sum the results. Character creation uses 3d6 for each ability score and 1d8 for starting health.
 
 ### Game Start Flow
 
 ```
 1. New Game / Continue / Quit
 2. (New Game) Enter name -> validate -> create default Human Fighter
-3. Welcome message with character name
-4. Display starting room
+3. Roll ability scores (3d6 x 6) and health (1d8)
+4. Welcome message with character name
+5. Display starting room
 ```
