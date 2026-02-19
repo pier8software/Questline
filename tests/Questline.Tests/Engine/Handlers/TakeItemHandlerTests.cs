@@ -18,7 +18,7 @@ public class TakeItemHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
 
-        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
+        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
 
         var handler = new TakeItemHandler();
 
@@ -35,12 +35,12 @@ public class TakeItemHandlerTests
         var rooms = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
-        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
+        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
         var handler = new TakeItemHandler();
 
         _ = handler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
 
-        state.Player.Inventory.Items.ShouldContain(lamp);
+        state.Player.Character.Inventory.Items.ShouldContain(lamp);
         state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBeNull();
     }
 
@@ -51,7 +51,7 @@ public class TakeItemHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
 
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
 
         var handler = new TakeItemHandler();
 
@@ -67,7 +67,7 @@ public class TakeItemHandlerTests
         var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
         var handler = new TakeItemHandler();
 
         var result = handler.Handle(state, new Requests.TakeItemCommand("BRASS LAMP"));

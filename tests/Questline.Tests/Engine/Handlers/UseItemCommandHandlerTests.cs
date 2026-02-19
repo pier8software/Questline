@@ -32,7 +32,7 @@ public class UseItemCommandHandlerTests
             .WithBarrier(barrier)
             .BuildState("player1", "chamber");
 
-        state.Player.Inventory.Add(key);
+        state.Player.Character.Inventory.Add(key);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
@@ -54,7 +54,7 @@ public class UseItemCommandHandlerTests
             .WithBarrier(barrier)
             .BuildState("player1", "chamber");
 
-        state.Player.Inventory.Add(torch);
+        state.Player.Character.Inventory.Add(torch);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("torch", "iron door"));
@@ -95,7 +95,7 @@ public class UseItemCommandHandlerTests
             .WithBarrier(barrier)
             .BuildState("player1", "chamber");
 
-        state.Player.Inventory.Add(key);
+        state.Player.Character.Inventory.Add(key);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", null));
@@ -114,7 +114,7 @@ public class UseItemCommandHandlerTests
             .WithRoom("beyond", "Beyond", "Beyond the door.")
             .BuildState("player1", "chamber");
 
-        state.Player.Inventory.Add(key);
+        state.Player.Character.Inventory.Add(key);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
@@ -136,7 +136,7 @@ public class UseItemCommandHandlerTests
             .WithBarrier(barrier)
             .BuildState("player1", "chamber");
 
-        state.Player.Inventory.Add(key);
+        state.Player.Character.Inventory.Add(key);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));

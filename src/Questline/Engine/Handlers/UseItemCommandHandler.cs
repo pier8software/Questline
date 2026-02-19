@@ -9,13 +9,13 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 {
     public IResponse Handle(GameState state, Requests.UseItemCommand command)
     {
-        var item = state.Player.Inventory.FindByName(command.ItemName);
+        var item = state.Player.Character.Inventory.FindByName(command.ItemName);
         if (item is null)
         {
             return Responses.UseItemResponse.Error($"You don't have '{command.ItemName}'.");
         }
 
-        var room = state.GetRoom(state.Player.Location);
+        var room = state.GetRoom(state.Player.Character.Location);
 
         Barrier? barrier = null;
 

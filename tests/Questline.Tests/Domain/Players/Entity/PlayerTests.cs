@@ -6,20 +6,32 @@ namespace Questline.Tests.Domain.Players.Entity;
 public class PlayerTests
 {
     [Fact]
-    public void Location_is_mutable()
+    public void Has_character_property()
     {
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" };
-        player.Location.ShouldBe("start");
+        var character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" };
+        var player = new Player { Id = "player1", Character = character };
 
-        player.Location = "end";
-        player.Location.ShouldBe("end");
+        player.Character.ShouldBe(character);
     }
 
     [Fact]
-    public void Inventory_starts_empty()
+    public void Location_accessed_through_character()
     {
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" };
+        var character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" };
+        var player = new Player { Id = "player1", Character = character };
 
-        player.Inventory.IsEmpty.ShouldBeTrue();
+        player.Character.Location.ShouldBe("start");
+
+        player.Character.Location = "end";
+        player.Character.Location.ShouldBe("end");
+    }
+
+    [Fact]
+    public void Inventory_accessed_through_character()
+    {
+        var character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" };
+        var player = new Player { Id = "player1", Character = character };
+
+        player.Character.Inventory.IsEmpty.ShouldBeTrue();
     }
 }

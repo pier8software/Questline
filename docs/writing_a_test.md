@@ -96,7 +96,7 @@ var rooms = new GameBuilder()
         .WithExit(Direction.South, "start"))
     .Build();
 
-var state = new GameState(rooms, new Player { Location = "start" });
+var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("Hero", Race.Human, CharacterClass.Fighter) { Location = "start" } });
 ```
 
 - `GameBuilder.WithRoom(id, name, description, configure?)` — adds a room, optionally configuring it via a `RoomBuilder` callback
