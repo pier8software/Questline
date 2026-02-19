@@ -24,10 +24,30 @@ The character name SHALL be validated: non-empty, 2-24 characters, alphanumeric 
 - **WHEN** the player enters "Thorin"
 - **THEN** the character SHALL be created with name "Thorin"
 
-#### Scenario: Invalid name
+#### Scenario: Invalid name - empty
 
-- **WHEN** the player enters an empty string, a name shorter than 2 characters, longer than 24 characters, or containing invalid characters
-- **THEN** a validation error SHALL be returned with message: "Please give your character a name"
+- **WHEN** the player enters an empty string
+- **THEN** a validation error SHALL be returned with message "Please give your character a name"
+
+#### Scenario: Invalid name - too short
+
+- **WHEN** the player enters "A"
+- **THEN** a validation error SHALL be returned with message "Please give your character a name"
+
+#### Scenario: Invalid name - too long
+
+- **WHEN** the player enters a name longer than 24 characters
+- **THEN** a validation error SHALL be returned with message "Please give your character a name"
+
+#### Scenario: Invalid name - special characters
+
+- **WHEN** the player enters "Th@rin!"
+- **THEN** a validation error SHALL be returned with message "Please give your character a name"
+
+#### Scenario: Invalid name - leading or trailing whitespace
+
+- **WHEN** the player enters " Thorin " (with leading/trailing spaces)
+- **THEN** a validation error SHALL be returned with message "Please give your character a name"
 
 ### Requirement: Default race and class
 
@@ -60,7 +80,7 @@ The `stats` command SHALL display the character's name, race, class, level, and 
 
 ### Requirement: Player and Character are separate models
 
-Player (the human) and Character (the in-game avatar) SHALL be separate models. Player has an Id, a Character, and a Location.
+Player (the human) and Character (the in-game avatar) SHALL be separate models. Player has an Id, a Character, a Location, and an Inventory.
 
 #### Scenario: Player owns character
 
