@@ -69,6 +69,7 @@ updated via OpenSpec change workflow, not edited directly.
 - **Records** - Use for requests, responses, and immutable value types
 - **Primary constructors** - Use on classes (handlers, builders, attributes) not just records
 - **`static abstract` interface members** - `IRequest.CreateRequest` enforces a static factory contract
+- **Allman brace style** - Opening Brace on the NEXT line
 
 ## Additional Resources
 

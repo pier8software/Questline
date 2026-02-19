@@ -29,6 +29,7 @@ context: |
     - File-scoped namespaces, primary constructors, prefer records for immutable data
     - PascalCase public members/types, camelCase private fields
     - Entities have identity (required string Id), value objects use records
+    - Allman brace style
     - Content defined in JSON, not code
 
     ## Testing
