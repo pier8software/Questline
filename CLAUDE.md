@@ -22,25 +22,24 @@ This is a monorepo containing multiple projects and folders.
 ### Folder Structure
 
 - `Cli/` - The entry point for the terminal - Composition root, a thin client running the game engine
-- `Domain/` - Game Rules - Entities, data objects, value objects, domain commands, domain events, command handlers and
-  validators
-- `Engine/` - The game engine - Loading content, parsing commands and dispatching commands to handelers
-- `Framework/` - Core abstractions and utilities - This is where code for interacting with external systems lives,
-  project agnostic code
+- `Domain/` - Game Rules - Entities, data objects, value objects and validators
+- `Engine/` - The game engine - Loading content, parsing request and sending commands/queries to handlers. Requests, responses and request handlers live here.
+- `Framework/` - Core abstractions and utilities - This is where code for interacting with external systems lives, project agnostic code
 
 ### Domain Feature-Folder Convention
 
-`Domain/` is organised by feature: `Players/`, `Rooms/`, `Shared/`. Each feature folder uses the same internal layout:
+`Domain/` is organised by bounded context, a set of capabilities: `Players/`, `Rooms/`, `Shared/`. Each bounded context folder uses the same internal layout:
 
 | Sub-folder | Contents                          |
 |------------|-----------------------------------|
 | `Entity/`  | Domain entities and value objects |
 | `Data/`    | Data objects (where applicable)   |
 
+New bounded context get their own top-level folder under `Domain/` following this layout. New capabilities related to an existing bounded context should be added to that context.
+
 ## `tests/Questline.Tests/`: Application Test Suite
 
-Follows a similar structure to the main application code project, i.e. tests for componentns of the game engine will
-live in the `Engine/` folder.
+Follows a similar structure to the main application code project, i.e. tests for componentns of the game engine will live in the `Engine/` folder.
 
 ## `openspec/`: OpenSpec
 
@@ -69,6 +68,7 @@ updated via OpenSpec change workflow, not edited directly.
 - **Records** - Use for requests, responses, and immutable value types
 - **Primary constructors** - Use on classes (handlers, builders, attributes) not just records
 - **`static abstract` interface members** - `IRequest.CreateRequest` enforces a static factory contract
+- **Allman brace style** - Opening Brace on the NEXT line
 
 ## Additional Resources
 

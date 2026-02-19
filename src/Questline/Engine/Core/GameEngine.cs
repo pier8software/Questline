@@ -2,7 +2,7 @@ using Questline.Domain.Shared.Data;
 using Questline.Engine.Parsers;
 using Questline.Framework.Mediator;
 
-namespace Questline.Engine;
+namespace Questline.Engine.Core;
 
 public class GameEngine(Parser parser, RequestSender dispatcher, GameState state)
 {

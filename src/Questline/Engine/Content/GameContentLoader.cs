@@ -1,4 +1,3 @@
-using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Data;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
@@ -7,11 +6,11 @@ using Questline.Framework.FileSystem;
 
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
-namespace Questline.Engine;
+namespace Questline.Engine.Content;
 
 public class GameContentLoader(JsonFileLoader loader)
 {
-    public GameState Load()
+    public WorldContent Load()
     {
         var adventureData = loader.LoadFile<AdventureData>("the-goblins-lair.json");
 
@@ -34,7 +33,7 @@ public class GameContentLoader(JsonFileLoader loader)
 
         var rooms = BuildRooms(adventureData.Rooms, itemsDictionary);
 
-        return new GameState(rooms, new Player { Id = "Player1", Location = adventureData.StartingRoomId }, barriers);
+        return new WorldContent(rooms, barriers, adventureData.StartingRoomId);
     }
 
     private static Dictionary<string, Room> BuildRooms(

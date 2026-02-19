@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Questline.Domain.Characters.Entity;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Shared.Data;
 using Questline.Engine.Handlers;
@@ -16,7 +17,7 @@ public class RequestSenderTests
         var world = new GameBuilder()
             .WithRoom("start", "Start", "A starting room.")
             .Build();
-        var state = new GameState(world, new Player { Id = "player1", Location = "start" });
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" });
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton<IRequestHandler<Requests.GetRoomDetailsQuery>, GetRoomDetailsHandler>()

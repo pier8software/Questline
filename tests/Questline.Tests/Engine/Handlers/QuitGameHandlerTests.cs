@@ -1,3 +1,4 @@
+using Questline.Domain.Characters.Entity;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Shared.Data;
 using Questline.Engine.Handlers;
@@ -15,7 +16,7 @@ public class QuitGameHandlerTests
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
             .Build();
 
-        var state = new GameState(world, new Player { Id = "player1", Location = "tavern" });
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "tavern" });
 
         var handler = new QuitGameHandler();
 

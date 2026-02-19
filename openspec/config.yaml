@@ -21,7 +21,7 @@ context: |
     - Questline.Engine — parser, command dispatcher, command handlers, event generation
     - Questline.Framework — JSON serialisation, save/load, content loading, messaging
 
-    Command pipeline: Input -> Parser -> Command -> Handler -> Event/Result -> Renderer
+    Command pipeline: Input -> Parser -> Request(Command/Query) -> Handler -> Response -> Renderer
     Handlers receive command objects, return results (never write to console directly).
     Handlers registered with dispatcher by verb using registration pattern.
 
@@ -29,6 +29,7 @@ context: |
     - File-scoped namespaces, primary constructors, prefer records for immutable data
     - PascalCase public members/types, camelCase private fields
     - Entities have identity (required string Id), value objects use records
+    - Allman brace style
     - Content defined in JSON, not code
 
     ## Testing
@@ -72,12 +73,12 @@ context: |
     progression (XP, levelling, shops), Terminal.Gui or TUI frameworks.
 
     ## Domain Structure
-    `Domain/` is organised by feature: `Players/`, `Rooms/`, `Shared/`.
-    Each feature folder uses the same internal layout:
+    `Domain/` is organised by bounded context, a set of capabilities: `Players/`, `Rooms/`, `Shared/`.
+    Each bounded context folder uses the same internal layout:
     - `Entity/` — domain entities and value objects (e.g. `Player`, `Room`, `Item`)
     - `Data/` — data-transfer objects for JSON deserialisation (where applicable)
     `Shared/` holds cross-cutting concerns: `Item`, `Inventory`, `GameState`, `AdventureData`.
-    New features get their own top-level folder under `Domain/` following this layout.
+    New bounded context get their own top-level folder under `Domain/` following this layout. New capabilities related to an existing bounded context should be added to that context.
 
     ## Command Pipeline Details
     Adding a new command follows a mediator pattern:
