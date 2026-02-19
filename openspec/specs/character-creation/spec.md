@@ -80,12 +80,23 @@ The `stats` command SHALL display the character's name, race, class, level, and 
 
 ### Requirement: Player and Character are separate models
 
-Player (the human) and Character (the in-game avatar) SHALL be separate models. Player has an Id, a Character, a Location, and an Inventory.
+Player (the human) and Character (the in-game avatar) SHALL be separate models. Player has an Id and a Character. Character has a Location and an Inventory. Location and Inventory are properties of the Character, not the Player.
 
 #### Scenario: Player owns character
 
 - **WHEN** a Player is created with a Character named "Thorin"
 - **THEN** `Player.Character.Name` SHALL be "Thorin"
+
+#### Scenario: Character holds location
+
+- **WHEN** a Character moves to room "dungeon-entrance"
+- **THEN** `Player.Character.Location` SHALL be "dungeon-entrance"
+
+#### Scenario: Character holds inventory
+
+- **WHEN** a Character picks up an item
+- **THEN** the item SHALL be in `Player.Character.Inventory`
+- **AND** `Player` SHALL NOT have a direct Inventory property
 
 ### Requirement: Welcome message uses character name
 
@@ -101,13 +112,17 @@ On starting a new game, the welcome message SHALL include the character's name.
 ### Character Model
 
 ```csharp
-public record Character(
-    string Name,
-    Race Race,
-    CharacterClass Class,
-    int Level = 1,
-    int Experience = 0,
-    CharacterStats? Stats = null);
+public class Character
+{
+    public string Name { get; }
+    public Race Race { get; }
+    public CharacterClass Class { get; }
+    public int Level { get; }
+    public int Experience { get; }
+    public CharacterStats? Stats { get; }
+    public string Location { get; set; }
+    public Inventory Inventory { get; init; } = new();
+}
 
 public enum Race { Human, Elf, Dwarf, Halfling }
 public enum CharacterClass { Fighter, Wizard, Rogue, Cleric }
@@ -128,9 +143,8 @@ public record CharacterStats(
 ```csharp
 public class Player
 {
-    public required Guid Id { get; init; }
+    public required string Id { get; init; }
     public required Character Character { get; init; }
-    public required string Location { get; set; }
 }
 ```
 
