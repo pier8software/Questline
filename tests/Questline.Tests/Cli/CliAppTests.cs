@@ -1,9 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
-using Questline.Domain.Players.Entity;
+using Questline.Domain.Characters.Entity;
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared.Data;
-using Questline.Engine;
+using Questline.Engine.Characters;
+using Questline.Engine.Content;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Engine.Parsers;
@@ -29,7 +29,9 @@ public class CliAppTests
                 r.WithExit(Direction.South, "hallway"))
             .Build();
 
-        var state = new GameState(rooms, new Player { Id = "player1", Location = "entrance" });
+        var world = new WorldContent(rooms, new(), "entrance");
+        var dice = new FakeDice(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4);
+        var factory = new CharacterFactory(dice);
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton<IRequestHandler<Requests.GetRoomDetailsQuery>, GetRoomDetailsHandler>()
@@ -39,12 +41,10 @@ public class CliAppTests
 
         var dispatcher = new RequestSender(serviceProvider);
 
-
         var console = new FakeConsole();
         var parser = new Parser();
-        var gameEngine = new GameEngine(parser, dispatcher, state);
 
-        var app = new CliApp(console, gameEngine);
+        var app = new CliApp(console, world, factory, parser, dispatcher);
 
         return (app, console);
     }
@@ -53,7 +53,7 @@ public class CliAppTests
     public void Displays_initial_room_on_start()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("quit");
+        console.QueueInput("Hero", "quit");
 
         loop.Run();
 
@@ -65,7 +65,7 @@ public class CliAppTests
     public void Displays_command_prompt()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("quit");
+        console.QueueInput("Hero", "quit");
 
         loop.Run();
 
@@ -76,12 +76,11 @@ public class CliAppTests
     public void Look_command_displays_room_info()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("look", "quit");
+        console.QueueInput("Hero", "look", "quit");
 
         loop.Run();
 
         var output = console.AllOutput;
-        // The initial display + look should both show room info
         var count = CountOccurrences(output, "Dungeon Entrance");
         count.ShouldBeGreaterThanOrEqualTo(2);
     }
@@ -90,7 +89,7 @@ public class CliAppTests
     public void Go_command_moves_and_displays_new_room()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("go north", "quit");
+        console.QueueInput("Hero", "go north", "quit");
 
         loop.Run();
 
@@ -101,7 +100,7 @@ public class CliAppTests
     public void Unknown_command_displays_error()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("dance", "quit");
+        console.QueueInput("Hero", "dance", "quit");
 
         loop.Run();
 
@@ -112,7 +111,7 @@ public class CliAppTests
     public void Quit_command_exits_gracefully()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("quit");
+        console.QueueInput("Hero", "quit");
 
         loop.Run();
 
@@ -123,12 +122,11 @@ public class CliAppTests
     public void Null_input_exits_loop()
     {
         var (loop, console) = CreateCliApp();
-        // No input queued, ReadLine returns null
+        // No input queued, ReadLine returns null at name prompt
 
         loop.Run();
 
-        // Should not hang — loop exits when input is null
-        console.AllOutput.ShouldContain("Dungeon Entrance");
+        // Should not hang — exits when input is null
     }
 
     private static int CountOccurrences(string text, string search)

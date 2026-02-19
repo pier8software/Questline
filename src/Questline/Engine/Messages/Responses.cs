@@ -134,6 +134,22 @@ public static class Responses
         public string Message => $"Questline v{Version}";
     }
 
+    public record StatsResponse(
+        string Name,
+        string Race,
+        string Class,
+        int Level,
+        Domain.Characters.Entity.CharacterStats Stats) : IResponse
+    {
+        public string Message =>
+            $"""
+            {Name} — {Race} {Class} (Level {Level})
+            HP: {Stats.CurrentHealth}/{Stats.MaxHealth}
+            STR: {Stats.Strength}  INT: {Stats.Intelligence}  WIS: {Stats.Wisdom}
+            DEX: {Stats.Dexterity}  CON: {Stats.Constitution}  CHA: {Stats.Charisma}
+            """;
+    }
+
     public record GameQuited : IResponse
     {
         public string Message => "Goodbye!";

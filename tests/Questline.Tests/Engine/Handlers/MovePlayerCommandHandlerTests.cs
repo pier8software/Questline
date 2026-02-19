@@ -1,3 +1,4 @@
+using Questline.Domain.Characters.Entity;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
@@ -18,7 +19,7 @@ public class MovePlayerCommandHandlerTests
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .Build();
 
-        var player = new Player { Id = "player1", Location = "start" };
+        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" };
         var state = new GameState(rooms, player);
 
         var handler = new MovePlayerCommandHandler();
@@ -38,7 +39,7 @@ public class MovePlayerCommandHandlerTests
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .Build();
 
-        var player = new Player { Id = "player1", Location = "start" };
+        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" };
         var state = new GameState(rooms, player);
 
         var handler = new MovePlayerCommandHandler();
@@ -56,7 +57,7 @@ public class MovePlayerCommandHandlerTests
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .Build();
 
-        var player = new Player { Id = "player1", Location = "start" };
+        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" };
         var state = new GameState(rooms, player);
 
         var handler = new MovePlayerCommandHandler();
@@ -73,7 +74,7 @@ public class MovePlayerCommandHandlerTests
             .WithRoom("sealed", "Sealed Room", "No way north.")
             .Build();
 
-        var player = new Player { Id = "player1", Location = "sealed" };
+        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "sealed" };
         var state = new GameState(world, player);
 
         var handler = new MovePlayerCommandHandler();

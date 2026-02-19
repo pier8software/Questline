@@ -6,7 +6,6 @@ namespace Questline.Cli;
 public class CliAppBuilder
 {
     private readonly ServiceCollection _services = new();
-    //private IConfiguration _configuration;
 
     public CliAppBuilder ConfigureServices()
     {
@@ -16,8 +15,6 @@ public class CliAppBuilder
         _services.AddQuestlineEngine();
         return this;
     }
-
-    //public CliAppBuilder ConfigureApplication() => this;
 
     public CliApp Build()
     {

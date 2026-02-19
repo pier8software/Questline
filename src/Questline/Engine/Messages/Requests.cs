@@ -56,6 +56,12 @@ public static class Requests
         public static IRequest CreateRequest(string[] args) => new VersionQuery();
     }
 
+    [Verbs("stats")]
+    public record StatsQuery : IRequest
+    {
+        public static IRequest CreateRequest(string[] args) => new StatsQuery();
+    }
+
     [Verbs("use")]
     public record UseItemCommand(string ItemName, string? TargetName) : IRequest
     {

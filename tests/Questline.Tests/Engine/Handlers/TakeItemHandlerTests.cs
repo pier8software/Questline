@@ -1,3 +1,4 @@
+using Questline.Domain.Characters.Entity;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
@@ -17,7 +18,7 @@ public class TakeItemHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
 
-        var state = new GameState(rooms, new Player { Id = "player1", Location = "cellar" });
+        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
 
         var handler = new TakeItemHandler();
 
@@ -34,7 +35,7 @@ public class TakeItemHandlerTests
         var rooms = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
-        var state = new GameState(rooms, new Player { Id = "player1", Location = "cellar" });
+        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
         var handler = new TakeItemHandler();
 
         _ = handler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
@@ -50,7 +51,7 @@ public class TakeItemHandlerTests
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
 
-        var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
 
         var handler = new TakeItemHandler();
 
@@ -66,7 +67,7 @@ public class TakeItemHandlerTests
         var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
-        var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
         var handler = new TakeItemHandler();
 
         var result = handler.Handle(state, new Requests.TakeItemCommand("BRASS LAMP"));

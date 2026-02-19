@@ -1,3 +1,4 @@
+using Questline.Domain.Characters.Entity;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
@@ -26,7 +27,7 @@ public class GetRoomDetailsHandlerTests
             .WithRoom("entrance", "Entrance", "The entrance.")
             .Build();
 
-        var state = new GameState(rooms, new Player { Id = "player1", Location = "hallway" });
+        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "hallway" });
         var handler = new GetRoomDetailsHandler();
 
         var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
@@ -45,7 +46,7 @@ public class GetRoomDetailsHandlerTests
         var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
-        var state = new GameState(world, new Player { Id = "player1", Location = "cellar" });
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
         var handler = new GetRoomDetailsHandler();
 
         var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
