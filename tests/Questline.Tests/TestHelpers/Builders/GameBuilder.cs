@@ -8,11 +8,12 @@ namespace Questline.Tests.TestHelpers.Builders;
 
 public class GameBuilder
 {
-    private static readonly Character DefaultCharacter = new("TestHero", Race.Human, CharacterClass.Fighter);
+    private static readonly Func<string, Character> DefaultCharacterFactory =
+        location => new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = location };
 
     private readonly Dictionary<string, Barrier> _barriers = new();
     private readonly Dictionary<string, Room> _rooms = new();
-    private Character _character = DefaultCharacter;
+    private Func<string, Character>? _characterFactory;
 
     public GameBuilder WithRoom(string id, string name, string description, Action<RoomBuilder>? configure = null)
     {
@@ -30,12 +31,20 @@ public class GameBuilder
 
     public GameBuilder WithCharacter(Character character)
     {
-        _character = character;
+        _characterFactory = _ => character;
         return this;
     }
 
     public Dictionary<string, Room> Build() => _rooms;
 
-    public GameState BuildState(string playerId, string startLocation) =>
-        new(_rooms, new Player { Id = playerId, Character = _character, Location = startLocation }, _barriers);
+    public GameState BuildState(string playerId, string startLocation)
+    {
+        var character = _characterFactory is not null
+            ? _characterFactory(startLocation)
+            : DefaultCharacterFactory(startLocation);
+
+        character.Location = startLocation;
+
+        return new GameState(_rooms, new Player { Id = playerId, Character = character }, _barriers);
+    }
 }

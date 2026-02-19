@@ -11,7 +11,7 @@ public class StatsQueryHandlerTests
     public void Returns_character_name_in_stats()
     {
         var stats = new CharacterStats(8, 6, 14, 10, 12, 8, 15, 11);
-        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, Stats: stats);
+        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, stats: stats);
         var state = new GameBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
             .WithCharacter(character)
@@ -27,7 +27,7 @@ public class StatsQueryHandlerTests
     public void Returns_race_and_class()
     {
         var stats = new CharacterStats(8, 6, 14, 10, 12, 8, 15, 11);
-        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, Stats: stats);
+        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, stats: stats);
         var state = new GameBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
             .WithCharacter(character)
@@ -44,7 +44,7 @@ public class StatsQueryHandlerTests
     public void Returns_level()
     {
         var stats = new CharacterStats(8, 6, 14, 10, 12, 8, 15, 11);
-        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, Stats: stats);
+        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, stats: stats);
         var state = new GameBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
             .WithCharacter(character)
@@ -60,7 +60,7 @@ public class StatsQueryHandlerTests
     public void Returns_all_ability_scores()
     {
         var stats = new CharacterStats(8, 6, 14, 10, 12, 8, 15, 11);
-        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, Stats: stats);
+        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, stats: stats);
         var state = new GameBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
             .WithCharacter(character)
@@ -81,7 +81,7 @@ public class StatsQueryHandlerTests
     public void Returns_health_values()
     {
         var stats = new CharacterStats(8, 6, 14, 10, 12, 8, 15, 11);
-        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, Stats: stats);
+        var character = new Character("Thorin", Race.Human, CharacterClass.Fighter, stats: stats);
         var state = new GameBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
             .WithCharacter(character)

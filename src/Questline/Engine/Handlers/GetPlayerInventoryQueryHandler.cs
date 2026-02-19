@@ -8,7 +8,7 @@ public class GetPlayerInventoryQueryHandler : IRequestHandler<Requests.GetPlayer
 {
     public IResponse Handle(GameState state, Requests.GetPlayerInventoryQuery command)
     {
-        var items = state.Player.Inventory.Items
+        var items = state.Player.Character.Inventory.Items
             .Select(i => i.Name)
             .ToList();
 

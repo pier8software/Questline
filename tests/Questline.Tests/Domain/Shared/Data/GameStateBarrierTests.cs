@@ -23,7 +23,7 @@ public class GameStateBarrierTests
 
         var state = new GameState(
             new Dictionary<string, Room>(),
-            new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" },
+            new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } },
             new Dictionary<string, Barrier> { ["iron-door"] = barrier });
 
         state.GetBarrier("iron-door").ShouldBe(barrier);
@@ -34,7 +34,7 @@ public class GameStateBarrierTests
     {
         var state = new GameState(
             new Dictionary<string, Room>(),
-            new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" });
+            new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } });
 
         state.GetBarrier("nonexistent").ShouldBeNull();
     }
@@ -44,7 +44,7 @@ public class GameStateBarrierTests
     {
         var state = new GameState(
             new Dictionary<string, Room>(),
-            new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" });
+            new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } });
 
         state.GetBarrier(null).ShouldBeNull();
     }

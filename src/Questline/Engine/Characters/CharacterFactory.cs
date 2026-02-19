@@ -30,6 +30,6 @@ public class CharacterFactory(IDice dice)
             constitution,
             charisma);
 
-        return new Character(name, Race.Human, CharacterClass.Fighter, Stats: stats);
+        return new Character(name, Race.Human, CharacterClass.Fighter, stats: stats);
     }
 }

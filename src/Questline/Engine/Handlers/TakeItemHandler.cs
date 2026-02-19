@@ -8,7 +8,7 @@ public class TakeItemHandler : IRequestHandler<Requests.TakeItemCommand>
 {
     public IResponse Handle(GameState state, Requests.TakeItemCommand request)
     {
-        var room = state.GetRoom(state.Player.Location);
+        var room = state.GetRoom(state.Player.Character.Location);
         var item = room.Items.FindByName(request.ItemName);
 
         if (item is null)
@@ -17,7 +17,7 @@ public class TakeItemHandler : IRequestHandler<Requests.TakeItemCommand>
         }
 
         room.Items.Remove(item);
-        state.Player.Inventory.Add(item);
+        state.Player.Character.Inventory.Add(item);
 
         return Responses.ItemTakenResponse.Success(item.Name);
     }

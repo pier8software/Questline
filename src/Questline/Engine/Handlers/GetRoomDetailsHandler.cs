@@ -8,7 +8,7 @@ public class GetRoomDetailsHandler : IRequestHandler<Requests.GetRoomDetailsQuer
 {
     public IResponse Handle(GameState state, Requests.GetRoomDetailsQuery request)
     {
-        var room = state.GetRoom(state.Player.Location);
+        var room = state.GetRoom(state.Player.Character.Location);
         var exits = room.Exits.Keys.Select(d => d.ToString()).ToList();
         var items = room.Items.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(state, room);

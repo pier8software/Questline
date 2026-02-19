@@ -19,7 +19,7 @@ public class MovePlayerCommandHandlerTests
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .Build();
 
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" };
+        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } };
         var state = new GameState(rooms, player);
 
         var handler = new MovePlayerCommandHandler();
@@ -39,7 +39,7 @@ public class MovePlayerCommandHandlerTests
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .Build();
 
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" };
+        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } };
         var state = new GameState(rooms, player);
 
         var handler = new MovePlayerCommandHandler();
@@ -57,14 +57,14 @@ public class MovePlayerCommandHandlerTests
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
             .Build();
 
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "start" };
+        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } };
         var state = new GameState(rooms, player);
 
         var handler = new MovePlayerCommandHandler();
 
         _ = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
-        state.Player.Location.ShouldBe("end");
+        state.Player.Character.Location.ShouldBe("end");
     }
 
     [Fact]
@@ -74,14 +74,14 @@ public class MovePlayerCommandHandlerTests
             .WithRoom("sealed", "Sealed Room", "No way north.")
             .Build();
 
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "sealed" };
+        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "sealed" } };
         var state = new GameState(world, player);
 
         var handler = new MovePlayerCommandHandler();
 
         _ = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
-        player.Location.ShouldBe("sealed");
+        player.Character.Location.ShouldBe("sealed");
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class MovePlayerCommandHandlerTests
         var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
         result.Message.ShouldBe("The iron door is locked tight.");
-        state.Player.Location.ShouldBe("start");
+        state.Player.Character.Location.ShouldBe("start");
     }
 
     [Fact]
@@ -139,6 +139,6 @@ public class MovePlayerCommandHandlerTests
 
         var parts = result.Message.Split("\n");
         parts[0].ShouldBe("End Room");
-        state.Player.Location.ShouldBe("end");
+        state.Player.Character.Location.ShouldBe("end");
     }
 }

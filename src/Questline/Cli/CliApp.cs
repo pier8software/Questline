@@ -20,11 +20,12 @@ public class CliApp(IConsole console, WorldContent world, CharacterFactory chara
             return;
         }
 
+        character.Location = world.StartingRoomId;
+
         var player = new Player
         {
             Id = Guid.NewGuid().ToString(),
-            Character = character,
-            Location = world.StartingRoomId
+            Character = character
         };
 
         var state = new GameState(world.Rooms, player, world.Barriers);

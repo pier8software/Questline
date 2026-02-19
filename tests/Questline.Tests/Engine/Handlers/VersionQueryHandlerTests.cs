@@ -16,7 +16,7 @@ public class VersionQueryHandlerTests
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
             .Build();
 
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "tavern" });
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "tavern" } });
 
         var handler = new VersionQueryHandler();
 

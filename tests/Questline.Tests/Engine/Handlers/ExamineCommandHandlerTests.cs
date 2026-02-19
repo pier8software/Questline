@@ -17,7 +17,7 @@ public class ExamineCommandHandlerTests
             .WithRoom("chamber", "Chamber", "A dark chamber.")
             .BuildState("player1", "chamber");
 
-        state.Player.Inventory.Add(key);
+        state.Player.Character.Inventory.Add(key);
         var handler = new ExamineCommandHandler();
 
         var result = handler.Handle(state, new Requests.ExamineCommand("rusty key"));

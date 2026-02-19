@@ -8,7 +8,7 @@ public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerComma
 {
     public IResponse Handle(GameState state, Requests.MovePlayerCommand command)
     {
-        var currentRoom = state.GetRoom(state.Player.Location);
+        var currentRoom = state.GetRoom(state.Player.Character.Location);
 
         if (!currentRoom.Exits.TryGetValue(command.Direction, out var exit))
         {
@@ -24,7 +24,7 @@ public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerComma
             }
         }
 
-        state.Player.Location = exit.Destination;
+        state.Player.Character.Location = exit.Destination;
 
         var newRoom = state.GetRoom(exit.Destination);
         var exits = newRoom.Exits.Keys.Select(d => d.ToString()).ToList();

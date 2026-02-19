@@ -1,9 +1,21 @@
+using Questline.Domain.Shared.Entity;
+
 namespace Questline.Domain.Characters.Entity;
 
-public record Character(
-    string Name,
-    Race Race,
-    CharacterClass Class,
-    int Level = 1,
-    int Experience = 0,
-    CharacterStats? Stats = null);
+public class Character(
+    string name,
+    Race race,
+    CharacterClass @class,
+    int level = 1,
+    int experience = 0,
+    CharacterStats? stats = null)
+{
+    public string Name { get; } = name;
+    public Race Race { get; } = race;
+    public CharacterClass Class { get; } = @class;
+    public int Level { get; } = level;
+    public int Experience { get; } = experience;
+    public CharacterStats? Stats { get; } = stats;
+    public string Location { get; set; } = "";
+    public Inventory Inventory { get; init; } = new();
+}

@@ -18,9 +18,9 @@ public class GetPlayerInventoryQueryHandlerTests
         var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
-        state.Player.Inventory.Add(lamp);
-        state.Player.Inventory.Add(key);
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
+        state.Player.Character.Inventory.Add(lamp);
+        state.Player.Character.Inventory.Add(key);
         var handler = new GetPlayerInventoryQueryHandler();
 
         var result = handler.Handle(state, new Requests.GetPlayerInventoryQuery());
@@ -36,7 +36,7 @@ public class GetPlayerInventoryQueryHandlerTests
         var world = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .Build();
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
+        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
         var handler = new GetPlayerInventoryQueryHandler();
 
         var result = handler.Handle(state, new Requests.GetPlayerInventoryQuery());
@@ -51,16 +51,16 @@ public class GetPlayerInventoryQueryHandlerTests
         var rooms = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .Build();
-        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter), Location = "cellar" });
+        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
         var getHandler = new TakeItemHandler();
         var dropHandler = new DropItemCommandHandler();
 
         getHandler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
-        state.Player.Inventory.Items.ShouldContain(lamp);
+        state.Player.Character.Inventory.Items.ShouldContain(lamp);
         state.GetRoom("cellar").Items.IsEmpty.ShouldBeTrue();
 
         dropHandler.Handle(state, new Requests.DropItemCommand("brass lamp"));
-        state.Player.Inventory.IsEmpty.ShouldBeTrue();
+        state.Player.Character.Inventory.IsEmpty.ShouldBeTrue();
         state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBe(lamp);
     }
 }
