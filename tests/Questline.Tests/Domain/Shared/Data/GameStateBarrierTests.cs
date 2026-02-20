@@ -8,6 +8,15 @@ namespace Questline.Tests.Domain.Shared.Data;
 
 public class GameStateBarrierTests
 {
+    private static readonly HitPoints DefaultHitPoints = new(8, 8);
+    private static readonly AbilityScores DefaultAbilityScores = new(
+        new AbilityScore(10), new AbilityScore(10), new AbilityScore(10),
+        new AbilityScore(10), new AbilityScore(10), new AbilityScore(10));
+
+    private static Player CreateTestPlayer() =>
+        new("player1", Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+            DefaultHitPoints, DefaultAbilityScores, "start"));
+
     [Fact]
     public void GetBarrier_returns_barrier_when_found()
     {
@@ -23,7 +32,7 @@ public class GameStateBarrierTests
 
         var state = new GameState(
             new Dictionary<string, Room>(),
-            new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } },
+            CreateTestPlayer(),
             new Dictionary<string, Barrier> { ["iron-door"] = barrier });
 
         state.GetBarrier("iron-door").ShouldBe(barrier);
@@ -34,7 +43,7 @@ public class GameStateBarrierTests
     {
         var state = new GameState(
             new Dictionary<string, Room>(),
-            new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } });
+            CreateTestPlayer());
 
         state.GetBarrier("nonexistent").ShouldBeNull();
     }
@@ -44,7 +53,7 @@ public class GameStateBarrierTests
     {
         var state = new GameState(
             new Dictionary<string, Room>(),
-            new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } });
+            CreateTestPlayer());
 
         state.GetBarrier(null).ShouldBeNull();
     }

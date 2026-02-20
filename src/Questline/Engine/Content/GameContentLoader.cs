@@ -10,9 +10,9 @@ namespace Questline.Engine.Content;
 
 public class GameContentLoader(JsonFileLoader loader)
 {
-    public WorldContent Load()
+    public WorldContent Load(string adventureId)
     {
-        var adventureData = loader.LoadFile<AdventureData>("the-goblins-lair.json");
+        var adventureData = loader.LoadFile<AdventureData>($"{adventureId}.json");
 
         var itemsDictionary = adventureData.Items.ToDictionary(i => i.Id, i => new Item
         {

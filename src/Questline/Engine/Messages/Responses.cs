@@ -1,3 +1,5 @@
+using Questline.Domain.Characters.Entity;
+using Questline.Domain.Rooms.Entity;
 using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Messages;
@@ -6,7 +8,10 @@ public static class Responses
 {
     public record UseItemResponse : IResponse
     {
-        private UseItemResponse(string message) { Message = message; }
+        private UseItemResponse(string message)
+        {
+            Message = message;
+        }
 
         public string Message { get; }
 
@@ -16,7 +21,10 @@ public static class Responses
 
     public record ExamineResponse : IResponse
     {
-        private ExamineResponse(string message) { Message = message; }
+        private ExamineResponse(string message)
+        {
+            Message = message;
+        }
 
         public string Message { get; }
 
@@ -31,6 +39,8 @@ public static class Responses
         {
             Message = message;
         }
+
+        public string Message { get; }
 
         public static PlayerMovedResponse Success(
             string roomName,
@@ -62,8 +72,6 @@ public static class Responses
 
             return string.Join("\n", parts);
         }
-
-        public string Message { get; }
     }
 
     public record ItemDroppedResponse(string Item)
@@ -129,29 +137,67 @@ public static class Responses
         public static ItemTakenResponse Success(string item) => new($"You pick up the {item}.");
         public static ItemTakenResponse Error(string errorMessage) => new(errorMessage);
     }
+
     public record VersionResponse(string Version) : IResponse
     {
         public string Message => $"Questline v{Version}";
     }
 
-    public record StatsResponse(
-        string Name,
-        string Race,
-        string Class,
-        int Level,
-        Domain.Characters.Entity.CharacterStats Stats) : IResponse
-    {
-        public string Message =>
-            $"""
-            {Name} — {Race} {Class} (Level {Level})
-            HP: {Stats.CurrentHealth}/{Stats.MaxHealth}
-            STR: {Stats.Strength}  INT: {Stats.Intelligence}  WIS: {Stats.Wisdom}
-            DEX: {Stats.Dexterity}  CON: {Stats.Constitution}  CHA: {Stats.Charisma}
-            """;
-    }
+    public record CharacterCreationResponse(string Message) : IResponse;
+
+    public record CharacterCreationCompleteResponse(string Message, Character Character) : IResponse;
 
     public record GameQuited : IResponse
     {
         public string Message => "Goodbye!";
+    }
+
+    public record GameInitialisedResponse : IResponse
+    {
+        private GameInitialisedResponse(string message)
+        {
+            Message = message;
+        }
+
+        public string Message { get; }
+
+        private static string FormatRoomDescription(
+            string characterName,
+            string roomName,
+            string description,
+            IReadOnlyList<string> exits,
+            IReadOnlyList<string> items,
+            IReadOnlyList<string>? lockedBarriers = null)
+        {
+            var parts = new List<string>
+            {
+                $"Welcome {characterName}! Your adventure begins...",
+                roomName,
+                description
+            };
+
+            if (items.Count > 0)
+            {
+                parts.Add($"You can see: {string.Join(", ", items)}");
+            }
+
+            if (lockedBarriers is { Count: > 0 })
+            {
+                parts.AddRange(lockedBarriers);
+            }
+
+            parts.Add($"Exits: {string.Join(", ", exits)}");
+
+            return string.Join("\n", parts);
+        }
+
+        public static GameInitialisedResponse Create(
+            string characterName,
+            string roomName,
+            string description,
+            List<string> exits,
+            List<string> items,
+            List<string>? lockedBarriers = null) =>
+            new(FormatRoomDescription(characterName, roomName, description, exits, items, lockedBarriers));
     }
 }

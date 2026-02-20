@@ -61,8 +61,13 @@ public class Parser
         }
     }
 
-    public ParseResult Parse(string input)
+    public ParseResult Parse(string? input)
     {
+        if (string.IsNullOrEmpty(input))
+        {
+            return ParseResult.Failure(new ParseError("Please enter a command."));
+        }
+
         var tokens = input.Trim().ToLowerInvariant()
             .Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
