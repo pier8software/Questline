@@ -14,7 +14,7 @@ public class CharacterNameValidator : AbstractValidator<CharacterName>
 
     public static CharacterNameValidator Instance { get; } = new();
 
-    public static bool HaveValidLength(string name) =>
-        name.Length is >= 2 and <= 24
+    public static bool HaveValidLength(string? name) =>
+        name?.Length is >= 2 and <= 24
         && name == name.Trim();
 }
