@@ -6,12 +6,12 @@ namespace Questline.Domain.Characters;
 public static class AbilityScoresCalculator
 {
     public static AbilityScores Calculate(IDice dice) => new(
-        new AbilityScore(dice.Roll(1, 6).Sum()),
-        new AbilityScore(dice.Roll(1, 6).Sum()),
-        new AbilityScore(dice.Roll(1, 6).Sum()),
-        new AbilityScore(dice.Roll(1, 6).Sum()),
-        new AbilityScore(dice.Roll(1, 6).Sum()),
-        new AbilityScore(dice.Roll(1, 6).Sum())
+        new AbilityScore(dice.Roll(3, 6).Sum()),
+        new AbilityScore(dice.Roll(3, 6).Sum()),
+        new AbilityScore(dice.Roll(3, 6).Sum()),
+        new AbilityScore(dice.Roll(3, 6).Sum()),
+        new AbilityScore(dice.Roll(3, 6).Sum()),
+        new AbilityScore(dice.Roll(3, 6).Sum())
     );
 }
 
