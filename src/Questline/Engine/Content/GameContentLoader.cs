@@ -3,7 +3,6 @@ using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Framework.FileSystem;
-
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Engine.Content;

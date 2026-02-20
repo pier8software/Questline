@@ -19,9 +19,9 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\Questline\Questline.csproj"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-        <Using Include="Xunit" />
-        <Using Include="Shouldly" />
+        <Using Include="Xunit"/>
+        <Using Include="Shouldly"/>
     </ItemGroup>
 </Project>

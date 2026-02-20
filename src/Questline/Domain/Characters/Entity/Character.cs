@@ -32,7 +32,7 @@ public record Character
             AbilityScores = abilityScores,
             HitPoints = hitPoints,
             Location = location,
-            Inventory = new()
+            Inventory = new Inventory()
         };
     }
 

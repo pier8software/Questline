@@ -7,11 +7,11 @@ namespace Questline.Tests.Engine.Characters;
 
 public class CharacterCreationStateMachineTests
 {
-    private static CharacterCreationStateMachine CreateStateMachine(params int[] diceRolls) =>
-        new(new FakeDice(diceRolls));
-
     // 3d6 x 6 ability scores = 18 rolls, then 1d8 for HP = 19 rolls total
     private static readonly int[] DefaultRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
+
+    private static CharacterCreationStateMachine CreateStateMachine(params int[] diceRolls) =>
+        new(new FakeDice(diceRolls));
 
     [Fact]
     public void First_call_rolls_ability_scores_and_prompts_class_selection()

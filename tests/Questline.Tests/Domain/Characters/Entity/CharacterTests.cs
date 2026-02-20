@@ -5,6 +5,7 @@ namespace Questline.Tests.Domain.Characters.Entity;
 public class CharacterTests
 {
     private static readonly HitPoints DefaultHitPoints = new(8, 8);
+
     private static readonly AbilityScores DefaultAbilityScores = new(
         new AbilityScore(10), new AbilityScore(10), new AbilityScore(10),
         new AbilityScore(10), new AbilityScore(10), new AbilityScore(10));

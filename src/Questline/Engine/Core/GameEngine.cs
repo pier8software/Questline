@@ -30,7 +30,7 @@ public class GameEngine(Parser parser, RequestSender dispatcher, IGameContentLoa
 
         character.SetLocation(world.StartingRoomId);
 
-        _state = new GameState(world.Rooms, new Player( Guid.NewGuid().ToString(), character), world.Barriers);
+        _state = new GameState(world.Rooms, new Player(Guid.NewGuid().ToString(), character), world.Barriers);
         var startingRoom = _state.GetRoom(world.StartingRoomId);
         var exits = startingRoom.Exits.Keys.Select(d => d.ToString()).ToList();
         var items = startingRoom.Items.Items.Select(i => i.Name).ToList();
@@ -56,7 +56,7 @@ public class GameEngine(Parser parser, RequestSender dispatcher, IGameContentLoa
             return descriptions;
         }
 
-        return  Responses.GameInitialisedResponse.Create(
+        return Responses.GameInitialisedResponse.Create(
             character.Name,
             startingRoom.Name,
             startingRoom.Description,
