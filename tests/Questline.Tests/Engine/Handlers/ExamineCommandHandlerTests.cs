@@ -11,7 +11,8 @@ public class ExamineCommandHandlerTests
     [Fact]
     public void Examine_inventory_item_shows_description()
     {
-        var key = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key, its teeth worn by time." };
+        var key = new Item
+            { Id = "rusty-key", Name = "rusty key", Description = "An old iron key, its teeth worn by time." };
 
         var state = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.")

@@ -1,7 +1,4 @@
-using Questline.Domain.Characters.Entity;
-using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared.Data;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
@@ -14,13 +11,10 @@ public class MovePlayerCommandHandlerTests
     [Fact]
     public void Returns_next_room_details_in_response()
     {
-        var rooms = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
-            .Build();
-
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } };
-        var state = new GameState(rooms, player);
+            .BuildState("player1", "start");
 
         var handler = new MovePlayerCommandHandler();
 
@@ -34,13 +28,10 @@ public class MovePlayerCommandHandlerTests
     [Fact]
     public void Invalid_direction_returns_error_message()
     {
-        var rooms = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
-            .Build();
-
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } };
-        var state = new GameState(rooms, player);
+            .BuildState("player1", "start");
 
         var handler = new MovePlayerCommandHandler();
 
@@ -52,13 +43,10 @@ public class MovePlayerCommandHandlerTests
     [Fact]
     public void Player_location_is_updated_after_moving()
     {
-        var rooms = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
             .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
-            .Build();
-
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } };
-        var state = new GameState(rooms, player);
+            .BuildState("player1", "start");
 
         var handler = new MovePlayerCommandHandler();
 
@@ -70,18 +58,15 @@ public class MovePlayerCommandHandlerTests
     [Fact]
     public void Player_location_is_not_updated_if_direction_is_invalid()
     {
-        var world = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("sealed", "Sealed Room", "No way north.")
-            .Build();
-
-        var player = new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "sealed" } };
-        var state = new GameState(world, player);
+            .BuildState("player1", "sealed");
 
         var handler = new MovePlayerCommandHandler();
 
         _ = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
-        player.Character.Location.ShouldBe("sealed");
+        state.Player.Character.Location.ShouldBe("sealed");
     }
 
     [Fact]

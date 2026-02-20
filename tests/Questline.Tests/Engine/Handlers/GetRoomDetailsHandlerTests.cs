@@ -1,7 +1,4 @@
-using Questline.Domain.Characters.Entity;
-using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
@@ -16,7 +13,7 @@ public class GetRoomDetailsHandlerTests
     public void Returns_response_with_formatted_message()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var rooms = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("hallway", "Hallway", "A long hallway.", r =>
             {
                 r.WithItem(lamp);
@@ -25,9 +22,7 @@ public class GetRoomDetailsHandlerTests
             })
             .WithRoom("throne-room", "Throne Room", "Grand throne room.")
             .WithRoom("entrance", "Entrance", "The entrance.")
-            .Build();
-
-        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "hallway" } });
+            .BuildState("player1", "hallway");
         var handler = new GetRoomDetailsHandler();
 
         var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
@@ -43,10 +38,9 @@ public class GetRoomDetailsHandlerTests
     [Fact]
     public void Response_omits_items_line_if_room_is_empty()
     {
-        var world = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
-            .Build();
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
+            .BuildState("player1", "cellar");
         var handler = new GetRoomDetailsHandler();
 
         var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());

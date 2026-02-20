@@ -34,7 +34,11 @@
                 {
                     "id": "strange-symbols",
                     "name": "strange symbols",
-                    "keywords": ["symbols", "carvings", "runes"],
+                    "keywords": [
+                        "symbols",
+                        "carvings",
+                        "runes"
+                    ],
                     "description": "Ancient runes etched into the stone walls. They seem to depict a key turning in a lock."
                 }
             ]

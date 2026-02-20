@@ -1,6 +1,3 @@
-using Questline.Domain.Characters.Entity;
-using Questline.Domain.Players.Entity;
-using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
@@ -15,10 +12,9 @@ public class GetPlayerInventoryQueryHandlerTests
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var key = new Item { Id = "key", Name = "rusty key", Description = "A rusty iron key." };
-        var world = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
-            .Build();
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
+            .BuildState("player1", "cellar");
         state.Player.Character.Inventory.Add(lamp);
         state.Player.Character.Inventory.Add(key);
         var handler = new GetPlayerInventoryQueryHandler();
@@ -33,10 +29,9 @@ public class GetPlayerInventoryQueryHandlerTests
     [Fact]
     public void Empty_inventory_shows_not_carrying_anything()
     {
-        var world = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
-            .Build();
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
+            .BuildState("player1", "cellar");
         var handler = new GetPlayerInventoryQueryHandler();
 
         var result = handler.Handle(state, new Requests.GetPlayerInventoryQuery());
@@ -48,10 +43,9 @@ public class GetPlayerInventoryQueryHandlerTests
     public void Get_then_drop_round_trips_item_through_inventory()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var rooms = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
-            .Build();
-        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
+            .BuildState("player1", "cellar");
         var getHandler = new TakeItemHandler();
         var dropHandler = new DropItemCommandHandler();
 

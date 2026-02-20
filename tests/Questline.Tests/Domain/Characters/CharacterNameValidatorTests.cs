@@ -5,62 +5,33 @@ namespace Questline.Tests.Domain.Characters;
 public class CharacterNameValidatorTests
 {
     [Fact]
-    public void Valid_name_returns_success()
-    {
-        CharacterNameValidator.Validate("Thorin").ShouldBeTrue();
-    }
+    public void Valid_name_returns_success() => CharacterNameValidator.HaveValidLength("Thorin").ShouldBeTrue();
 
     [Fact]
-    public void Name_with_spaces_is_valid()
-    {
-        CharacterNameValidator.Validate("Sir Lancelot").ShouldBeTrue();
-    }
+    public void Name_with_spaces_is_valid() => CharacterNameValidator.HaveValidLength("Sir Lancelot").ShouldBeTrue();
 
     [Fact]
-    public void Two_character_name_is_valid()
-    {
-        CharacterNameValidator.Validate("Bo").ShouldBeTrue();
-    }
+    public void Two_character_name_is_valid() => CharacterNameValidator.HaveValidLength("Bo").ShouldBeTrue();
 
     [Fact]
-    public void Twenty_four_character_name_is_valid()
-    {
-        CharacterNameValidator.Validate("Abcdefghijklmnopqrstuvwx").ShouldBeTrue();
-    }
+    public void Twenty_four_character_name_is_valid() =>
+        CharacterNameValidator.HaveValidLength("Abcdefghijklmnopqrstuvwx").ShouldBeTrue();
 
     [Fact]
-    public void Empty_name_returns_failure()
-    {
-        CharacterNameValidator.Validate("").ShouldBeFalse();
-    }
+    public void Empty_name_returns_failure() => CharacterNameValidator.HaveValidLength("").ShouldBeFalse();
 
     [Fact]
-    public void Single_character_name_returns_failure()
-    {
-        CharacterNameValidator.Validate("A").ShouldBeFalse();
-    }
+    public void Single_character_name_returns_failure() => CharacterNameValidator.HaveValidLength("A").ShouldBeFalse();
 
     [Fact]
-    public void Name_longer_than_24_characters_returns_failure()
-    {
-        CharacterNameValidator.Validate("Abcdefghijklmnopqrstuvwxy").ShouldBeFalse();
-    }
+    public void Name_longer_than_24_characters_returns_failure() =>
+        CharacterNameValidator.HaveValidLength("Abcdefghijklmnopqrstuvwxy").ShouldBeFalse();
 
     [Fact]
-    public void Name_with_special_characters_returns_failure()
-    {
-        CharacterNameValidator.Validate("Th@rin!").ShouldBeFalse();
-    }
+    public void Name_with_leading_whitespace_returns_failure() =>
+        CharacterNameValidator.HaveValidLength(" Thorin").ShouldBeFalse();
 
     [Fact]
-    public void Name_with_leading_whitespace_returns_failure()
-    {
-        CharacterNameValidator.Validate(" Thorin").ShouldBeFalse();
-    }
-
-    [Fact]
-    public void Name_with_trailing_whitespace_returns_failure()
-    {
-        CharacterNameValidator.Validate("Thorin ").ShouldBeFalse();
-    }
+    public void Name_with_trailing_whitespace_returns_failure() =>
+        CharacterNameValidator.HaveValidLength("Thorin ").ShouldBeFalse();
 }

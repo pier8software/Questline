@@ -6,8 +6,8 @@ namespace Questline.Tests.TestHelpers.Builders;
 public class RoomBuilder(string id, string name, string description)
 {
     private readonly Dictionary<Direction, Exit> _exits = new();
-    private readonly List<Item> _items = new();
     private readonly List<Feature> _features = new();
+    private readonly List<Item> _items = new();
 
     public RoomBuilder WithExit(Direction direction, string destinationId)
         => WithExit(direction, new Exit(destinationId));

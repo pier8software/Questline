@@ -1,6 +1,3 @@
-using Questline.Domain.Characters.Entity;
-using Questline.Domain.Players.Entity;
-using Questline.Domain.Shared.Data;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
@@ -12,11 +9,9 @@ public class VersionQueryHandlerTests
     [Fact]
     public void Returns_version_response_with_current_version()
     {
-        var world = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
-            .Build();
-
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "tavern" } });
+            .BuildState("player1", "tavern");
 
         var handler = new VersionQueryHandler();
 

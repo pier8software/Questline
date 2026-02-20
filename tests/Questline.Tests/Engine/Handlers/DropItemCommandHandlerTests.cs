@@ -1,6 +1,3 @@
-using Questline.Domain.Characters.Entity;
-using Questline.Domain.Players.Entity;
-using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
@@ -14,11 +11,9 @@ public class DropItemCommandHandlerTests
     public void Returns_successful_drop_response()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var rooms = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
-            .Build();
-
-        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
+            .BuildState("player1", "cellar");
         state.Player.Character.Inventory.Add(lamp);
 
         var handler = new DropItemCommandHandler();
@@ -33,10 +28,9 @@ public class DropItemCommandHandlerTests
     public void Item_moves_from_inventory_to_room()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var rooms = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
-            .Build();
-        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
+            .BuildState("player1", "cellar");
         state.Player.Character.Inventory.Add(lamp);
         var handler = new DropItemCommandHandler();
 
@@ -49,11 +43,9 @@ public class DropItemCommandHandlerTests
     [Fact]
     public void Item_not_in_inventory_returns_error_message()
     {
-        var rooms = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
-            .Build();
-
-        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
+            .BuildState("player1", "cellar");
 
         var handler = new DropItemCommandHandler();
 
@@ -65,11 +57,9 @@ public class DropItemCommandHandlerTests
     [Fact]
     public void Matching_is_case_insensitive()
     {
-        var rooms = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
-            .Build();
-
-        var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "cellar" } });
+            .BuildState("player1", "cellar");
 
         var handler = new DropItemCommandHandler();
 

@@ -1,7 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Questline.Domain.Characters.Entity;
-using Questline.Domain.Players.Entity;
-using Questline.Domain.Shared.Data;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
@@ -14,15 +11,13 @@ public class RequestSenderTests
     [Fact]
     public void Registered_verb_executes_its_handler()
     {
-        var world = new GameBuilder()
+        var state = new GameBuilder()
             .WithRoom("start", "Start", "A starting room.")
-            .Build();
-        var state = new GameState(world, new Player { Id = "player1", Character = new Character("TestHero", Race.Human, CharacterClass.Fighter) { Location = "start" } });
+            .BuildState("player1", "start");
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton<IRequestHandler<Requests.GetRoomDetailsQuery>, GetRoomDetailsHandler>()
             .BuildServiceProvider();
-
 
         var dispatcher = new RequestSender(serviceProvider);
 

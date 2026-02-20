@@ -24,7 +24,7 @@ public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerComma
             }
         }
 
-        state.Player.Character.Location = exit.Destination;
+        state.Player.Character.SetLocation(exit.Destination);
 
         var newRoom = state.GetRoom(exit.Destination);
         var exits = newRoom.Exits.Keys.Select(d => d.ToString()).ToList();

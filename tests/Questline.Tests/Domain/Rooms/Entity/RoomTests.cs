@@ -42,8 +42,8 @@ public class RoomTests
             Description = "A long hallway.",
             Exits = new Dictionary<Direction, Exit>
             {
-                [Direction.North] = new Exit("throne-room"),
-                [Direction.South] = new Exit("entrance")
+                [Direction.North] = new("throne-room"),
+                [Direction.South] = new("entrance")
             }
         };
 

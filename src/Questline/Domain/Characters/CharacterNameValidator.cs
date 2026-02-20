@@ -1,15 +1,20 @@
-using System.Text.RegularExpressions;
+using FluentValidation;
+using Questline.Domain.Characters.Data;
 
 namespace Questline.Domain.Characters;
 
-public static partial class CharacterNameValidator
+public class CharacterNameValidator : AbstractValidator<CharacterName>
 {
-    public static bool Validate(string name) =>
-        name.Length >= 2
-        && name.Length <= 24
-        && name == name.Trim()
-        && AllowedPattern().IsMatch(name);
+    private CharacterNameValidator()
+    {
+        RuleFor(c => c.Name).NotEmpty().WithMessage("Please give your character a name.");
+        RuleFor(c => c.Name).Must(HaveValidLength)
+            .WithMessage("Your character's name must be between 2 and 24 characters.");
+    }
 
-    [GeneratedRegex(@"^[a-zA-Z0-9 ]+$")]
-    private static partial Regex AllowedPattern();
+    public static CharacterNameValidator Instance { get; } = new();
+
+    public static bool HaveValidLength(string? name) =>
+        name?.Length is >= 2 and <= 24
+        && name == name.Trim();
 }

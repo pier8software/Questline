@@ -1,9 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
-using Questline.Domain.Characters.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
-using Questline.Engine.Content;
+using Questline.Engine.Core;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Engine.Parsers;
@@ -15,9 +14,15 @@ namespace Questline.Tests.Cli;
 
 public class CliAppTests
 {
+    // 3d6 x 6 ability scores = 18 rolls, then 1d8 for HP = 19 rolls total
+    private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
+
+    // Character creation inputs: select class (Fighter), select race (Human), continue (HP roll), enter name
+    private static readonly string[] CharacterCreationInputs = ["1", "1", "", "Hero"];
+
     private static (CliApp app, FakeConsole console) CreateCliApp()
     {
-        var rooms = new GameBuilder()
+        var worldContent = new GameBuilder()
             .WithRoom("entrance", "Dungeon Entrance", "A dark entrance to the dungeon.", r =>
                 r.WithExit(Direction.North, "hallway"))
             .WithRoom("hallway", "Torch-Lit Hallway", "A hallway lined with flickering torches.", r =>
@@ -27,11 +32,7 @@ public class CliAppTests
             })
             .WithRoom("chamber", "Great Chamber", "A vast chamber with vaulted ceilings.", r =>
                 r.WithExit(Direction.South, "hallway"))
-            .Build();
-
-        var world = new WorldContent(rooms, new(), "entrance");
-        var dice = new FakeDice(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4);
-        var factory = new CharacterFactory(dice);
+            .BuildWorldContent("entrance");
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton<IRequestHandler<Requests.GetRoomDetailsQuery>, GetRoomDetailsHandler>()
@@ -39,12 +40,17 @@ public class CliAppTests
             .AddSingleton<IRequestHandler<Requests.QuitGame>, QuitGameHandler>()
             .BuildServiceProvider();
 
-        var dispatcher = new RequestSender(serviceProvider);
-
         var console = new FakeConsole();
-        var parser = new Parser();
 
-        var app = new CliApp(console, world, factory, parser, dispatcher);
+        var dice = new FakeDice(DefaultDiceRolls);
+        var stateMachine = new CharacterCreationStateMachine(dice);
+
+        var contentLoader = new FakeGameContentLoader(worldContent);
+        var dispatcher = new RequestSender(serviceProvider);
+        var parser = new Parser();
+        var gameEngine = new GameEngine(parser, dispatcher, contentLoader);
+
+        var app = new CliApp(console, stateMachine, gameEngine);
 
         return (app, console);
     }
@@ -53,7 +59,7 @@ public class CliAppTests
     public void Displays_initial_room_on_start()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("Hero", "quit");
+        console.QueueInput([..CharacterCreationInputs, "quit"]);
 
         loop.Run();
 
@@ -65,7 +71,7 @@ public class CliAppTests
     public void Displays_command_prompt()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("Hero", "quit");
+        console.QueueInput([..CharacterCreationInputs, "quit"]);
 
         loop.Run();
 
@@ -76,7 +82,7 @@ public class CliAppTests
     public void Look_command_displays_room_info()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("Hero", "look", "quit");
+        console.QueueInput([..CharacterCreationInputs, "look", "quit"]);
 
         loop.Run();
 
@@ -89,7 +95,7 @@ public class CliAppTests
     public void Go_command_moves_and_displays_new_room()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("Hero", "go north", "quit");
+        console.QueueInput([..CharacterCreationInputs, "go north", "quit"]);
 
         loop.Run();
 
@@ -100,7 +106,7 @@ public class CliAppTests
     public void Unknown_command_displays_error()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("Hero", "dance", "quit");
+        console.QueueInput([..CharacterCreationInputs, "dance", "quit"]);
 
         loop.Run();
 
@@ -111,7 +117,7 @@ public class CliAppTests
     public void Quit_command_exits_gracefully()
     {
         var (loop, console) = CreateCliApp();
-        console.QueueInput("Hero", "quit");
+        console.QueueInput([..CharacterCreationInputs, "quit"]);
 
         loop.Run();
 

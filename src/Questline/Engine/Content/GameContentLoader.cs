@@ -3,16 +3,15 @@ using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Framework.FileSystem;
-
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Engine.Content;
 
-public class GameContentLoader(JsonFileLoader loader)
+public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
 {
-    public WorldContent Load()
+    public WorldContent Load(string adventureId)
     {
-        var adventureData = loader.LoadFile<AdventureData>("the-goblins-lair.json");
+        var adventureData = loader.LoadFile<AdventureData>($"{adventureId}.json");
 
         var itemsDictionary = adventureData.Items.ToDictionary(i => i.Id, i => new Item
         {

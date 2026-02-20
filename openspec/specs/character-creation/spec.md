@@ -60,27 +60,27 @@ A new character SHALL be created with race Human and class Fighter by default.
 
 ### Requirement: Character has base stats
 
-A new character SHALL have 6 ability scores (STR, INT, WIS, DEX, CON, CHA) and health values. Each ability score is rolled by summing 3d6, assigned in order: STR, INT, WIS, DEX, CON, CHA. MaxHealth is 8 (Fighter hit die ceiling at level 1). CurrentHealth is a 1d8 roll (character may start below max). Stats do NOT vary by race or class (out of scope for this feature).
+A new character SHALL have 6 ability scores (STR, INT, WIS, DEX, CON, CHA) and hit points. Each ability score is rolled by summing 3d6, assigned in order: STR, INT, WIS, DEX, CON, CHA. MaxHitPoints is 8 (Fighter hit die ceiling at level 1). CurrentHitPoints is a 1d8 roll (character may start below max). Stats do NOT vary by race or class (out of scope for this feature). Ability scores and hit points SHALL be separate value objects.
 
 #### Scenario: Rolled stats
 
 - **WHEN** a default Human Fighter is created
-- **THEN** STR, INT, WIS, DEX, CON, CHA SHALL each be the sum of 3d6 (range 3-18)
-- **AND** MaxHealth SHALL be 8
-- **AND** CurrentHealth SHALL be a 1d8 roll (range 1-8)
+- **THEN** STR, INT, WIS, DEX, CON, CHA SHALL each be an AbilityScore containing the sum of 3d6 (range 3-18)
+- **AND** HitPoints.MaxHitPoints SHALL be 8
+- **AND** HitPoints.CurrentHitPoints SHALL be a 1d8 roll (range 1-8)
 
 ### Requirement: Stats command displays character information
 
-The `stats` command SHALL display the character's name, race, class, level, and stats.
+The `stats` command SHALL display the character's name, race, class, level, and stats including ability scores and hit points.
 
 #### Scenario: Stats output
 
 - **WHEN** the player executes `stats`
-- **THEN** the result SHALL contain the character name, race, class, level, and all stat values
+- **THEN** the result SHALL contain the character name, race, class, level, ability scores, and hit point values
 
 ### Requirement: Player and Character are separate models
 
-Player (the human) and Character (the in-game avatar) SHALL be separate models. Player has an Id and a Character. Character has a Location and an Inventory. Location and Inventory are properties of the Character, not the Player.
+Player (the human) and Character (the in-game avatar) SHALL be separate models. Player is a record with an Id and a Character. Character is a record created via a factory method with a Location and an Inventory. Location is mutated via a SetLocation method. Location and Inventory are properties of the Character, not the Player.
 
 #### Scenario: Player owns character
 
@@ -90,7 +90,7 @@ Player (the human) and Character (the in-game avatar) SHALL be separate models. 
 #### Scenario: Character holds location
 
 - **WHEN** a Character moves to room "dungeon-entrance"
-- **THEN** `Player.Character.Location` SHALL be "dungeon-entrance"
+- **THEN** `Player.Character.Location` SHALL be "dungeon-entrance" (set via `SetLocation`)
 
 #### Scenario: Character holds inventory
 
@@ -112,40 +112,57 @@ On starting a new game, the welcome message SHALL include the character's name.
 ### Character Model
 
 ```csharp
-public class Character
+public record Character
 {
-    public string Name { get; }
-    public Race Race { get; }
-    public CharacterClass Class { get; }
-    public int Level { get; }
-    public int Experience { get; }
-    public CharacterStats? Stats { get; }
-    public string Location { get; set; }
-    public Inventory Inventory { get; init; } = new();
+    public string Name { get; private init; }
+    public Race Race { get; private init; }
+    public CharacterClass Class { get; private init; }
+    public int Level { get; private init; }
+    public int Experience { get; init; }
+    public AbilityScores AbilityScores { get; init; }
+    public HitPoints HitPoints { get; private init; }
+    public string Location { get; private set; }
+    public Inventory Inventory { get; private init; } = new();
+
+    public static Character Create(string name, Race race, CharacterClass characterClass,
+        HitPoints hitPoints, AbilityScores abilityScores, string location = "");
+    public void SetLocation(string locationId);
 }
+
+public record HitPoints(int MaxHitPoints, int CurrentHitPoints);
+public record AbilityScores(
+    AbilityScore Strength, AbilityScore Intelligence, AbilityScore Wisdom,
+    AbilityScore Dexterity, AbilityScore Constitution, AbilityScore Charisma);
+public record AbilityScore(int Score);
 
 public enum Race { Human, Elf, Dwarf, Halfling }
 public enum CharacterClass { Fighter, Wizard, Rogue, Cleric }
-
-public record CharacterStats(
-    int MaxHealth,
-    int CurrentHealth,
-    int STR,
-    int INT,
-    int WIS,
-    int DEX,
-    int CON,
-    int CHA);
 ```
 
 ### Player vs Character Separation
 
 ```csharp
-public class Player
+public record Player(string Id, Character Character);
+```
+
+### Name Validation
+
+```csharp
+// FluentValidation-based validator
+public class CharacterNameValidator : AbstractValidator<CharacterName>
+public record CharacterName(string Name);
+```
+
+### Character Creation State Machine
+
+```csharp
+public class CharacterCreationStateMachine(IDice dice)
 {
-    public required string Id { get; init; }
-    public required Character Character { get; init; }
+    public IResponse ProcessInput(string? input);
 }
+
+// States: PendingAbilityScores → PendingClassSelection → PendingRaceSelection
+//       → PendingHitPoints → PendingCharacterName → Complete
 ```
 
 ### Dice Rolling
@@ -155,9 +172,12 @@ Stats use dice notation NdX: roll N dice with X sides and sum the results. Chara
 ### Game Start Flow
 
 ```
-1. New Game / Continue / Quit
-2. (New Game) Enter name -> validate -> create default Human Fighter
-3. Roll ability scores (3d6 x 6) and health (1d8)
-4. Welcome message with character name
-5. Display starting room
+1. Welcome message
+2. Hit enter to start character creation
+3. Roll ability scores (3d6 x 6) — automatic
+4. Select class (Fighter)
+5. Select race (Human)
+6. Roll hit points (1d8) — automatic
+7. Enter character name → validate
+8. Character creation complete, launch game
 ```

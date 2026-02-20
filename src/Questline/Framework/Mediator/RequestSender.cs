@@ -5,7 +5,7 @@ namespace Questline.Framework.Mediator;
 
 public class RequestSender(IServiceProvider serviceProvider)
 {
-    public IResponse Send(GameState state, IRequest request)
+    public IResponse Send(GameState? state, IRequest request)
     {
         var requestType = request.GetType();
 

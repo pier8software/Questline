@@ -1,50 +1,36 @@
-using Questline.Domain.Characters;
-using Questline.Domain.Players.Entity;
-using Questline.Domain.Shared.Data;
+using Questline.Domain.Characters.Entity;
 using Questline.Engine.Characters;
-using Questline.Engine.Content;
 using Questline.Engine.Core;
 using Questline.Engine.Messages;
-using Questline.Engine.Parsers;
-using Questline.Framework.Mediator;
 
 namespace Questline.Cli;
 
-public class CliApp(IConsole console, WorldContent world, CharacterFactory characterFactory, Parser parser, RequestSender dispatcher)
+public class CliApp(
+    IConsole console,
+    CharacterCreationStateMachine stateMachine,
+    GameEngine engine)
 {
     public void Run()
     {
-        var character = PromptForCharacter();
+        DisplayWelcomeMessage();
+
+        var character = InitiateCharacterSetup();
         if (character is null)
         {
             return;
         }
 
-        character.Location = world.StartingRoomId;
+        LaunchGameSession(character);
 
-        var player = new Player
-        {
-            Id = Guid.NewGuid().ToString(),
-            Character = character
-        };
+        HandleGameLoop();
+    }
 
-        var state = new GameState(world.Rooms, player, world.Barriers);
-        var engine = new GameEngine(parser, dispatcher, state);
-
-        console.WriteLine($"Welcome, {character.Name}! Your adventure begins...");
-
-        var initialRoom = engine.ProcessInput("look");
-        console.WriteLine(initialRoom.Message);
-
+    private void HandleGameLoop()
+    {
         while (true)
         {
             console.Write("> ");
             var input = console.ReadLine();
-
-            if (input is null)
-            {
-                break;
-            }
 
             var result = engine.ProcessInput(input);
 
@@ -57,26 +43,40 @@ public class CliApp(IConsole console, WorldContent world, CharacterFactory chara
         }
     }
 
-    private Domain.Characters.Entity.Character? PromptForCharacter()
+    private void LaunchGameSession(Character character)
     {
+        var message = engine.LaunchGame(character, "the-goblins-lair");
+        console.WriteLine(message.Message);
+    }
+
+    private Character? InitiateCharacterSetup()
+    {
+        console.WriteLine("Hit enter to create a new character...");
+        var input = console.ReadLine();
+        if (input is null)
+        {
+            return null;
+        }
+
         while (true)
         {
-            console.WriteLine("What is your name, adventurer?");
-            console.Write("> ");
-            var name = console.ReadLine();
+            var response = stateMachine.ProcessInput(input);
+            console.WriteLine(response.Message);
 
-            if (name is null)
+            if (response is Responses.CharacterCreationCompleteResponse characterResponse)
+            {
+                var character = characterResponse.Character;
+                console.WriteLine(character.ToCharacterSummary());
+                return character;
+            }
+
+            input = console.ReadLine();
+            if (input is null)
             {
                 return null;
             }
-
-            if (!CharacterNameValidator.Validate(name))
-            {
-                console.WriteLine("Please give your character a name");
-                continue;
-            }
-
-            return characterFactory.Create(name);
         }
     }
+
+    private void DisplayWelcomeMessage() => console.WriteLine("Welcome to Questline!");
 }
