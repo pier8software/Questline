@@ -8,7 +8,7 @@ using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Engine.Content;
 
-public class GameContentLoader(JsonFileLoader loader)
+public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
 {
     public WorldContent Load(string adventureId)
     {

@@ -15,6 +15,10 @@ public class CliApp(
         DisplayWelcomeMessage();
 
         var character = InitiateCharacterSetup();
+        if (character is null)
+        {
+            return;
+        }
 
         LaunchGameSession(character);
 
@@ -45,10 +49,15 @@ public class CliApp(
         console.WriteLine(message.Message);
     }
 
-    private Character InitiateCharacterSetup()
+    private Character? InitiateCharacterSetup()
     {
         console.WriteLine("Hit enter to create a new character...");
         var input = console.ReadLine();
+        if (input is null)
+        {
+            return null;
+        }
+
         while (true)
         {
             var response = stateMachine.ProcessInput(input);
@@ -62,6 +71,10 @@ public class CliApp(
             }
 
             input = console.ReadLine();
+            if (input is null)
+            {
+                return null;
+            }
         }
     }
 

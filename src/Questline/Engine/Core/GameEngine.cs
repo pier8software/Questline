@@ -9,7 +9,7 @@ using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Core;
 
-public class GameEngine(Parser parser, RequestSender dispatcher, GameContentLoader contentLoader)
+public class GameEngine(Parser parser, RequestSender dispatcher, IGameContentLoader contentLoader)
 {
     private GameState? _state;
 

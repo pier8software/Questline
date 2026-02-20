@@ -2,6 +2,7 @@ using Questline.Domain.Characters.Entity;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
+using Questline.Engine.Content;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Tests.TestHelpers.Builders;
@@ -42,6 +43,9 @@ public class GameBuilder
     }
 
     public Dictionary<string, Room> Build() => _rooms;
+
+    public WorldContent BuildWorldContent(string startingRoomId) =>
+        new(_rooms, _barriers, startingRoomId);
 
     public GameState BuildState(string playerId, string startLocation)
     {

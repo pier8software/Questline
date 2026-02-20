@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddQuestlineEngine(this IServiceCollection services)
     {
-        services.AddSingleton<GameContentLoader>();
+        services.AddSingleton<IGameContentLoader, GameContentLoader>();
         services.AddSingleton<JsonFileLoader>();
         services.AddSingleton<Parser>();
         services.AddSingleton<IDice, Dice>();
