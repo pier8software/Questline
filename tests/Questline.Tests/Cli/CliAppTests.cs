@@ -160,7 +160,7 @@ public class CliAppTests
         // Second save should include the player with character
         repository.SaveCalls.Count.ShouldBeGreaterThanOrEqualTo(2);
         repository.SaveCalls[1].Player.ShouldNotBeNull();
-        repository.SaveCalls[1].Player.Character.Name.ShouldBe("Hero");
+        repository.SaveCalls[1].Player!.Character.Name.ShouldBe("Hero");
     }
 
     private static int CountOccurrences(string text, string search)
