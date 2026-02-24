@@ -8,12 +8,14 @@ Define the game's main loop: startup display, prompt cycle, result rendering, an
 
 ### Requirement: Game displays initial room on start
 
-The game SHALL prompt for a character name, display a welcome message including the character's name, and then display the starting room's name, description, available items, locked barrier descriptions, and exits when the game begins.
+The game SHALL load adventure content and save the initial world state to the repository, then prompt for character creation, save the character to the game profile, and finally display a welcome message including the character's name followed by the starting room's name, description, available items, locked barrier descriptions, and exits.
 
 #### Scenario: Game startup with character creation
 
 - **WHEN** the game starts and the player enters character name "Thorin"
-- **THEN** the output SHALL contain a welcome message including "Thorin"
+- **THEN** adventure content SHALL be loaded and saved to the repository before character creation
+- **AND** the character SHALL be saved to the game profile after creation completes
+- **AND** the output SHALL contain a welcome message including "Thorin"
 - **AND** the output SHALL contain the starting room name, description, and available exits
 
 #### Scenario: Game startup displays items in starting room
