@@ -14,13 +14,16 @@ public class CliApp(
     {
         DisplayWelcomeMessage();
 
+        engine.LoadWorld("the-goblins-lair");
+
         var character = InitiateCharacterSetup();
         if (character is null)
         {
             return;
         }
 
-        LaunchGameSession(character);
+        var response = engine.StartGame(character);
+        console.WriteLine(response.Message);
 
         HandleGameLoop();
     }
@@ -41,12 +44,6 @@ public class CliApp(
                 break;
             }
         }
-    }
-
-    private void LaunchGameSession(Character character)
-    {
-        var message = engine.LaunchGame(character, "the-goblins-lair");
-        console.WriteLine(message.Message);
     }
 
     private Character? InitiateCharacterSetup()

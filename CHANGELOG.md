@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-02-24
+
+### Added
+
+- Auto-save game state to MongoDB after every player action via `AutoSaveDecorator`
+- `IGameStateRepository` interface with MongoDB-backed implementation using upsert semantics
+- `GameStateDocument` DTO for persistence, keeping domain entities persistence-unaware
+- Initial world state saved to MongoDB when a new game starts (before character creation)
+- Character saved to game profile after creation completes
+
+### Changed
+
+- Game startup flow reordered: content loads before character creation
+- `GameEngine.LaunchGame()` split into `LoadWorld()` and `StartGame()` for phased initialisation
+- Handler registration uses `RegisterHandler` helper that wraps all handlers with `AutoSaveDecorator`
+
 ## [0.5.0] - 2026-02-19
 
 ### Added
