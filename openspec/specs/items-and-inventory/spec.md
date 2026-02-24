@@ -15,33 +15,9 @@ An Item SHALL have a unique `Id`, a `Name`, and a `Description`.
 - **WHEN** an Item is created with Id "lamp", Name "brass lamp", Description "A shiny brass lamp."
 - **THEN** the Item SHALL expose those values
 
-### Requirement: Inventory container supports add, remove, find, and query
-
-Inventory SHALL support adding items, removing items, finding items by name (case-insensitive), checking containment, exposing a readonly collection, and reporting emptiness.
-
-#### Scenario: Add and find by name
-
-- **WHEN** an Item named "brass lamp" is added to an Inventory
-- **THEN** `FindByName("brass lamp")` SHALL return that Item
-
-#### Scenario: Case-insensitive find
-
-- **WHEN** an Item named "brass lamp" is in the Inventory
-- **THEN** `FindByName("BRASS LAMP")` SHALL return that Item
-
-#### Scenario: Remove item
-
-- **WHEN** an Item is removed from the Inventory
-- **THEN** `FindByName` for that item SHALL return null and `IsEmpty` SHALL be true (if no other items)
-
-#### Scenario: Empty inventory
-
-- **WHEN** the Inventory contains no items
-- **THEN** `IsEmpty` SHALL be true
-
 ### Requirement: Rooms have items
 
-A Room SHALL have an Items property backed by Inventory. WorldBuilder SHALL support adding items to rooms.
+A Room SHALL have an `Items` property (`ImmutableList<Item>`) and a `FindItemByName(string name)` method for case-insensitive lookup. WorldBuilder SHALL support adding items to rooms.
 
 #### Scenario: Room with items
 
@@ -50,7 +26,7 @@ A Room SHALL have an Items property backed by Inventory. WorldBuilder SHALL supp
 
 ### Requirement: Player has inventory
 
-The Player SHALL have an Inventory property that starts empty.
+The Character SHALL have an `Inventory` property (`ImmutableList<Item>`) that starts empty, and a `FindInventoryItemByName(string name)` method for case-insensitive lookup.
 
 #### Scenario: New player inventory
 

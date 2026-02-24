@@ -1,5 +1,5 @@
 ### Requirement: Domain entities are immutable after construction
-All domain entities (`Character`, `Room`, `Barrier`, `Item`) and the `Inventory` value object SHALL be immutable after construction. No public mutable properties (setters) or mutable collections SHALL be exposed.
+All domain entities (`Character`, `Room`, `Barrier`, `Item`) SHALL be immutable after construction. No public mutable properties (setters) or mutable collections SHALL be exposed.
 
 #### Scenario: Entity properties cannot be reassigned after creation
 - **WHEN** a domain entity is constructed
@@ -47,19 +47,6 @@ The `Barrier` entity SHALL provide an `Unlock()` method that returns a new `Barr
 - **WHEN** `Unlock()` is called on a locked `Barrier`
 - **THEN** a new `Barrier` instance SHALL be returned with `IsUnlocked` equal to `true`
 - **THEN** the original `Barrier` instance SHALL retain `IsUnlocked` equal to `false`
-
-### Requirement: Inventory operations return new instances
-The `Inventory` value object SHALL provide `Add` and `Remove` methods that return new `Inventory` instances, leaving the original unchanged.
-
-#### Scenario: Item added to inventory
-- **WHEN** `Add(item)` is called on an `Inventory`
-- **THEN** a new `Inventory` instance SHALL be returned containing the item
-- **THEN** the original `Inventory` instance SHALL NOT contain the new item
-
-#### Scenario: Item removed from inventory
-- **WHEN** `Remove(item)` is called on an `Inventory`
-- **THEN** a new `Inventory` instance SHALL be returned without the item
-- **THEN** the original `Inventory` instance SHALL still contain the item
 
 ### Requirement: GameState provides entity replacement methods
 `GameState` SHALL provide methods to replace domain entities by identity, allowing handlers to swap in new immutable instances after state changes.

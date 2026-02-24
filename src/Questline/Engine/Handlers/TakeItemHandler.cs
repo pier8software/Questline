@@ -9,16 +9,15 @@ public class TakeItemHandler : IRequestHandler<Requests.TakeItemCommand>
     public IResponse Handle(GameState state, Requests.TakeItemCommand request)
     {
         var room = state.GetRoom(state.Player.Character.Location);
-        var item = room.Items.FindByName(request.ItemName);
+        var item = room.FindItemByName(request.ItemName);
 
         if (item is null)
         {
             return Responses.ItemTakenResponse.Error($"There is no '{request.ItemName}' here.");
         }
 
-        state.UpdateRoom(room.RemoveItem(item));
-        var newCharacter = state.Player.Character.AddInventoryItem(item);
-        state.UpdatePlayer(state.Player with { Character = newCharacter });
+        room.RemoveItem(item);
+        state.Player.Character.AddInventoryItem(item);
 
         return Responses.ItemTakenResponse.Success(item.Name);
     }

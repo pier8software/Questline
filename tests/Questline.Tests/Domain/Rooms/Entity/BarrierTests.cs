@@ -33,7 +33,7 @@ public class BarrierTests
             UnlockMessage = "The rusty key turns in the lock..."
         };
 
-        barrier = barrier.Unlock();
+        barrier.Unlock();
 
         barrier.IsUnlocked.ShouldBeTrue();
     }

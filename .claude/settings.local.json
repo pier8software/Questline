@@ -9,7 +9,8 @@
       "Bash(openspec create:*)",
       "Bash(openspec:*)",
       "Bash(dotnet msbuild:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(find:*)"
     ]
   }
 }

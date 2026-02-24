@@ -1,20 +1,41 @@
-using System.Collections.Immutable;
 using Questline.Domain.Shared.Entity;
 
 namespace Questline.Domain.Rooms.Entity;
 
-public record Room
+public class Room
 {
+    private readonly Dictionary<Direction, Exit> _exits = new();
+    private readonly List<Feature> _features = [];
+    private readonly List<Item> _items = [];
+
     public required string Id { get; init; }
     public required string Name { get; init; }
     public required string Description { get; init; }
-    public ImmutableDictionary<Direction, Exit> Exits { get; init; } = ImmutableDictionary<Direction, Exit>.Empty;
-    public Inventory Items { get; init; } = new();
-    public ImmutableList<Feature> Features { get; init; } = ImmutableList<Feature>.Empty;
 
-    public Room AddItem(Item item) => this with { Items = Items.Add(item) };
+    public IReadOnlyDictionary<Direction, Exit> Exits
+    {
+        get => _exits;
+        init => _exits = new Dictionary<Direction, Exit>(value);
+    }
 
-    public Room RemoveItem(Item item) => this with { Items = Items.Remove(item) };
+    public IReadOnlyList<Item> Items
+    {
+        get => _items;
+        init => _items = [..value];
+    }
+
+    public IReadOnlyList<Feature> Features
+    {
+        get => _features;
+        init => _features = [..value];
+    }
+
+    public void AddItem(Item item) => _items.Add(item);
+
+    public void RemoveItem(Item item) => _items.Remove(item);
+
+    public Item? FindItemByName(string name) =>
+        _items.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 }
 
 public record Exit(string Destination, string? BarrierId = null);

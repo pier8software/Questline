@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Questline.Domain.Rooms.Data;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
@@ -59,18 +58,18 @@ public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
                 Name = f.Name,
                 Keywords = f.Keywords,
                 Description = f.Description
-            }).ToImmutableList();
+            }).ToList();
 
-            var inventory = roomDetail.Items
-                .Aggregate(new Inventory(), (inv, itemId) => inv.Add(items[itemId]));
+            var roomItems = roomDetail.Items
+                .Select(itemId => items[itemId]).ToList();
 
             var room = new Room
             {
                 Id = roomDetail.Id,
                 Name = roomDetail.Name,
                 Description = roomDetail.Description,
-                Exits = exits.ToImmutableDictionary(),
-                Items = inventory,
+                Exits = exits,
+                Items = roomItems,
                 Features = features
             };
 

@@ -54,17 +54,14 @@ context: |
     - Rebase only, squash merge on PR
     - CI: build + test on every PR
 
-    ## Roadmap Status
-    Implemented (Phase 0):
-    -   0.1 Scaffolding: world model, room graph, look/go commands, game loop, quit
-    -   0.2 Items & Inventory: Item entity, Inventory container, get/drop/inventory commands
-    -   0.3 Content Loading: JSON adventure files, loader, validation, 5-room dungeon
-
-    Planned (Phase 0):
-    -   0.4 Puzzles: use command, barriers, examine, room features
-    -   0.5 Character Creation: name entry, default Human Fighter, stats command
-    -   0.6 Save/Load: persist and restore game state
-    -   0.7 Polish: help system, error handling, victory detection, command shortcuts
+    ## Roadmap Status (phase 0):
+    - [x] 0.1 Scaffolding: world model, room graph, look/go commands, game loop, quit
+    - [x] 0.2 Items & Inventory: Item entity, Inventory, get/drop/inventory commands
+    - [x] 0.3 Content Loading: JSON adventure files, loader, validation, 5-room dungeon
+    - [x] 0.4 Puzzles: use command, barriers, examine, room features
+    - [x] 0.5 Character Creation: name entry, default Human Fighter, stats command
+    - [ ] 0.6 Save/Load: persist and restore game state
+    - [ ] 0.7 Polish: help system, error handling, victory detection, command shortcuts
 
     Future phases: Solo Adventure (combat, XP), Party Play (networking), MUD Platform.
 
@@ -77,7 +74,7 @@ context: |
     Each bounded context folder uses the same internal layout:
     - `Entity/` — domain entities and value objects (e.g. `Player`, `Room`, `Item`)
     - `Data/` — data-transfer objects for JSON deserialisation (where applicable)
-    `Shared/` holds cross-cutting concerns: `Item`, `Inventory`, `GameState`, `AdventureData`.
+    `Shared/` holds cross-cutting concerns: `Item`, `GameState`, `AdventureData`.
     New bounded context get their own top-level folder under `Domain/` following this layout. New capabilities related to an existing bounded context should be added to that context.
 
     ## Command Pipeline Details
@@ -107,6 +104,7 @@ context: |
     3. Create handler implementing `IRequestHandler<T>` in `Engine/Handlers/`
     4. Register handler in `Engine/ServiceCollectionExtensions.RegisterCommandHandlers()`
     5. Write tests using `GameBuilder`/`RoomBuilder` in `tests/Questline.Tests/Engine/Handlers/`
+    6. Update `CHANGELOG.md` with new feature and update `<Version>` in `Directory.Build.props`
 
 rules:
     spec:

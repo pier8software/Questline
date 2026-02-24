@@ -9,7 +9,7 @@ public class ExamineCommandHandler : IRequestHandler<Requests.ExamineCommand>
     public IResponse Handle(GameState state, Requests.ExamineCommand command)
     {
         // Search order: inventory items > room items > room features
-        var inventoryItem = state.Player.Character.Inventory.FindByName(command.TargetName);
+        var inventoryItem = state.Player.Character.FindInventoryItemByName(command.TargetName);
         if (inventoryItem is not null)
         {
             return Responses.ExamineResponse.Success(inventoryItem.Description);
@@ -17,7 +17,7 @@ public class ExamineCommandHandler : IRequestHandler<Requests.ExamineCommand>
 
         var room = state.GetRoom(state.Player.Character.Location);
 
-        var roomItem = room.Items.FindByName(command.TargetName);
+        var roomItem = room.FindItemByName(command.TargetName);
         if (roomItem is not null)
         {
             return Responses.ExamineResponse.Success(roomItem.Description);

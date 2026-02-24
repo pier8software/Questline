@@ -80,7 +80,7 @@ The `stats` command SHALL display the character's name, race, class, level, and 
 
 ### Requirement: Player and Character are separate models
 
-Player (the human) and Character (the in-game avatar) SHALL be separate models. Player is a record with an Id and a Character. Character is a record created via a factory method with a Location and an Inventory. Location is mutated via a SetLocation method. Location and Inventory are properties of the Character, not the Player.
+Player (the human) and Character (the in-game avatar) SHALL be separate models. Player is a record with an Id and a Character. Character is a record created via a factory method with a Location and an Inventory (`ImmutableList<Item>`). Location is mutated via a SetLocation method. Location and Inventory are properties of the Character, not the Player.
 
 #### Scenario: Player owns character
 
@@ -122,7 +122,7 @@ public record Character
     public AbilityScores AbilityScores { get; init; }
     public HitPoints HitPoints { get; private init; }
     public string Location { get; private set; }
-    public Inventory Inventory { get; private init; } = new();
+    public ImmutableList<Item> Inventory { get; private init; } = ImmutableList<Item>.Empty;
 
     public static Character Create(string name, Race race, CharacterClass characterClass,
         HitPoints hitPoints, AbilityScores abilityScores, string location = "");

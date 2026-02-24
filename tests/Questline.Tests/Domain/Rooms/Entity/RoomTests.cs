@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
 
@@ -12,9 +11,9 @@ public class RoomTests
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
 
-        room = room.AddItem(lamp);
+        room.AddItem(lamp);
 
-        room.Items.FindByName("brass lamp").ShouldBe(lamp);
+        room.FindItemByName("brass lamp").ShouldBe(lamp);
     }
 
     [Fact]
@@ -26,11 +25,34 @@ public class RoomTests
             Id = "cellar",
             Name = "Cellar",
             Description = "A damp cellar.",
-            Items = new Inventory().Add(lamp)
+            Items = new List<Item> { lamp }
         };
 
-        room = room.RemoveItem(lamp);
+        room.RemoveItem(lamp);
 
-        room.Items.IsEmpty.ShouldBeTrue();
+        room.Items.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void FindItemByName_returns_item_case_insensitively()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var room = new Room
+        {
+            Id = "cellar",
+            Name = "Cellar",
+            Description = "A damp cellar.",
+            Items = new List<Item> { lamp }
+        };
+
+        room.FindItemByName("BRASS LAMP").ShouldBe(lamp);
+    }
+
+    [Fact]
+    public void FindItemByName_returns_null_when_not_found()
+    {
+        var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
+
+        room.FindItemByName("sword").ShouldBeNull();
     }
 }

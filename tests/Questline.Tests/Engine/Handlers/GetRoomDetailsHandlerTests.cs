@@ -85,9 +85,9 @@ public class GetRoomDetailsHandlerTests
             Description = "A heavy iron door blocks the way North.",
             BlockedMessage = "The iron door is locked tight.",
             UnlockItemId = "rusty-key",
-            UnlockMessage = "The rusty key turns in the lock...",
-            IsUnlocked = true
+            UnlockMessage = "The rusty key turns in the lock..."
         };
+        barrier.Unlock();
 
         var state = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",

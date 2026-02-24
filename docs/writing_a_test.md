@@ -2,7 +2,8 @@
 
 ## Test First, Always
 
-No production code without a failing test.
+No production code without a failing test. 100% coverage is not nessary, 100% value is.
+Value lies in testing the behaviour of the code is valid, not, for example, checking if properties have been set when a class is created.
 
 ## Stack
 

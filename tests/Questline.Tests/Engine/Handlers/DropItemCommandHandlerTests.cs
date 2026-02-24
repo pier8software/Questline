@@ -10,8 +10,7 @@ public class DropItemCommandHandlerTests
 {
     private static void GiveItemToPlayer(GameState state, Item item)
     {
-        var newCharacter = state.Player.Character.AddInventoryItem(item);
-        state.UpdatePlayer(state.Player with { Character = newCharacter });
+        state.Player.Character.AddInventoryItem(item);
     }
 
     [Fact]
@@ -43,8 +42,8 @@ public class DropItemCommandHandlerTests
 
         _ = handler.Handle(state, new Requests.DropItemCommand("brass lamp"));
 
-        state.Player.Character.Inventory.IsEmpty.ShouldBeTrue();
-        state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBe(lamp);
+        state.Player.Character.Inventory.ShouldBeEmpty();
+        state.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
     }
 
     [Fact]
