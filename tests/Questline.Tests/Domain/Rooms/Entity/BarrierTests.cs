@@ -21,7 +21,7 @@ public class BarrierTests
     }
 
     [Fact]
-    public void Barrier_can_be_unlocked()
+    public void Can_Unlock_a_barrier()
     {
         var barrier = new Barrier
         {
@@ -33,7 +33,7 @@ public class BarrierTests
             UnlockMessage = "The rusty key turns in the lock..."
         };
 
-        barrier.IsUnlocked = true;
+        barrier = barrier.Unlock();
 
         barrier.IsUnlocked.ShouldBeTrue();
     }

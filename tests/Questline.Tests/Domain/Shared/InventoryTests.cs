@@ -7,10 +7,9 @@ public class InventoryTests
     [Fact]
     public void Added_item_is_found_by_name()
     {
-        var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
 
-        inventory.Add(lamp);
+        var inventory = new Inventory().Add(lamp);
 
         inventory.FindByName("brass lamp").ShouldBe(lamp);
     }
@@ -18,9 +17,9 @@ public class InventoryTests
     [Fact]
     public void Find_by_name_is_case_insensitive()
     {
-        var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        inventory.Add(lamp);
+
+        var inventory = new Inventory().Add(lamp);
 
         inventory.FindByName("BRASS LAMP").ShouldBe(lamp);
     }
@@ -36,12 +35,12 @@ public class InventoryTests
     [Fact]
     public void Removing_an_item_makes_inventory_empty()
     {
-        var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        inventory.Add(lamp);
+        var inventory = new Inventory().Add(lamp);
 
-        inventory.Remove(lamp).ShouldBeTrue();
-        inventory.IsEmpty.ShouldBeTrue();
+        var result = inventory.Remove(lamp);
+
+        result.IsEmpty.ShouldBeTrue();
     }
 
     [Fact]
@@ -55,9 +54,9 @@ public class InventoryTests
     [Fact]
     public void Items_collection_contains_added_item()
     {
-        var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        inventory.Add(lamp);
+
+        var inventory = new Inventory().Add(lamp);
 
         inventory.Items.ShouldContain(lamp);
     }
@@ -65,9 +64,9 @@ public class InventoryTests
     [Fact]
     public void Contains_returns_true_when_item_present()
     {
-        var inventory = new Inventory();
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        inventory.Add(lamp);
+
+        var inventory = new Inventory().Add(lamp);
 
         inventory.Contains(lamp).ShouldBeTrue();
     }
@@ -79,5 +78,29 @@ public class InventoryTests
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
 
         inventory.Contains(lamp).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Add_returns_new_instance_leaving_original_unchanged()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var original = new Inventory();
+
+        var updated = original.Add(lamp);
+
+        original.IsEmpty.ShouldBeTrue();
+        updated.Items.ShouldContain(lamp);
+    }
+
+    [Fact]
+    public void Remove_returns_new_instance_leaving_original_unchanged()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var original = new Inventory().Add(lamp);
+
+        var updated = original.Remove(lamp);
+
+        original.Contains(lamp).ShouldBeTrue();
+        updated.IsEmpty.ShouldBeTrue();
     }
 }

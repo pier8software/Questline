@@ -1,55 +1,36 @@
+using System.Collections.Immutable;
 using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Shared.Entity;
 
 namespace Questline.Tests.Domain.Rooms.Entity;
 
 public class RoomTests
 {
     [Fact]
-    public void Has_required_id_name_and_description()
+    public void Can_add_an_item_to_a_rooms_inventory()
     {
-        var room = new Room
-        {
-            Id = "tavern",
-            Name = "The Tavern",
-            Description = "A cozy tavern with a roaring fire."
-        };
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
 
-        room.Id.ShouldBe("tavern");
-        room.Name.ShouldBe("The Tavern");
-        room.Description.ShouldBe("A cozy tavern with a roaring fire.");
+        room = room.AddItem(lamp);
+
+        room.Items.FindByName("brass lamp").ShouldBe(lamp);
     }
 
     [Fact]
-    public void Has_empty_exits_by_default()
+    public void Can_remove_an_item_from_a_rooms_inventory()
     {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var room = new Room
         {
-            Id = "cell",
-            Name = "Cell",
-            Description = "A dark cell."
+            Id = "cellar",
+            Name = "Cellar",
+            Description = "A damp cellar.",
+            Items = new Inventory().Add(lamp)
         };
 
-        room.Exits.ShouldBeEmpty();
-    }
+        room = room.RemoveItem(lamp);
 
-    [Fact]
-    public void Exits_link_to_other_rooms()
-    {
-        var room = new Room
-        {
-            Id = "hallway",
-            Name = "Hallway",
-            Description = "A long hallway.",
-            Exits = new Dictionary<Direction, Exit>
-            {
-                [Direction.North] = new("throne-room"),
-                [Direction.South] = new("entrance")
-            }
-        };
-
-        room.Exits.ShouldContainKey(Direction.North);
-        room.Exits[Direction.North].Destination.ShouldBe("throne-room");
-        room.Exits.ShouldContainKey(Direction.South);
-        room.Exits[Direction.South].Destination.ShouldBe("entrance");
+        room.Items.IsEmpty.ShouldBeTrue();
     }
 }

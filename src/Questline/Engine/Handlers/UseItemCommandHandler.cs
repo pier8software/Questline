@@ -76,7 +76,7 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
             return Responses.UseItemResponse.Error($"The {item.Name} doesn't work on the {barrier.Name}.");
         }
 
-        barrier.IsUnlocked = true;
+        state.UpdateBarrier(barrier.Unlock());
         return Responses.UseItemResponse.Success(barrier.UnlockMessage);
     }
 }

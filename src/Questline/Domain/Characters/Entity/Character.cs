@@ -11,7 +11,7 @@ public record Character
     public int Experience { get; init; }
     public AbilityScores AbilityScores { get; private init; } = null!;
     public HitPoints HitPoints { get; private init; } = null!;
-    public string Location { get; private set; } = null!;
+    public string Location { get; private init; } = null!;
     public Inventory Inventory { get; private init; } = new();
 
     public static Character Create(
@@ -36,13 +36,11 @@ public record Character
         };
     }
 
-    public void SetLocation(string locationId)
-    {
-        if (Location != locationId)
-        {
-            Location = locationId;
-        }
-    }
+    public Character MoveTo(string locationId) => this with { Location = locationId };
+
+    public Character AddInventoryItem(Item item) => this with { Inventory = Inventory.Add(item) };
+
+    public Character RemoveInventoryItem(Item item) => this with { Inventory = Inventory.Remove(item) };
 
     public string ToCharacterSummary()
     {

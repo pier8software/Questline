@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 namespace Questline.Domain.Shared.Entity;
 
 public class Item
@@ -7,16 +9,25 @@ public class Item
     public required string Description { get; init; }
 }
 
-public class Inventory
+public record Inventory
 {
-    private readonly List<Item> _items = new();
+    private readonly ImmutableList<Item> _items;
+
+    public Inventory() : this(ImmutableList<Item>.Empty)
+    {
+    }
+
+    private Inventory(ImmutableList<Item> items)
+    {
+        _items = items;
+    }
 
     public IReadOnlyList<Item> Items => _items;
-    public bool IsEmpty => _items.Count == 0;
+    public bool IsEmpty => _items.IsEmpty;
 
-    public void Add(Item item) => _items.Add(item);
+    public Inventory Add(Item item) => new(_items.Add(item));
 
-    public bool Remove(Item item) => _items.Remove(item);
+    public Inventory Remove(Item item) => new(_items.Remove(item));
 
     public Item? FindByName(string name) =>
         _items.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));

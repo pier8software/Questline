@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
 
@@ -32,20 +33,16 @@ public class RoomBuilder(string id, string name, string description)
 
     public Room Build()
     {
-        var room = new Room
+        var inventory = _items.Aggregate(new Inventory(), (inv, item) => inv.Add(item));
+
+        return new Room
         {
             Id = id,
             Name = name,
             Description = description,
-            Exits = new Dictionary<Direction, Exit>(_exits),
-            Features = new List<Feature>(_features)
+            Exits = _exits.ToImmutableDictionary(),
+            Items = inventory,
+            Features = _features.ToImmutableList()
         };
-
-        foreach (var item in _items)
-        {
-            room.Items.Add(item);
-        }
-
-        return room;
     }
 }
