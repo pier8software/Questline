@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
 
@@ -12,7 +11,7 @@ public class RoomTests
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
 
-        room = room.AddItem(lamp);
+        room.AddItem(lamp);
 
         room.FindItemByName("brass lamp").ShouldBe(lamp);
     }
@@ -26,12 +25,12 @@ public class RoomTests
             Id = "cellar",
             Name = "Cellar",
             Description = "A damp cellar.",
-            Items = ImmutableList.Create(lamp)
+            Items = new List<Item> { lamp }
         };
 
-        room = room.RemoveItem(lamp);
+        room.RemoveItem(lamp);
 
-        room.Items.IsEmpty.ShouldBeTrue();
+        room.Items.ShouldBeEmpty();
     }
 
     [Fact]
@@ -43,7 +42,7 @@ public class RoomTests
             Id = "cellar",
             Name = "Cellar",
             Description = "A damp cellar.",
-            Items = ImmutableList.Create(lamp)
+            Items = new List<Item> { lamp }
         };
 
         room.FindItemByName("BRASS LAMP").ShouldBe(lamp);

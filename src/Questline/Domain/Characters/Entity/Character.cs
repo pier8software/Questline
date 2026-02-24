@@ -1,10 +1,11 @@
-using System.Collections.Immutable;
 using Questline.Domain.Shared.Entity;
 
 namespace Questline.Domain.Characters.Entity;
 
-public record Character
+public class Character
 {
+    private List<Item> _inventory = [];
+
     public string Name { get; private init; } = null!;
     public Race Race { get; private init; }
     public CharacterClass Class { get; private init; }
@@ -12,8 +13,13 @@ public record Character
     public int Experience { get; init; }
     public AbilityScores AbilityScores { get; private init; } = null!;
     public HitPoints HitPoints { get; private init; } = null!;
-    public string Location { get; private init; } = null!;
-    public ImmutableList<Item> Inventory { get; private init; } = ImmutableList<Item>.Empty;
+    public string Location { get; private set; } = null!;
+
+    public IReadOnlyList<Item> Inventory
+    {
+        get => _inventory;
+        private init => _inventory = new List<Item>(value);
+    }
 
     public static Character Create(
         string name,
@@ -32,19 +38,18 @@ public record Character
             Experience = 0,
             AbilityScores = abilityScores,
             HitPoints = hitPoints,
-            Location = location,
-            Inventory = ImmutableList<Item>.Empty
+            Location = location
         };
     }
 
-    public Character MoveTo(string locationId) => this with { Location = locationId };
+    public void MoveTo(string locationId) => Location = locationId;
 
-    public Character AddInventoryItem(Item item) => this with { Inventory = Inventory.Add(item) };
+    public void AddInventoryItem(Item item) => _inventory.Add(item);
 
-    public Character RemoveInventoryItem(Item item) => this with { Inventory = Inventory.Remove(item) };
+    public void RemoveInventoryItem(Item item) => _inventory.Remove(item);
 
     public Item? FindInventoryItemByName(string name) =>
-        Inventory.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        _inventory.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
     public string ToCharacterSummary()
     {

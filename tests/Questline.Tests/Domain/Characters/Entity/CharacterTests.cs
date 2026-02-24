@@ -17,7 +17,7 @@ public class CharacterTests
         var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores, "start");
 
-        character = character.MoveTo("end");
+        character.MoveTo("end");
 
         character.Location.ShouldBe("end");
     }
@@ -29,7 +29,7 @@ public class CharacterTests
             DefaultHitPoints, DefaultAbilityScores, "start");
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
 
-        character = character.AddInventoryItem(lamp);
+        character.AddInventoryItem(lamp);
 
         character.Inventory.Contains(lamp).ShouldBeTrue();
     }
@@ -39,12 +39,12 @@ public class CharacterTests
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start")
-            .AddInventoryItem(lamp);
+            DefaultHitPoints, DefaultAbilityScores, "start");
+        character.AddInventoryItem(lamp);
 
-        character = character.RemoveInventoryItem(lamp);
+        character.RemoveInventoryItem(lamp);
 
-        character.Inventory.IsEmpty.ShouldBeTrue();
+        character.Inventory.ShouldBeEmpty();
     }
 
     [Fact]
@@ -52,8 +52,8 @@ public class CharacterTests
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start")
-            .AddInventoryItem(lamp);
+            DefaultHitPoints, DefaultAbilityScores, "start");
+        character.AddInventoryItem(lamp);
 
         character.FindInventoryItemByName("BRASS LAMP").ShouldBe(lamp);
     }

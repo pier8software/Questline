@@ -22,8 +22,7 @@ public class UseItemCommandHandlerTests
 
     private static void GiveItemToPlayer(GameState state, Item item)
     {
-        var newCharacter = state.Player.Character.AddInventoryItem(item);
-        state.UpdatePlayer(state.Player with { Character = newCharacter });
+        state.Player.Character.AddInventoryItem(item);
     }
 
     [Fact]
@@ -132,7 +131,8 @@ public class UseItemCommandHandlerTests
     [Fact]
     public void Already_unlocked_barrier_returns_informative_message()
     {
-        var barrier = CreateBarrier() with { IsUnlocked = true };
+        var barrier = CreateBarrier();
+        barrier.Unlock();
         var key = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
 
         var state = new GameBuilder()

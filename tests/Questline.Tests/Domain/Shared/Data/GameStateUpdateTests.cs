@@ -2,6 +2,7 @@ using Questline.Domain.Characters.Entity;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
+using Questline.Domain.Shared.Entity;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Tests.Domain.Shared.Data;
@@ -19,35 +20,33 @@ public class GameStateUpdateTests
             DefaultHitPoints, DefaultAbilityScores, location));
 
     [Fact]
-    public void UpdatePlayer_replaces_current_player()
+    public void Character_mutation_is_visible_through_game_state()
     {
         var state = new GameState(
             new Dictionary<string, Room>(),
             CreateTestPlayer());
 
-        var newCharacter = state.Player.Character.MoveTo("end");
-        var newPlayer = state.Player with { Character = newCharacter };
-        state.UpdatePlayer(newPlayer);
+        state.Player.Character.MoveTo("end");
 
         state.Player.Character.Location.ShouldBe("end");
     }
 
     [Fact]
-    public void UpdateRoom_replaces_room_by_id()
+    public void Room_mutation_is_visible_through_game_state()
     {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
         var state = new GameState(
             new Dictionary<string, Room> { ["cellar"] = room },
             CreateTestPlayer());
 
-        var updatedRoom = room with { Description = "A very damp cellar." };
-        state.UpdateRoom(updatedRoom);
+        state.GetRoom("cellar").AddItem(lamp);
 
-        state.GetRoom("cellar").Description.ShouldBe("A very damp cellar.");
+        state.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
     }
 
     [Fact]
-    public void UpdateBarrier_replaces_barrier_by_id()
+    public void Barrier_mutation_is_visible_through_game_state()
     {
         var barrier = new Barrier
         {
@@ -64,8 +63,7 @@ public class GameStateUpdateTests
             CreateTestPlayer(),
             new Dictionary<string, Barrier> { ["iron-door"] = barrier });
 
-        var unlocked = barrier.Unlock();
-        state.UpdateBarrier(unlocked);
+        state.GetBarrier("iron-door")!.Unlock();
 
         state.GetBarrier("iron-door")!.IsUnlocked.ShouldBeTrue();
     }

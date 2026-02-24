@@ -16,9 +16,8 @@ public class TakeItemHandler : IRequestHandler<Requests.TakeItemCommand>
             return Responses.ItemTakenResponse.Error($"There is no '{request.ItemName}' here.");
         }
 
-        state.UpdateRoom(room.RemoveItem(item));
-        var newCharacter = state.Player.Character.AddInventoryItem(item);
-        state.UpdatePlayer(state.Player with { Character = newCharacter });
+        room.RemoveItem(item);
+        state.Player.Character.AddInventoryItem(item);
 
         return Responses.ItemTakenResponse.Success(item.Name);
     }

@@ -107,9 +107,9 @@ public class MovePlayerCommandHandlerTests
             Description = "A heavy iron door.",
             BlockedMessage = "The iron door is locked tight.",
             UnlockItemId = "rusty-key",
-            UnlockMessage = "The rusty key turns in the lock...",
-            IsUnlocked = true
+            UnlockMessage = "The rusty key turns in the lock..."
         };
+        barrier.Unlock();
 
         var state = new GameBuilder()
             .WithRoom("start", "Start", "Starting room.",

@@ -15,11 +15,10 @@ public class DropItemCommandHandler : IRequestHandler<Requests.DropItemCommand>
             return new Responses.ItemDroppedResponse($"You are not carrying '{command.ItemName}'.");
         }
 
-        var newCharacter = state.Player.Character.RemoveInventoryItem(item);
-        state.UpdatePlayer(state.Player with { Character = newCharacter });
+        state.Player.Character.RemoveInventoryItem(item);
 
         var room = state.GetRoom(state.Player.Character.Location);
-        state.UpdateRoom(room.AddItem(item));
+        room.AddItem(item);
 
         return new Responses.ItemDroppedResponse(item.Name);
     }

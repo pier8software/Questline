@@ -10,8 +10,7 @@ public class GetPlayerInventoryQueryHandlerTests
 {
     private static void GiveItemToPlayer(GameState state, Item item)
     {
-        var newCharacter = state.Player.Character.AddInventoryItem(item);
-        state.UpdatePlayer(state.Player with { Character = newCharacter });
+        state.Player.Character.AddInventoryItem(item);
     }
 
     [Fact]
@@ -58,10 +57,10 @@ public class GetPlayerInventoryQueryHandlerTests
 
         getHandler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
         state.Player.Character.Inventory.ShouldContain(lamp);
-        state.GetRoom("cellar").Items.IsEmpty.ShouldBeTrue();
+        state.GetRoom("cellar").Items.ShouldBeEmpty();
 
         dropHandler.Handle(state, new Requests.DropItemCommand("brass lamp"));
-        state.Player.Character.Inventory.IsEmpty.ShouldBeTrue();
+        state.Player.Character.Inventory.ShouldBeEmpty();
         state.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
     }
 }
