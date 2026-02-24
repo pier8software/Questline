@@ -22,6 +22,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<CharacterCreationStateMachine>();
         services.AddSingleton<GameEngine>();
 
+        services.AddMongoPersistence("mongodb://localhost:27017", "questline", "0.6.0");
+
         RegisterCommandHandlers(services);
 
         return services;

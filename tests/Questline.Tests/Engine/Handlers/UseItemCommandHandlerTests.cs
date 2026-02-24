@@ -20,10 +20,7 @@ public class UseItemCommandHandlerTests
         UnlockMessage = "The rusty key turns in the lock and the iron door swings open."
     };
 
-    private static void GiveItemToPlayer(GameState state, Item item)
-    {
-        state.Player.Character.AddInventoryItem(item);
-    }
+    private static void GiveItemToPlayer(GameState state, Item item) => state.Player.Character.AddInventoryItem(item);
 
     [Fact]
     public void Correct_item_on_barrier_unlocks_it()

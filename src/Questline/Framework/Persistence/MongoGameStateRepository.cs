@@ -1,6 +1,4 @@
 using MongoDB.Driver;
-using Questline.Domain.Characters.Entity;
-using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
@@ -8,7 +6,8 @@ using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Framework.Persistence;
 
-public class MongoGameStateRepository(IMongoCollection<GameStateDocument> collection, string version) : IGameStateRepository
+public class MongoGameStateRepository(IMongoCollection<GameStateDocument> collection, string version)
+    : IGameStateRepository
 {
     public void Save(GameState state)
     {

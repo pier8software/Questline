@@ -10,10 +10,14 @@ using Questline.Framework.Persistence;
 
 namespace Questline.Engine.Core;
 
-public class GameEngine(Parser parser, RequestSender dispatcher, IGameContentLoader contentLoader, IGameStateRepository repository)
+public class GameEngine(
+    Parser parser,
+    RequestSender dispatcher,
+    IGameContentLoader contentLoader,
+    IGameStateRepository repository)
 {
-    private GameState? _state;
     private string _startingRoomId = "";
+    private GameState? _state;
 
     public void LoadWorld(string adventureId)
     {

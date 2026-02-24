@@ -1,5 +1,4 @@
 using MongoDB.Driver;
-using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
 using Questline.Framework.Persistence;
 using Questline.Tests.TestHelpers.Builders;
@@ -26,10 +25,7 @@ public class MongoGameStateRepositoryTests : IDisposable
         _repository = new MongoGameStateRepository(_collection, "0.6.0");
     }
 
-    public void Dispose()
-    {
-        _collection.DeleteMany(Builders<GameStateDocument>.Filter.Empty);
-    }
+    public void Dispose() => _collection.DeleteMany(Builders<GameStateDocument>.Filter.Empty);
 
     [Fact]
     public void First_save_inserts_a_new_document()

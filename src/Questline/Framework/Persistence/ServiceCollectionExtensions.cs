@@ -5,7 +5,8 @@ namespace Questline.Framework.Persistence;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddMongoPersistence(this IServiceCollection services, string connectionString, string databaseName, string version)
+    public static IServiceCollection AddMongoPersistence(this IServiceCollection services, string connectionString,
+        string databaseName, string version)
     {
         services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
         services.AddSingleton(sp =>

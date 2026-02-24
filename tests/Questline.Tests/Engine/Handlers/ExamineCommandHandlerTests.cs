@@ -9,10 +9,7 @@ namespace Questline.Tests.Engine.Handlers;
 
 public class ExamineCommandHandlerTests
 {
-    private static void GiveItemToPlayer(GameState state, Item item)
-    {
-        state.Player.Character.AddInventoryItem(item);
-    }
+    private static void GiveItemToPlayer(GameState state, Item item) => state.Player.Character.AddInventoryItem(item);
 
     [Fact]
     public void Examine_inventory_item_shows_description()

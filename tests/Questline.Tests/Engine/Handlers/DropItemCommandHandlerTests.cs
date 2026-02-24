@@ -8,10 +8,7 @@ namespace Questline.Tests.Engine.Handlers;
 
 public class DropItemCommandHandlerTests
 {
-    private static void GiveItemToPlayer(GameState state, Item item)
-    {
-        state.Player.Character.AddInventoryItem(item);
-    }
+    private static void GiveItemToPlayer(GameState state, Item item) => state.Player.Character.AddInventoryItem(item);
 
     [Fact]
     public void Returns_successful_drop_response()

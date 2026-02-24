@@ -8,10 +8,7 @@ namespace Questline.Tests.Engine.Handlers;
 
 public class GetPlayerInventoryQueryHandlerTests
 {
-    private static void GiveItemToPlayer(GameState state, Item item)
-    {
-        state.Player.Character.AddInventoryItem(item);
-    }
+    private static void GiveItemToPlayer(GameState state, Item item) => state.Player.Character.AddInventoryItem(item);
 
     [Fact]
     public void Lists_carried_items()

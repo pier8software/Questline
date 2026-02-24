@@ -4,8 +4,8 @@ namespace Questline.Framework.Persistence;
 
 public record GameStateDocument
 {
-    [BsonId]
-    public required string Id { get; init; }
+    [BsonId] public required string Id { get; init; }
+
     public required string AdventureId { get; init; }
     public required string Version { get; init; }
     public required PlayerDocument Player { get; init; }
