@@ -1,4 +1,5 @@
 using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
@@ -8,6 +9,12 @@ namespace Questline.Tests.Engine.Handlers;
 
 public class ExamineCommandHandlerTests
 {
+    private static void GiveItemToPlayer(GameState state, Item item)
+    {
+        var newCharacter = state.Player.Character.AddInventoryItem(item);
+        state.UpdatePlayer(state.Player with { Character = newCharacter });
+    }
+
     [Fact]
     public void Examine_inventory_item_shows_description()
     {
@@ -18,7 +25,7 @@ public class ExamineCommandHandlerTests
             .WithRoom("chamber", "Chamber", "A dark chamber.")
             .BuildState("player1", "chamber");
 
-        state.Player.Character.Inventory.Add(key);
+        GiveItemToPlayer(state, key);
         var handler = new ExamineCommandHandler();
 
         var result = handler.Handle(state, new Requests.ExamineCommand("rusty key"));

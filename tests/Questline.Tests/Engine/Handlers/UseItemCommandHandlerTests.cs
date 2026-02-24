@@ -1,4 +1,5 @@
 using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
@@ -19,6 +20,12 @@ public class UseItemCommandHandlerTests
         UnlockMessage = "The rusty key turns in the lock and the iron door swings open."
     };
 
+    private static void GiveItemToPlayer(GameState state, Item item)
+    {
+        var newCharacter = state.Player.Character.AddInventoryItem(item);
+        state.UpdatePlayer(state.Player with { Character = newCharacter });
+    }
+
     [Fact]
     public void Correct_item_on_barrier_unlocks_it()
     {
@@ -32,13 +39,13 @@ public class UseItemCommandHandlerTests
             .WithBarrier(barrier)
             .BuildState("player1", "chamber");
 
-        state.Player.Character.Inventory.Add(key);
+        GiveItemToPlayer(state, key);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
 
         result.Message.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
-        barrier.IsUnlocked.ShouldBeTrue();
+        state.GetBarrier("iron-door")!.IsUnlocked.ShouldBeTrue();
     }
 
     [Fact]
@@ -54,13 +61,13 @@ public class UseItemCommandHandlerTests
             .WithBarrier(barrier)
             .BuildState("player1", "chamber");
 
-        state.Player.Character.Inventory.Add(torch);
+        GiveItemToPlayer(state, torch);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("torch", "iron door"));
 
         result.Message.ShouldBe("The torch doesn't work on the iron door.");
-        barrier.IsUnlocked.ShouldBeFalse();
+        state.GetBarrier("iron-door")!.IsUnlocked.ShouldBeFalse();
     }
 
     [Fact]
@@ -95,13 +102,13 @@ public class UseItemCommandHandlerTests
             .WithBarrier(barrier)
             .BuildState("player1", "chamber");
 
-        state.Player.Character.Inventory.Add(key);
+        GiveItemToPlayer(state, key);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", null));
 
         result.Message.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
-        barrier.IsUnlocked.ShouldBeTrue();
+        state.GetBarrier("iron-door")!.IsUnlocked.ShouldBeTrue();
     }
 
     [Fact]
@@ -114,7 +121,7 @@ public class UseItemCommandHandlerTests
             .WithRoom("beyond", "Beyond", "Beyond the door.")
             .BuildState("player1", "chamber");
 
-        state.Player.Character.Inventory.Add(key);
+        GiveItemToPlayer(state, key);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
@@ -125,8 +132,7 @@ public class UseItemCommandHandlerTests
     [Fact]
     public void Already_unlocked_barrier_returns_informative_message()
     {
-        var barrier = CreateBarrier();
-        barrier.IsUnlocked = true;
+        var barrier = CreateBarrier() with { IsUnlocked = true };
         var key = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
 
         var state = new GameBuilder()
@@ -136,7 +142,7 @@ public class UseItemCommandHandlerTests
             .WithBarrier(barrier)
             .BuildState("player1", "chamber");
 
-        state.Player.Character.Inventory.Add(key);
+        GiveItemToPlayer(state, key);
         var handler = new UseItemCommandHandler();
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));

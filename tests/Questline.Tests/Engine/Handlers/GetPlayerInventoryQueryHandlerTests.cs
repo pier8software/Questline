@@ -1,3 +1,4 @@
+using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
@@ -7,6 +8,12 @@ namespace Questline.Tests.Engine.Handlers;
 
 public class GetPlayerInventoryQueryHandlerTests
 {
+    private static void GiveItemToPlayer(GameState state, Item item)
+    {
+        var newCharacter = state.Player.Character.AddInventoryItem(item);
+        state.UpdatePlayer(state.Player with { Character = newCharacter });
+    }
+
     [Fact]
     public void Lists_carried_items()
     {
@@ -15,8 +22,8 @@ public class GetPlayerInventoryQueryHandlerTests
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .BuildState("player1", "cellar");
-        state.Player.Character.Inventory.Add(lamp);
-        state.Player.Character.Inventory.Add(key);
+        GiveItemToPlayer(state, lamp);
+        GiveItemToPlayer(state, key);
         var handler = new GetPlayerInventoryQueryHandler();
 
         var result = handler.Handle(state, new Requests.GetPlayerInventoryQuery());

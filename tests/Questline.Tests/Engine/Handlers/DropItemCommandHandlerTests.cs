@@ -1,3 +1,4 @@
+using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
@@ -7,6 +8,12 @@ namespace Questline.Tests.Engine.Handlers;
 
 public class DropItemCommandHandlerTests
 {
+    private static void GiveItemToPlayer(GameState state, Item item)
+    {
+        var newCharacter = state.Player.Character.AddInventoryItem(item);
+        state.UpdatePlayer(state.Player with { Character = newCharacter });
+    }
+
     [Fact]
     public void Returns_successful_drop_response()
     {
@@ -14,7 +21,7 @@ public class DropItemCommandHandlerTests
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .BuildState("player1", "cellar");
-        state.Player.Character.Inventory.Add(lamp);
+        GiveItemToPlayer(state, lamp);
 
         var handler = new DropItemCommandHandler();
 
@@ -31,7 +38,7 @@ public class DropItemCommandHandlerTests
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .BuildState("player1", "cellar");
-        state.Player.Character.Inventory.Add(lamp);
+        GiveItemToPlayer(state, lamp);
         var handler = new DropItemCommandHandler();
 
         _ = handler.Handle(state, new Requests.DropItemCommand("brass lamp"));

@@ -54,7 +54,7 @@ public class GameBuilder
             ? _characterFactory(startLocation)
             : DefaultCharacterFactory(startLocation);
 
-        character.SetLocation(startLocation);
+        character = character.MoveTo(startLocation);
 
         return new GameState(_rooms, new Player(playerId, character), _barriers);
     }

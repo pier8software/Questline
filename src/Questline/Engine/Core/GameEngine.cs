@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Questline.Domain.Characters.Entity;
 using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
@@ -28,7 +29,7 @@ public class GameEngine(Parser parser, RequestSender dispatcher, IGameContentLoa
     {
         var world = contentLoader.Load(adventureId);
 
-        character.SetLocation(world.StartingRoomId);
+        character = character.MoveTo(world.StartingRoomId);
 
         _state = new GameState(world.Rooms, new Player(Guid.NewGuid().ToString(), character), world.Barriers);
         var startingRoom = _state.GetRoom(world.StartingRoomId);
@@ -36,7 +37,7 @@ public class GameEngine(Parser parser, RequestSender dispatcher, IGameContentLoa
         var items = startingRoom.Items.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(startingRoom.Exits);
 
-        List<string> GetLockedBarrierDescriptions(Dictionary<Direction, Exit> roomExits)
+        List<string> GetLockedBarrierDescriptions(ImmutableDictionary<Direction, Exit> roomExits)
         {
             var descriptions = new List<string>();
             foreach (var (_, exit) in roomExits)

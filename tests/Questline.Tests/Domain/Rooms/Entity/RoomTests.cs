@@ -1,4 +1,6 @@
+using System.Collections.Immutable;
 using Questline.Domain.Rooms.Entity;
+using Questline.Domain.Shared.Entity;
 
 namespace Questline.Tests.Domain.Rooms.Entity;
 
@@ -40,16 +42,46 @@ public class RoomTests
             Id = "hallway",
             Name = "Hallway",
             Description = "A long hallway.",
-            Exits = new Dictionary<Direction, Exit>
+            Exits = ImmutableDictionary.CreateRange(new Dictionary<Direction, Exit>
             {
                 [Direction.North] = new("throne-room"),
                 [Direction.South] = new("entrance")
-            }
+            })
         };
 
         room.Exits.ShouldContainKey(Direction.North);
         room.Exits[Direction.North].Destination.ShouldBe("throne-room");
         room.Exits.ShouldContainKey(Direction.South);
         room.Exits[Direction.South].Destination.ShouldBe("entrance");
+    }
+
+    [Fact]
+    public void AddItem_returns_new_room_with_item()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
+
+        var updated = room.AddItem(lamp);
+
+        updated.Items.FindByName("brass lamp").ShouldBe(lamp);
+        room.Items.IsEmpty.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void RemoveItem_returns_new_room_without_item()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var room = new Room
+        {
+            Id = "cellar",
+            Name = "Cellar",
+            Description = "A damp cellar.",
+            Items = new Inventory().Add(lamp)
+        };
+
+        var updated = room.RemoveItem(lamp);
+
+        updated.Items.IsEmpty.ShouldBeTrue();
+        room.Items.FindByName("brass lamp").ShouldBe(lamp);
     }
 }

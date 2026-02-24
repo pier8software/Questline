@@ -30,8 +30,8 @@ public class PlayerTests
 
         player.Character.Location.ShouldBe("start");
 
-        player.Character.SetLocation("end");
-        player.Character.Location.ShouldBe("end");
+        var moved = player with { Character = player.Character.MoveTo("end") };
+        moved.Character.Location.ShouldBe("end");
     }
 
     [Fact]

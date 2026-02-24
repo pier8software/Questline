@@ -8,7 +8,7 @@ public class GameState(Dictionary<string, Room> rooms, Player player, Dictionary
 {
     private readonly Dictionary<string, Barrier> _barriers = barriers ?? new Dictionary<string, Barrier>();
 
-    public Player Player { get; } = player;
+    public Player Player { get; private set; } = player;
 
     public IReadOnlyDictionary<string, Barrier> Barriers => _barriers;
 
@@ -30,5 +30,20 @@ public class GameState(Dictionary<string, Room> rooms, Player player, Dictionary
         }
 
         return _barriers.GetValueOrDefault(id);
+    }
+
+    public void UpdatePlayer(Player newPlayer)
+    {
+        Player = newPlayer;
+    }
+
+    public void UpdateRoom(Room room)
+    {
+        rooms[room.Id] = room;
+    }
+
+    public void UpdateBarrier(Barrier barrier)
+    {
+        _barriers[barrier.Id] = barrier;
     }
 }

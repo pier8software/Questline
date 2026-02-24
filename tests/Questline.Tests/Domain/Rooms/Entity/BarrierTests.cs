@@ -21,7 +21,7 @@ public class BarrierTests
     }
 
     [Fact]
-    public void Barrier_can_be_unlocked()
+    public void Unlock_returns_new_barrier_with_IsUnlocked_true()
     {
         var barrier = new Barrier
         {
@@ -33,8 +33,26 @@ public class BarrierTests
             UnlockMessage = "The rusty key turns in the lock..."
         };
 
-        barrier.IsUnlocked = true;
+        var unlocked = barrier.Unlock();
 
-        barrier.IsUnlocked.ShouldBeTrue();
+        unlocked.IsUnlocked.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Unlock_leaves_original_barrier_locked()
+    {
+        var barrier = new Barrier
+        {
+            Id = "iron-door",
+            Name = "iron door",
+            Description = "A heavy iron door.",
+            BlockedMessage = "The iron door is locked tight.",
+            UnlockItemId = "rusty-key",
+            UnlockMessage = "The rusty key turns in the lock..."
+        };
+
+        _ = barrier.Unlock();
+
+        barrier.IsUnlocked.ShouldBeFalse();
     }
 }
