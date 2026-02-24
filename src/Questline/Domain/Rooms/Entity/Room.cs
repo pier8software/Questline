@@ -4,9 +4,9 @@ namespace Questline.Domain.Rooms.Entity;
 
 public class Room
 {
-    private Dictionary<Direction, Exit> _exits = new();
-    private List<Item> _items = [];
-    private List<Feature> _features = [];
+    private readonly Dictionary<Direction, Exit> _exits = new();
+    private readonly List<Feature> _features = [];
+    private readonly List<Item> _items = [];
 
     public required string Id { get; init; }
     public required string Name { get; init; }
@@ -21,13 +21,13 @@ public class Room
     public IReadOnlyList<Item> Items
     {
         get => _items;
-        init => _items = new List<Item>(value);
+        init => _items = [..value];
     }
 
     public IReadOnlyList<Feature> Features
     {
         get => _features;
-        init => _features = new List<Feature>(value);
+        init => _features = [..value];
     }
 
     public void AddItem(Item item) => _items.Add(item);

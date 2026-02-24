@@ -4,7 +4,7 @@ namespace Questline.Domain.Characters.Entity;
 
 public class Character
 {
-    private List<Item> _inventory = [];
+    private readonly List<Item> _inventory = [];
 
     public string Name { get; private init; } = null!;
     public Race Race { get; private init; }
@@ -18,7 +18,7 @@ public class Character
     public IReadOnlyList<Item> Inventory
     {
         get => _inventory;
-        private init => _inventory = new List<Item>(value);
+        private init => _inventory = [..value];
     }
 
     public static Character Create(
