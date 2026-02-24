@@ -44,7 +44,7 @@ public class DropItemCommandHandlerTests
         _ = handler.Handle(state, new Requests.DropItemCommand("brass lamp"));
 
         state.Player.Character.Inventory.IsEmpty.ShouldBeTrue();
-        state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBe(lamp);
+        state.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
     }
 
     [Fact]

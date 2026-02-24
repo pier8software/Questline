@@ -34,8 +34,8 @@ public class TakeItemHandlerTests
 
         _ = handler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
 
-        state.Player.Character.Inventory.Items.ShouldContain(lamp);
-        state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBeNull();
+        state.Player.Character.Inventory.ShouldContain(lamp);
+        state.GetRoom("cellar").FindItemByName("brass lamp").ShouldBeNull();
     }
 
     [Fact]

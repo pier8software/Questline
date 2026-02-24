@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Questline.Domain.Shared.Entity;
 
 namespace Questline.Domain.Characters.Entity;
@@ -12,7 +13,7 @@ public record Character
     public AbilityScores AbilityScores { get; private init; } = null!;
     public HitPoints HitPoints { get; private init; } = null!;
     public string Location { get; private init; } = null!;
-    public Inventory Inventory { get; private init; } = new();
+    public ImmutableList<Item> Inventory { get; private init; } = ImmutableList<Item>.Empty;
 
     public static Character Create(
         string name,
@@ -32,7 +33,7 @@ public record Character
             AbilityScores = abilityScores,
             HitPoints = hitPoints,
             Location = location,
-            Inventory = new Inventory()
+            Inventory = ImmutableList<Item>.Empty
         };
     }
 
@@ -41,6 +42,9 @@ public record Character
     public Character AddInventoryItem(Item item) => this with { Inventory = Inventory.Add(item) };
 
     public Character RemoveInventoryItem(Item item) => this with { Inventory = Inventory.Remove(item) };
+
+    public Item? FindInventoryItemByName(string name) =>
+        Inventory.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
     public string ToCharacterSummary()
     {

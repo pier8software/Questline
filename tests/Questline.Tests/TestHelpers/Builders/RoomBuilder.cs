@@ -33,15 +33,13 @@ public class RoomBuilder(string id, string name, string description)
 
     public Room Build()
     {
-        var inventory = _items.Aggregate(new Inventory(), (inv, item) => inv.Add(item));
-
         return new Room
         {
             Id = id,
             Name = name,
             Description = description,
             Exits = _exits.ToImmutableDictionary(),
-            Items = inventory,
+            Items = _items.ToImmutableList(),
             Features = _features.ToImmutableList()
         };
     }

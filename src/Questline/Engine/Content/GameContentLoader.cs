@@ -61,8 +61,8 @@ public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
                 Description = f.Description
             }).ToImmutableList();
 
-            var inventory = roomDetail.Items
-                .Aggregate(new Inventory(), (inv, itemId) => inv.Add(items[itemId]));
+            var roomItems = roomDetail.Items
+                .Select(itemId => items[itemId]).ToImmutableList();
 
             var room = new Room
             {
@@ -70,7 +70,7 @@ public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
                 Name = roomDetail.Name,
                 Description = roomDetail.Description,
                 Exits = exits.ToImmutableDictionary(),
-                Items = inventory,
+                Items = roomItems,
                 Features = features
             };
 

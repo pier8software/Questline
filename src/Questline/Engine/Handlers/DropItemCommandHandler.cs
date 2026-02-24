@@ -8,7 +8,7 @@ public class DropItemCommandHandler : IRequestHandler<Requests.DropItemCommand>
 {
     public IResponse Handle(GameState state, Requests.DropItemCommand command)
     {
-        var item = state.Player.Character.Inventory.FindByName(command.ItemName);
+        var item = state.Player.Character.FindInventoryItemByName(command.ItemName);
 
         if (item is null)
         {

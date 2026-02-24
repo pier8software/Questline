@@ -34,7 +34,7 @@ public class GameEngine(Parser parser, RequestSender dispatcher, IGameContentLoa
         _state = new GameState(world.Rooms, new Player(Guid.NewGuid().ToString(), character), world.Barriers);
         var startingRoom = _state.GetRoom(world.StartingRoomId);
         var exits = startingRoom.Exits.Keys.Select(d => d.ToString()).ToList();
-        var items = startingRoom.Items.Items.Select(i => i.Name).ToList();
+        var items = startingRoom.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(startingRoom.Exits);
 
         List<string> GetLockedBarrierDescriptions(ImmutableDictionary<Direction, Exit> roomExits)

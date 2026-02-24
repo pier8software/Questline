@@ -8,7 +8,7 @@ Define the spatial model of the game world. Rooms are entities connected by dire
 
 ### Requirement: Room entity with identity and description
 
-A Room SHALL have a unique `Id`, a `Name`, a `Description`, an `Items` inventory, and a `Features` list.
+A Room SHALL have a unique `Id`, a `Name`, a `Description`, an `Items` list (`ImmutableList<Item>`), and a `Features` list.
 
 #### Scenario: Room exposes identity and descriptive properties
 

@@ -29,7 +29,7 @@ public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerComma
 
         var newRoom = state.GetRoom(exit.Destination);
         var exits = newRoom.Exits.Keys.Select(d => d.ToString()).ToList();
-        var items = newRoom.Items.Items.Select(i => i.Name).ToList();
+        var items = newRoom.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(state, newRoom);
 
         return Responses.PlayerMovedResponse.Success(newRoom.Name, newRoom.Description, exits, items, lockedBarriers);

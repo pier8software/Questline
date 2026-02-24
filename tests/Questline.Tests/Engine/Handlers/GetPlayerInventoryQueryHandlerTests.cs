@@ -57,11 +57,11 @@ public class GetPlayerInventoryQueryHandlerTests
         var dropHandler = new DropItemCommandHandler();
 
         getHandler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
-        state.Player.Character.Inventory.Items.ShouldContain(lamp);
+        state.Player.Character.Inventory.ShouldContain(lamp);
         state.GetRoom("cellar").Items.IsEmpty.ShouldBeTrue();
 
         dropHandler.Handle(state, new Requests.DropItemCommand("brass lamp"));
         state.Player.Character.Inventory.IsEmpty.ShouldBeTrue();
-        state.GetRoom("cellar").Items.FindByName("brass lamp").ShouldBe(lamp);
+        state.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
     }
 }

@@ -9,7 +9,7 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 {
     public IResponse Handle(GameState state, Requests.UseItemCommand command)
     {
-        var item = state.Player.Character.Inventory.FindByName(command.ItemName);
+        var item = state.Player.Character.FindInventoryItemByName(command.ItemName);
         if (item is null)
         {
             return Responses.UseItemResponse.Error($"You don't have '{command.ItemName}'.");

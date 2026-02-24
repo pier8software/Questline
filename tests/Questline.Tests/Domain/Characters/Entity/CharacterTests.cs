@@ -46,4 +46,24 @@ public class CharacterTests
 
         character.Inventory.IsEmpty.ShouldBeTrue();
     }
+
+    [Fact]
+    public void FindInventoryItemByName_returns_item_case_insensitively()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+            DefaultHitPoints, DefaultAbilityScores, "start")
+            .AddInventoryItem(lamp);
+
+        character.FindInventoryItemByName("BRASS LAMP").ShouldBe(lamp);
+    }
+
+    [Fact]
+    public void FindInventoryItemByName_returns_null_when_not_found()
+    {
+        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+            DefaultHitPoints, DefaultAbilityScores, "start");
+
+        character.FindInventoryItemByName("sword").ShouldBeNull();
+    }
 }

@@ -14,7 +14,7 @@ public class RoomTests
 
         room = room.AddItem(lamp);
 
-        room.Items.FindByName("brass lamp").ShouldBe(lamp);
+        room.FindItemByName("brass lamp").ShouldBe(lamp);
     }
 
     [Fact]
@@ -26,11 +26,34 @@ public class RoomTests
             Id = "cellar",
             Name = "Cellar",
             Description = "A damp cellar.",
-            Items = new Inventory().Add(lamp)
+            Items = ImmutableList.Create(lamp)
         };
 
         room = room.RemoveItem(lamp);
 
         room.Items.IsEmpty.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void FindItemByName_returns_item_case_insensitively()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var room = new Room
+        {
+            Id = "cellar",
+            Name = "Cellar",
+            Description = "A damp cellar.",
+            Items = ImmutableList.Create(lamp)
+        };
+
+        room.FindItemByName("BRASS LAMP").ShouldBe(lamp);
+    }
+
+    [Fact]
+    public void FindItemByName_returns_null_when_not_found()
+    {
+        var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
+
+        room.FindItemByName("sword").ShouldBeNull();
     }
 }
