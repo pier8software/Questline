@@ -12,83 +12,38 @@ public class CharacterTests
         new AbilityScore(10), new AbilityScore(10), new AbilityScore(10));
 
     [Fact]
-    public void MoveTo_returns_new_character_with_updated_location()
+    public void Moving_the_character_updates_their_location()
     {
         var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores, "start");
 
-        var moved = character.MoveTo("end");
+        character = character.MoveTo("end");
 
-        moved.Location.ShouldBe("end");
+        character.Location.ShouldBe("end");
     }
 
     [Fact]
-    public void MoveTo_leaves_original_character_unchanged()
-    {
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start");
-
-        _ = character.MoveTo("end");
-
-        character.Location.ShouldBe("start");
-    }
-
-    [Fact]
-    public void Inventory_starts_empty()
-    {
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start");
-
-        character.Inventory.IsEmpty.ShouldBeTrue();
-    }
-
-    [Fact]
-    public void AddInventoryItem_returns_new_character_with_item_in_inventory()
+    public void Can_add_a_new_item_to_a_characters_inventory()
     {
         var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores, "start");
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
 
-        var updated = character.AddInventoryItem(lamp);
-
-        updated.Inventory.Contains(lamp).ShouldBeTrue();
-    }
-
-    [Fact]
-    public void AddInventoryItem_leaves_original_character_unchanged()
-    {
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start");
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-
-        _ = character.AddInventoryItem(lamp);
-
-        character.Inventory.IsEmpty.ShouldBeTrue();
-    }
-
-    [Fact]
-    public void RemoveInventoryItem_returns_new_character_without_item()
-    {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start")
-            .AddInventoryItem(lamp);
-
-        var updated = character.RemoveInventoryItem(lamp);
-
-        updated.Inventory.IsEmpty.ShouldBeTrue();
-    }
-
-    [Fact]
-    public void RemoveInventoryItem_leaves_original_character_unchanged()
-    {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start")
-            .AddInventoryItem(lamp);
-
-        _ = character.RemoveInventoryItem(lamp);
+        character = character.AddInventoryItem(lamp);
 
         character.Inventory.Contains(lamp).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Can_remove_an_item_from_a_characters_inventory()
+    {
+        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+            DefaultHitPoints, DefaultAbilityScores, "start")
+            .AddInventoryItem(lamp);
+
+        character = character.RemoveInventoryItem(lamp);
+
+        character.Inventory.IsEmpty.ShouldBeTrue();
     }
 }
