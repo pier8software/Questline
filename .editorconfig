@@ -59,6 +59,7 @@ csharp_new_line_before_finally = true
 # Indentation
 csharp_indent_case_contents = true
 csharp_indent_switch_labels = true
+csharp_int_align = true
 
 # Spacing
 csharp_space_after_cast = false
