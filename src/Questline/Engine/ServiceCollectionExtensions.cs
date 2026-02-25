@@ -22,11 +22,27 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<CharacterCreationStateMachine>();
         services.AddSingleton<GameEngine>();
 
-        services.AddMongoPersistence("mongodb://localhost:27017", "questline", "0.6.0");
+        RegisterPersistence(services);
 
         RegisterCommandHandlers(services);
 
         return services;
+    }
+
+    private static void RegisterPersistence(IServiceCollection services)
+    {
+        services.AddMongoPersistence("mongodb://localhost:27017", "questline");
+
+        services.AddTransient<IGameStateRepository, MongoGameStateRepository>();
+        services.AddMapper<MongoGameStateMapper>();
+    }
+
+    private static void AddMapper<TMapper>(this IServiceCollection services) where TMapper : class
+    {
+        var mapperType    = typeof(TMapper);
+        var interfaceType = mapperType.GetInterface(typeof(IPersistenceMapper<,>).Name);
+
+        services.AddTransient(interfaceType!, mapperType);
     }
 
     private static void RegisterCommandHandlers(IServiceCollection services)

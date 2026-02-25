@@ -128,7 +128,7 @@ public class CliAppTests
     [Fact]
     public void Null_input_exits_loop()
     {
-        var (loop, console, _) = CreateCliApp();
+        var (loop, _, _) = CreateCliApp();
         // No input queued, ReadLine returns null at name prompt
 
         loop.Run();
@@ -144,7 +144,6 @@ public class CliAppTests
 
         loop.Run();
 
-        // First save should have no player (world snapshot before character creation)
         repository.SaveCalls.Count.ShouldBeGreaterThanOrEqualTo(2);
         repository.SaveCalls[0].Player.ShouldBeNull();
     }
@@ -157,7 +156,6 @@ public class CliAppTests
 
         loop.Run();
 
-        // Second save should include the player with character
         repository.SaveCalls.Count.ShouldBeGreaterThanOrEqualTo(2);
         repository.SaveCalls[1].Player.ShouldNotBeNull();
         repository.SaveCalls[1].Player!.Character.Name.ShouldBe("Hero");
