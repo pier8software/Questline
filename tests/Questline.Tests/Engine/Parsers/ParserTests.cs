@@ -66,7 +66,7 @@ public class ParserTests
 
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldNotBeNull();
-        result.Error.Message.ShouldBe("Please enter a command.");
+        result.Error.ErrorMessage.ShouldBe("Please enter a command.");
     }
 
     [Fact]
@@ -75,6 +75,6 @@ public class ParserTests
         var result = _parser.Parse("error");
 
         result.IsSuccess.ShouldBeFalse();
-        result.Error!.Message.ShouldBe("I don't understand 'error'.");
+        result.Error!.ErrorMessage.ShouldBe("I don't understand 'error'.");
     }
 }

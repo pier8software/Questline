@@ -2,6 +2,7 @@ using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Engine.Handlers;
@@ -23,8 +24,8 @@ public class DropItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.DropItemCommand("brass lamp"));
 
-        result.ShouldBeOfType<Responses.ItemDroppedResponse>();
-        result.Message.ShouldContain("You drop the brass lamp");
+        var dropped = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
+        dropped.ItemName.ShouldBe("brass lamp");
     }
 
     [Fact]
@@ -54,7 +55,8 @@ public class DropItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.DropItemCommand("lamp"));
 
-        result.Message.ShouldContain("You are not carrying 'lamp'.");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldContain("You are not carrying 'lamp'.");
     }
 
     [Fact]
@@ -68,6 +70,7 @@ public class DropItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.DropItemCommand("BRASS LAMP"));
 
-        result.Message.ShouldContain("brass lamp");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldContain("BRASS LAMP");
     }
 }

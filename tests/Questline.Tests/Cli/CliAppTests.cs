@@ -20,7 +20,7 @@ public class CliAppTests
     // Character creation inputs: select class (Fighter), select race (Human), continue (HP roll), enter name
     private static readonly string[] CharacterCreationInputs = ["1", "1", "", "Hero"];
 
-    private static (CliApp app, FakeConsole console, FakeGameStateRepository repository) CreateCliApp()
+    private static (CliApp app, FakeConsole console) CreateCliApp()
     {
         var worldContent = new GameBuilder()
             .WithRoom("entrance", "Dungeon Entrance", "A dark entrance to the dungeon.", r =>
@@ -41,7 +41,6 @@ public class CliAppTests
             .BuildServiceProvider();
 
         var console = new FakeConsole();
-        var repository = new FakeGameStateRepository();
 
         var dice = new FakeDice(DefaultDiceRolls);
         var stateMachine = new CharacterCreationStateMachine(dice);
@@ -49,17 +48,18 @@ public class CliAppTests
         var contentLoader = new FakeGameContentLoader(worldContent);
         var dispatcher = new RequestSender(serviceProvider);
         var parser = new Parser();
-        var gameEngine = new GameEngine(parser, dispatcher, contentLoader, repository);
+        var gameEngine = new GameEngine(parser, dispatcher, contentLoader, stateMachine);
+        var formatter = new ResponseFormatter();
 
-        var app = new CliApp(console, stateMachine, gameEngine);
+        var app = new CliApp(console, gameEngine, formatter);
 
-        return (app, console, repository);
+        return (app, console);
     }
 
     [Fact]
     public void Displays_initial_room_on_start()
     {
-        var (loop, console, _) = CreateCliApp();
+        var (loop, console) = CreateCliApp();
         console.QueueInput([..CharacterCreationInputs, "quit"]);
 
         loop.Run();
@@ -71,7 +71,7 @@ public class CliAppTests
     [Fact]
     public void Displays_command_prompt()
     {
-        var (loop, console, _) = CreateCliApp();
+        var (loop, console) = CreateCliApp();
         console.QueueInput([..CharacterCreationInputs, "quit"]);
 
         loop.Run();
@@ -82,7 +82,7 @@ public class CliAppTests
     [Fact]
     public void Look_command_displays_room_info()
     {
-        var (loop, console, _) = CreateCliApp();
+        var (loop, console) = CreateCliApp();
         console.QueueInput([..CharacterCreationInputs, "look", "quit"]);
 
         loop.Run();
@@ -95,7 +95,7 @@ public class CliAppTests
     [Fact]
     public void Go_command_moves_and_displays_new_room()
     {
-        var (loop, console, _) = CreateCliApp();
+        var (loop, console) = CreateCliApp();
         console.QueueInput([..CharacterCreationInputs, "go north", "quit"]);
 
         loop.Run();
@@ -106,7 +106,7 @@ public class CliAppTests
     [Fact]
     public void Unknown_command_displays_error()
     {
-        var (loop, console, _) = CreateCliApp();
+        var (loop, console) = CreateCliApp();
         console.QueueInput([..CharacterCreationInputs, "dance", "quit"]);
 
         loop.Run();
@@ -117,7 +117,7 @@ public class CliAppTests
     [Fact]
     public void Quit_command_exits_gracefully()
     {
-        var (loop, console, _) = CreateCliApp();
+        var (loop, console) = CreateCliApp();
         console.QueueInput([..CharacterCreationInputs, "quit"]);
 
         loop.Run();
@@ -128,37 +128,12 @@ public class CliAppTests
     [Fact]
     public void Null_input_exits_loop()
     {
-        var (loop, _, _) = CreateCliApp();
-        // No input queued, ReadLine returns null at name prompt
+        var (loop, _) = CreateCliApp();
+        // No input queued, ReadLine returns null
 
         loop.Run();
 
         // Should not hang — exits when input is null
-    }
-
-    [Fact]
-    public void Saves_world_state_before_character_creation()
-    {
-        var (loop, console, repository) = CreateCliApp();
-        console.QueueInput([..CharacterCreationInputs, "quit"]);
-
-        loop.Run();
-
-        repository.SaveCalls.Count.ShouldBeGreaterThanOrEqualTo(2);
-        repository.SaveCalls[0].Player.ShouldBeNull();
-    }
-
-    [Fact]
-    public void Saves_character_to_profile_after_creation()
-    {
-        var (loop, console, repository) = CreateCliApp();
-        console.QueueInput([..CharacterCreationInputs, "quit"]);
-
-        loop.Run();
-
-        repository.SaveCalls.Count.ShouldBeGreaterThanOrEqualTo(2);
-        repository.SaveCalls[1].Player.ShouldNotBeNull();
-        repository.SaveCalls[1].Player!.Character.Name.ShouldBe("Hero");
     }
 
     private static int CountOccurrences(string text, string search)

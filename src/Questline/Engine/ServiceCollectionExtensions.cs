@@ -6,7 +6,6 @@ using Questline.Engine.Handlers;
 using Questline.Engine.Parsers;
 using Questline.Framework.FileSystem;
 using Questline.Framework.Mediator;
-using Questline.Framework.Persistence;
 using static Questline.Engine.Messages.Requests;
 
 namespace Questline.Engine;
@@ -22,52 +21,23 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<CharacterCreationStateMachine>();
         services.AddSingleton<GameEngine>();
 
-        RegisterPersistence(services);
-
         RegisterCommandHandlers(services);
 
         return services;
     }
 
-    private static void RegisterPersistence(IServiceCollection services)
-    {
-        services.AddMongoPersistence("mongodb://localhost:27017", "questline");
-
-        services.AddTransient<IGameStateRepository, MongoGameStateRepository>();
-        services.AddMapper<MongoGameStateMapper>();
-    }
-
-    private static void AddMapper<TMapper>(this IServiceCollection services) where TMapper : class
-    {
-        var mapperType    = typeof(TMapper);
-        var interfaceType = mapperType.GetInterface(typeof(IPersistenceMapper<,>).Name);
-
-        services.AddTransient(interfaceType!, mapperType);
-    }
-
     private static void RegisterCommandHandlers(IServiceCollection services)
     {
-        RegisterHandler<GetRoomDetailsQuery, GetRoomDetailsHandler>(services);
-        RegisterHandler<MovePlayerCommand, MovePlayerCommandHandler>(services);
-        RegisterHandler<TakeItemCommand, TakeItemHandler>(services);
-        RegisterHandler<DropItemCommand, DropItemCommandHandler>(services);
-        RegisterHandler<GetPlayerInventoryQuery, GetPlayerInventoryQueryHandler>(services);
-        RegisterHandler<QuitGame, QuitGameHandler>(services);
-        RegisterHandler<UseItemCommand, UseItemCommandHandler>(services);
-        RegisterHandler<ExamineCommand, ExamineCommandHandler>(services);
-        RegisterHandler<VersionQuery, VersionQueryHandler>(services);
+        services.AddSingleton<IRequestHandler<GetRoomDetailsQuery>, GetRoomDetailsHandler>();
+        services.AddSingleton<IRequestHandler<MovePlayerCommand>, MovePlayerCommandHandler>();
+        services.AddSingleton<IRequestHandler<TakeItemCommand>, TakeItemHandler>();
+        services.AddSingleton<IRequestHandler<DropItemCommand>, DropItemCommandHandler>();
+        services.AddSingleton<IRequestHandler<GetPlayerInventoryQuery>, GetPlayerInventoryQueryHandler>();
+        services.AddSingleton<IRequestHandler<QuitGame>, QuitGameHandler>();
+        services.AddSingleton<IRequestHandler<UseItemCommand>, UseItemCommandHandler>();
+        services.AddSingleton<IRequestHandler<ExamineCommand>, ExamineCommandHandler>();
+        services.AddSingleton<IRequestHandler<VersionQuery>, VersionQueryHandler>();
 
         services.AddSingleton<RequestSender>();
-    }
-
-    private static void RegisterHandler<TRequest, THandler>(IServiceCollection services)
-        where TRequest : IRequest
-        where THandler : class, IRequestHandler<TRequest>
-    {
-        services.AddSingleton<THandler>();
-        services.AddSingleton<IRequestHandler<TRequest>>(sp =>
-            new AutoSaveDecorator<TRequest>(
-                sp.GetRequiredService<THandler>(),
-                sp.GetRequiredService<IGameStateRepository>()));
     }
 }

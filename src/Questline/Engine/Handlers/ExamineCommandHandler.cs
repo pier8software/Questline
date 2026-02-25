@@ -12,7 +12,7 @@ public class ExamineCommandHandler : IRequestHandler<Requests.ExamineCommand>
         var inventoryItem = state.Player.Character.FindInventoryItemByName(command.TargetName);
         if (inventoryItem is not null)
         {
-            return Responses.ExamineResponse.Success(inventoryItem.Description);
+            return new Responses.ExamineResponse(inventoryItem.Description);
         }
 
         var room = state.GetRoom(state.Player.Character.Location);
@@ -20,7 +20,7 @@ public class ExamineCommandHandler : IRequestHandler<Requests.ExamineCommand>
         var roomItem = room.FindItemByName(command.TargetName);
         if (roomItem is not null)
         {
-            return Responses.ExamineResponse.Success(roomItem.Description);
+            return new Responses.ExamineResponse(roomItem.Description);
         }
 
         var feature = room.Features.FirstOrDefault(f =>
@@ -28,9 +28,9 @@ public class ExamineCommandHandler : IRequestHandler<Requests.ExamineCommand>
             f.Keywords.Any(k => k.Equals(command.TargetName, StringComparison.OrdinalIgnoreCase)));
         if (feature is not null)
         {
-            return Responses.ExamineResponse.Success(feature.Description);
+            return new Responses.ExamineResponse(feature.Description);
         }
 
-        return Responses.ExamineResponse.Error($"You don't see '{command.TargetName}' here.");
+        return new ErrorResponse($"You don't see '{command.TargetName}' here.");
     }
 }

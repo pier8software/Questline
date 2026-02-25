@@ -10,7 +10,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class GetRoomDetailsHandlerTests
 {
     [Fact]
-    public void Returns_response_with_formatted_message()
+    public void Returns_response_with_room_details()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var state = new GameBuilder()
@@ -27,16 +27,16 @@ public class GetRoomDetailsHandlerTests
 
         var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
 
-        var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
-        var parts = lookResult.Message.Split('\n');
-        parts[0].ShouldBe("Hallway");
-        parts[1].ShouldBe("A long hallway.");
-        parts[2].ShouldContain("You can see: brass lamp");
-        parts[3].ShouldContain("Exits: North, South");
+        var details = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
+        details.RoomName.ShouldBe("Hallway");
+        details.Description.ShouldBe("A long hallway.");
+        details.Items.ShouldContain("brass lamp");
+        details.Exits.ShouldContain("North");
+        details.Exits.ShouldContain("South");
     }
 
     [Fact]
-    public void Response_omits_items_line_if_room_is_empty()
+    public void Response_has_empty_items_if_room_is_empty()
     {
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
@@ -45,7 +45,8 @@ public class GetRoomDetailsHandlerTests
 
         var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
 
-        result.Message.ShouldNotContain("You can see");
+        var details = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
+        details.Items.ShouldBeEmpty();
     }
 
     [Fact]
@@ -72,11 +73,12 @@ public class GetRoomDetailsHandlerTests
 
         var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
 
-        result.Message.ShouldContain("A heavy iron door blocks the way North.");
+        var details = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
+        details.LockedBarriers.ShouldContain("A heavy iron door blocks the way North.");
     }
 
     [Fact]
-    public void Response_omits_barrier_line_when_unlocked()
+    public void Response_omits_barrier_when_unlocked()
     {
         var barrier = new Barrier
         {
@@ -100,6 +102,7 @@ public class GetRoomDetailsHandlerTests
 
         var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
 
-        result.Message.ShouldNotContain("iron door");
+        var details = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
+        details.LockedBarriers.ShouldBeEmpty();
     }
 }

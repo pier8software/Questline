@@ -12,7 +12,7 @@ public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerComma
 
         if (!currentRoom.Exits.TryGetValue(command.Direction, out var exit))
         {
-            return Responses.PlayerMovedResponse.Error($"There is no exit to the {command.Direction}.");
+            return new ErrorResponse($"There is no exit to the {command.Direction}.");
         }
 
         if (exit.BarrierId is not null)
@@ -20,7 +20,7 @@ public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerComma
             var barrier = state.GetBarrier(exit.BarrierId);
             if (barrier is not null && !barrier.IsUnlocked)
             {
-                return Responses.PlayerMovedResponse.Error(barrier.BlockedMessage);
+                return new ErrorResponse(barrier.BlockedMessage);
             }
         }
 
@@ -31,7 +31,7 @@ public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerComma
         var items = newRoom.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(state, newRoom);
 
-        return Responses.PlayerMovedResponse.Success(newRoom.Name, newRoom.Description, exits, items, lockedBarriers);
+        return new Responses.PlayerMovedResponse(newRoom.Name, newRoom.Description, exits, items, lockedBarriers);
     }
 
     private static List<string> GetLockedBarrierDescriptions(GameState state, Domain.Rooms.Entity.Room room)

@@ -12,7 +12,7 @@ public class DropItemCommandHandler : IRequestHandler<Requests.DropItemCommand>
 
         if (item is null)
         {
-            return new Responses.ItemDroppedResponse($"You are not carrying '{command.ItemName}'.");
+            return new ErrorResponse($"You are not carrying '{command.ItemName}'.");
         }
 
         state.Player.Character.RemoveInventoryItem(item);

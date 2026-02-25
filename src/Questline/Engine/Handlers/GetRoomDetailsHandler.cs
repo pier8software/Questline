@@ -13,7 +13,7 @@ public class GetRoomDetailsHandler : IRequestHandler<Requests.GetRoomDetailsQuer
         var items = room.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(state, room);
 
-        return Responses.RoomDetailsResponse.Success(room.Name, room.Description, exits, items, lockedBarriers);
+        return new Responses.RoomDetailsResponse(room.Name, room.Description, exits, items, lockedBarriers);
     }
 
     private static List<string> GetLockedBarrierDescriptions(GameState state, Domain.Rooms.Entity.Room room)
