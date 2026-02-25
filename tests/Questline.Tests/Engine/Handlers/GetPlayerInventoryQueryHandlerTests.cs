@@ -39,7 +39,8 @@ public class GetPlayerInventoryQueryHandlerTests
 
         var result = handler.Handle(state, new Requests.GetPlayerInventoryQuery());
 
-        result.Message.ShouldContain("not carrying anything");
+        var inventory = result.ShouldBeOfType<Responses.PlayerInventoryResponse>();
+        inventory.Items.ShouldBeEmpty();
     }
 
     [Fact]

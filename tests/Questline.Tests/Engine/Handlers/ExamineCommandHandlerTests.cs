@@ -3,6 +3,7 @@ using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Engine.Handlers;
@@ -26,7 +27,8 @@ public class ExamineCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.ExamineCommand("rusty key"));
 
-        result.Message.ShouldBe("An old iron key, its teeth worn by time.");
+        var examine = result.ShouldBeOfType<Responses.ExamineResponse>();
+        examine.Description.ShouldBe("An old iron key, its teeth worn by time.");
     }
 
     [Fact]
@@ -42,7 +44,8 @@ public class ExamineCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.ExamineCommand("torch"));
 
-        result.Message.ShouldBe("A flickering wooden torch.");
+        var examine = result.ShouldBeOfType<Responses.ExamineResponse>();
+        examine.Description.ShouldBe("A flickering wooden torch.");
     }
 
     [Fact]
@@ -64,7 +67,8 @@ public class ExamineCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.ExamineCommand("symbols"));
 
-        result.Message.ShouldBe("Ancient runes etched into the stone walls.");
+        var examine = result.ShouldBeOfType<Responses.ExamineResponse>();
+        examine.Description.ShouldBe("Ancient runes etched into the stone walls.");
     }
 
     [Fact]
@@ -86,7 +90,8 @@ public class ExamineCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.ExamineCommand("strange symbols"));
 
-        result.Message.ShouldBe("Ancient runes etched into the stone walls.");
+        var examine = result.ShouldBeOfType<Responses.ExamineResponse>();
+        examine.Description.ShouldBe("Ancient runes etched into the stone walls.");
     }
 
     [Fact]
@@ -100,6 +105,7 @@ public class ExamineCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.ExamineCommand("mysterious orb"));
 
-        result.Message.ShouldBe("You don't see 'mysterious orb' here.");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldBe("You don't see 'mysterious orb' here.");
     }
 }

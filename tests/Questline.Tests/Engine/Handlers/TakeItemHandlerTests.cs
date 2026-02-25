@@ -1,6 +1,7 @@
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 
 namespace Questline.Tests.Engine.Handlers;
@@ -19,8 +20,8 @@ public class TakeItemHandlerTests
 
         var result = handler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
 
-        result.ShouldBeOfType<Responses.ItemTakenResponse>();
-        result.Message.ShouldContain("brass lamp");
+        var taken = result.ShouldBeOfType<Responses.ItemTakenResponse>();
+        taken.ItemName.ShouldBe("brass lamp");
     }
 
     [Fact]
@@ -49,7 +50,8 @@ public class TakeItemHandlerTests
 
         var result = handler.Handle(state, new Requests.TakeItemCommand("lamp"));
 
-        result.Message.ShouldContain("There is no 'lamp' here.");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldContain("There is no 'lamp' here.");
     }
 
     [Fact]
@@ -63,6 +65,7 @@ public class TakeItemHandlerTests
 
         var result = handler.Handle(state, new Requests.TakeItemCommand("BRASS LAMP"));
 
-        result.Message.ShouldContain("brass lamp");
+        var taken = result.ShouldBeOfType<Responses.ItemTakenResponse>();
+        taken.ItemName.ShouldBe("brass lamp");
     }
 }

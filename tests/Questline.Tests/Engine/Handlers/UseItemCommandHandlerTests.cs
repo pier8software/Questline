@@ -3,6 +3,7 @@ using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
@@ -40,7 +41,8 @@ public class UseItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
 
-        result.Message.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
+        var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
+        useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
         state.GetBarrier("iron-door")!.IsUnlocked.ShouldBeTrue();
     }
 
@@ -62,7 +64,8 @@ public class UseItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.UseItemCommand("torch", "iron door"));
 
-        result.Message.ShouldBe("The torch doesn't work on the iron door.");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldBe("The torch doesn't work on the iron door.");
         state.GetBarrier("iron-door")!.IsUnlocked.ShouldBeFalse();
     }
 
@@ -82,7 +85,8 @@ public class UseItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
 
-        result.Message.ShouldBe("You don't have 'rusty key'.");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldBe("You don't have 'rusty key'.");
     }
 
     [Fact]
@@ -103,7 +107,8 @@ public class UseItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", null));
 
-        result.Message.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
+        var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
+        useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
         state.GetBarrier("iron-door")!.IsUnlocked.ShouldBeTrue();
     }
 
@@ -122,7 +127,8 @@ public class UseItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
 
-        result.Message.ShouldBe("You don't see 'iron door' here.");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldBe("You don't see 'iron door' here.");
     }
 
     [Fact]
@@ -144,6 +150,7 @@ public class UseItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
 
-        result.Message.ShouldBe("The iron door is already unlocked.");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldBe("The iron door is already unlocked.");
     }
 }

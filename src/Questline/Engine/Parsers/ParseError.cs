@@ -2,4 +2,4 @@ using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Parsers;
 
-public record ParseError(string Message) : IResponse;
+public record ParseError(string ErrorMessage) : ErrorResponse(ErrorMessage);

@@ -1,3 +1,4 @@
+using Questline.Domain.Characters.Data;
 using Questline.Domain.Shared.Entity;
 
 namespace Questline.Domain.Characters.Entity;
@@ -51,23 +52,20 @@ public class Character
     public Item? FindInventoryItemByName(string name) =>
         _inventory.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-    public string ToCharacterSummary()
-    {
-        return $"""
-                Name: {Name}
-                Race: {Race}
-                Class: {Class}
-                Level: {Level}
-                HP: {HitPoints.CurrentHitPoints}/{HitPoints.MaxHitPoints}
-                XP: {Experience}
-
-                Ability Scores:
-                  STR: {AbilityScores.Strength}
-                  INT: {AbilityScores.Intelligence}
-                  WIS: {AbilityScores.Wisdom}
-                  DEX: {AbilityScores.Dexterity}
-                  CON: {AbilityScores.Constitution}
-                  CHA: {AbilityScores.Charisma}
-                """;
-    }
+    public CharacterSummary ToSummary() =>
+        new(
+            Name,
+            Race.ToString(),
+            Class.ToString(),
+            Level,
+            Experience,
+            HitPoints.MaxHitPoints,
+            HitPoints.CurrentHitPoints,
+            new AbilityScoresSummary(
+                AbilityScores.Strength.Score,
+                AbilityScores.Intelligence.Score,
+                AbilityScores.Wisdom.Score,
+                AbilityScores.Dexterity.Score,
+                AbilityScores.Constitution.Score,
+                AbilityScores.Charisma.Score));
 }

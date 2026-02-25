@@ -12,7 +12,7 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
         var item = state.Player.Character.FindInventoryItemByName(command.ItemName);
         if (item is null)
         {
-            return Responses.UseItemResponse.Error($"You don't have '{command.ItemName}'.");
+            return new ErrorResponse($"You don't have '{command.ItemName}'.");
         }
 
         var room = state.GetRoom(state.Player.Character.Location);
@@ -39,7 +39,7 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 
             if (barrier is null)
             {
-                return Responses.UseItemResponse.Error($"You don't see '{command.TargetName}' here.");
+                return new ErrorResponse($"You don't see '{command.TargetName}' here.");
             }
         }
         else
@@ -62,21 +62,21 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 
             if (barrier is null)
             {
-                return Responses.UseItemResponse.Error("There is nothing to use that on.");
+                return new ErrorResponse("There is nothing to use that on.");
             }
         }
 
         if (barrier.IsUnlocked)
         {
-            return Responses.UseItemResponse.Error($"The {barrier.Name} is already unlocked.");
+            return new ErrorResponse($"The {barrier.Name} is already unlocked.");
         }
 
         if (item.Id != barrier.UnlockItemId)
         {
-            return Responses.UseItemResponse.Error($"The {item.Name} doesn't work on the {barrier.Name}.");
+            return new ErrorResponse($"The {item.Name} doesn't work on the {barrier.Name}.");
         }
 
         barrier.Unlock();
-        return Responses.UseItemResponse.Success(barrier.UnlockMessage);
+        return new Responses.UseItemResponse(barrier.UnlockMessage);
     }
 }

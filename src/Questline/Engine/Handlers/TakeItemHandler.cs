@@ -13,12 +13,12 @@ public class TakeItemHandler : IRequestHandler<Requests.TakeItemCommand>
 
         if (item is null)
         {
-            return Responses.ItemTakenResponse.Error($"There is no '{request.ItemName}' here.");
+            return new ErrorResponse($"There is no '{request.ItemName}' here.");
         }
 
         room.RemoveItem(item);
         state.Player.Character.AddInventoryItem(item);
 
-        return Responses.ItemTakenResponse.Success(item.Name);
+        return new Responses.ItemTakenResponse(item.Name);
     }
 }
