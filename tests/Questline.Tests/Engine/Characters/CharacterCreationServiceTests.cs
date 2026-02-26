@@ -1,4 +1,3 @@
-using Questline.Domain.Characters.Entity;
 using Questline.Engine.Characters;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers;
@@ -20,8 +19,8 @@ public class CharacterCreationStateMachineTests
 
         var response = sm.ProcessInput(null); // select class prompt
 
-        response.ShouldBeOfType<Responses.CharacterCreationResponse>();
-        response.Message.ShouldContain("class");
+        var creation = response.ShouldBeOfType<Responses.CharacterCreationResponse>();
+        creation.Prompt.ShouldContain("class");
     }
 
     [Fact]
@@ -32,8 +31,8 @@ public class CharacterCreationStateMachineTests
         sm.ProcessInput(null); // select class prompt
         var response = sm.ProcessInput("1");
 
-        response.ShouldBeOfType<Responses.CharacterCreationResponse>();
-        response.Message.ShouldContain("race");
+        var creation = response.ShouldBeOfType<Responses.CharacterCreationResponse>();
+        creation.Prompt.ShouldContain("race");
     }
 
     [Fact]
@@ -45,8 +44,8 @@ public class CharacterCreationStateMachineTests
 
         var response = sm.ProcessInput("1");
 
-        response.ShouldBeOfType<Responses.CharacterCreationResponse>();
-        response.Message.ShouldContain("continue");
+        var creation = response.ShouldBeOfType<Responses.CharacterCreationResponse>();
+        creation.Prompt.ShouldContain("continue");
     }
 
     [Fact]
@@ -59,8 +58,8 @@ public class CharacterCreationStateMachineTests
 
         var response = sm.ProcessInput(null); // roll HP
 
-        response.ShouldBeOfType<Responses.CharacterCreationResponse>();
-        response.Message.ShouldContain("name");
+        var creation = response.ShouldBeOfType<Responses.CharacterCreationResponse>();
+        creation.Prompt.ShouldContain("name");
     }
 
     [Fact]
@@ -74,10 +73,10 @@ public class CharacterCreationStateMachineTests
         var response = sm.ProcessInput("Thorin");
 
         var complete = response.ShouldBeOfType<Responses.CharacterCreationCompleteResponse>();
-        complete.Character.Name.ShouldBe("Thorin");
-        complete.Character.Race.ShouldBe(Race.Human);
-        complete.Character.Class.ShouldBe(CharacterClass.Fighter);
-        complete.Character.Level.ShouldBe(1);
+        complete.Summary.Name.ShouldBe("Thorin");
+        complete.Summary.Race.ShouldBe("Human");
+        complete.Summary.Class.ShouldBe("Fighter");
+        complete.Summary.Level.ShouldBe(1);
     }
 
     [Fact]
@@ -92,12 +91,12 @@ public class CharacterCreationStateMachineTests
 
         var response = (Responses.CharacterCreationCompleteResponse)sm.ProcessInput("Thorin");
 
-        response.Character.AbilityScores.Strength.Score.ShouldBe(15);
-        response.Character.AbilityScores.Intelligence.Score.ShouldBe(9);
-        response.Character.AbilityScores.Wisdom.Score.ShouldBe(12);
-        response.Character.AbilityScores.Dexterity.Score.ShouldBe(3);
-        response.Character.AbilityScores.Constitution.Score.ShouldBe(18);
-        response.Character.AbilityScores.Charisma.Score.ShouldBe(15);
+        response.Summary.AbilityScores.Strength.ShouldBe(15);
+        response.Summary.AbilityScores.Intelligence.ShouldBe(9);
+        response.Summary.AbilityScores.Wisdom.ShouldBe(12);
+        response.Summary.AbilityScores.Dexterity.ShouldBe(3);
+        response.Summary.AbilityScores.Constitution.ShouldBe(18);
+        response.Summary.AbilityScores.Charisma.ShouldBe(15);
     }
 
     [Fact]
@@ -111,7 +110,7 @@ public class CharacterCreationStateMachineTests
 
         var response = (Responses.CharacterCreationCompleteResponse)sm.ProcessInput("Thorin");
 
-        response.Character.HitPoints.MaxHitPoints.ShouldBe(8);
+        response.Summary.MaxHitPoints.ShouldBe(8);
     }
 
     [Fact]
@@ -126,7 +125,7 @@ public class CharacterCreationStateMachineTests
 
         var response = (Responses.CharacterCreationCompleteResponse)sm.ProcessInput("Thorin");
 
-        response.Character.HitPoints.CurrentHitPoints.ShouldBe(4);
+        response.Summary.CurrentHitPoints.ShouldBe(4);
     }
 
     [Fact]
@@ -140,7 +139,7 @@ public class CharacterCreationStateMachineTests
 
         var response = sm.ProcessInput("");
 
-        response.ShouldBeOfType<Responses.CharacterCreationResponse>();
-        response.Message.ShouldContain("Please give your character a name.");
+        var creation = response.ShouldBeOfType<Responses.CharacterCreationResponse>();
+        creation.Prompt.ShouldContain("Please give your character a name.");
     }
 }

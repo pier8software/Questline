@@ -1,5 +1,5 @@
-using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
+using Questline.Engine.Core;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
@@ -10,7 +10,7 @@ public class DropItemCommandHandlerTests
 {
     private static void GiveItemToPlayer(GameState state, Item item)
     {
-        state.Player.Character.AddInventoryItem(item);
+        state.Character.AddInventoryItem(item);
     }
 
     [Fact]
@@ -26,8 +26,8 @@ public class DropItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.DropItemCommand("brass lamp"));
 
-        result.ShouldBeOfType<Responses.ItemDroppedResponse>();
-        result.Message.ShouldContain("You drop the brass lamp");
+        var dropResult = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
+        dropResult.ItemName.ShouldBe("brass lamp");
     }
 
     [Fact]
@@ -42,12 +42,12 @@ public class DropItemCommandHandlerTests
 
         _ = handler.Handle(state, new Requests.DropItemCommand("brass lamp"));
 
-        state.Player.Character.Inventory.ShouldBeEmpty();
-        state.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
+        state.Character.Inventory.ShouldBeEmpty();
+        state.Adventure.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
     }
 
     [Fact]
-    public void Item_not_in_inventory_returns_error_message()
+    public void Item_not_in_inventory_returns_error()
     {
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
@@ -57,7 +57,8 @@ public class DropItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.DropItemCommand("lamp"));
 
-        result.Message.ShouldContain("You are not carrying 'lamp'.");
+        var dropResult = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
+        dropResult.ItemName.ShouldContain("You are not carrying 'lamp'.");
     }
 
     [Fact]
@@ -71,6 +72,7 @@ public class DropItemCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.DropItemCommand("BRASS LAMP"));
 
-        result.Message.ShouldContain("brass lamp");
+        var dropResult = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
+        dropResult.ItemName.ShouldContain("BRASS LAMP");
     }
 }

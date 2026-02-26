@@ -1,6 +1,7 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
@@ -20,9 +21,9 @@ public class MovePlayerCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
-        var parts = result.Message.Split("\n");
-        parts[0].ShouldBe("End Room");
-        parts[1].ShouldBe("The end room.");
+        var moveResult = result.ShouldBeOfType<Responses.PlayerMovedResponse>();
+        moveResult.RoomName.ShouldBe("End Room");
+        moveResult.Description.ShouldBe("The end room.");
     }
 
     [Fact]
@@ -37,7 +38,8 @@ public class MovePlayerCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.East));
 
-        result.Message.ShouldBe("There is no exit to the East.");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldBe("There is no exit to the East.");
     }
 
     [Fact]
@@ -52,7 +54,7 @@ public class MovePlayerCommandHandlerTests
 
         _ = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
-        state.Player.Character.Location.ShouldBe("end");
+        state.Character.Location.ShouldBe("end");
     }
 
     [Fact]
@@ -66,7 +68,7 @@ public class MovePlayerCommandHandlerTests
 
         _ = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
-        state.Player.Character.Location.ShouldBe("sealed");
+        state.Character.Location.ShouldBe("sealed");
     }
 
     [Fact]
@@ -93,8 +95,9 @@ public class MovePlayerCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
-        result.Message.ShouldBe("The iron door is locked tight.");
-        state.Player.Character.Location.ShouldBe("start");
+        var error = result.ShouldBeOfType<ErrorResponse>();
+        error.ErrorMessage.ShouldBe("The iron door is locked tight.");
+        state.Character.Location.ShouldBe("start");
     }
 
     [Fact]
@@ -122,8 +125,8 @@ public class MovePlayerCommandHandlerTests
 
         var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
-        var parts = result.Message.Split("\n");
-        parts[0].ShouldBe("End Room");
-        state.Player.Character.Location.ShouldBe("end");
+        var moveResult = result.ShouldBeOfType<Responses.PlayerMovedResponse>();
+        moveResult.RoomName.ShouldBe("End Room");
+        state.Character.Location.ShouldBe("end");
     }
 }

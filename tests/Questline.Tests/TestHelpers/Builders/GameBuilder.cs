@@ -1,7 +1,8 @@
 using Questline.Domain.Characters.Entity;
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared.Data;
 using Questline.Engine.Content;
+using Questline.Engine.Core;
+using Questline.Domain.Players.Entity;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Tests.TestHelpers.Builders;
@@ -55,6 +56,15 @@ public class GameBuilder
 
         character.MoveTo(startLocation);
 
-        return new GameState(_rooms, _barriers);
+        var adventure = new AdventureContent(_rooms, _barriers, startLocation);
+        var player    = Player.Create(playerId, playerId, playerId);
+
+        return new GameState
+        {
+            Phase     = GamePhase.Playing,
+            Player    = player,
+            Adventure = adventure,
+            Character = character
+        };
     }
 }
