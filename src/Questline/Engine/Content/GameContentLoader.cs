@@ -1,7 +1,7 @@
-using Questline.Domain.Rooms.Data;
+using Questline.Domain.Adventures.Entity;
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
+using Questline.Engine.Content.Data;
 using Questline.Framework.FileSystem;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
@@ -9,7 +9,7 @@ namespace Questline.Engine.Content;
 
 public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
 {
-    public WorldContent Load(string adventureId)
+    public Adventure Load(string adventureId)
     {
         var adventureData = loader.LoadFile<AdventureData>($"{adventureId}.json");
 
@@ -32,7 +32,9 @@ public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
 
         var rooms = BuildRooms(adventureData.Rooms, itemsDictionary);
 
-        return new WorldContent(rooms, barriers, adventureData.StartingRoomId);
+        Adventure.Create(adventureData.Id, adventureData.Name, adventureData.StartingRoomId, rooms, barriers);
+
+        return new AdventureContent(rooms, barriers, adventureData.StartingRoomId);
     }
 
     private static Dictionary<string, Room> BuildRooms(

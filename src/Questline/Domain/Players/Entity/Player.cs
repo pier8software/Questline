@@ -4,7 +4,7 @@ namespace Questline.Domain.Players.Entity;
 
 public class Player : DomainEntity
 {
-    public string Name { get; set; }
+    public string Name { get; init; }
 
     private Player(string id, string name)
     {

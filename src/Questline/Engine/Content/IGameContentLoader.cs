@@ -1,6 +1,8 @@
+using Questline.Domain.Adventures.Entity;
+
 namespace Questline.Engine.Content;
 
 public interface IGameContentLoader
 {
-    WorldContent Load(string adventureId);
+    Adventure Load(string adventureId);
 }

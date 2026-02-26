@@ -1,8 +1,9 @@
-namespace Questline.Domain.Shared.Data;
+namespace Questline.Engine.Content.Data;
 
-public class ItemData
+public class FeatureData
 {
     public string Id { get; set; } = null!;
     public string Name { get; set; } = null!;
+    public string[] Keywords { get; set; } = [];
     public string Description { get; set; } = null!;
 }

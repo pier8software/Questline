@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Questline.Framework.Serialisation;
 
-namespace Questline.Domain.Rooms.Data;
+namespace Questline.Engine.Content.Data;
 
 public class RoomData
 {

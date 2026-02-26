@@ -5,24 +5,28 @@ namespace Questline.Engine.Messages;
 
 public static class Responses
 {
+    public record LoginResponse(string PlayerName) : IResponse;
+
+    public record GetAdventuresResponse(Resources.AdventureSummary[] Adventures) : IResponse;
+
     public record PlayerMovedResponse(
-        string RoomName,
-        string Description,
+        string                RoomName,
+        string                Description,
         IReadOnlyList<string> Exits,
         IReadOnlyList<string> Items,
         IReadOnlyList<string> LockedBarriers) : IResponse;
 
     public record RoomDetailsResponse(
-        string RoomName,
-        string Description,
+        string                RoomName,
+        string                Description,
         IReadOnlyList<string> Exits,
         IReadOnlyList<string> Items,
         IReadOnlyList<string> LockedBarriers) : IResponse;
 
     public record GameStartedResponse(
-        CharacterSummary Character,
-        string RoomName,
-        string Description,
+        CharacterSummary      Character,
+        string                RoomName,
+        string                Description,
         IReadOnlyList<string> Exits,
         IReadOnlyList<string> Items,
         IReadOnlyList<string> LockedBarriers) : IResponse;
@@ -52,8 +56,8 @@ public static class Responses
     public record CharacterCreationOption(string Value, string Label);
 
     public record CharacterCreationResponse(
-        CharacterCreationStep Step,
-        string Prompt,
+        CharacterCreationStep                   Step,
+        string                                  Prompt,
         IReadOnlyList<CharacterCreationOption>? Options = null) : IResponse;
 
     public record CharacterCreationCompleteResponse(CharacterSummary Summary) : IResponse;

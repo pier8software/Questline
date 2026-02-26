@@ -10,9 +10,13 @@ public class CliApp(
 {
     public void Run()
     {
-        console.WriteLine("Welcome to Questline!");
+        var response = engine.ProcessInput(null);
+        console.WriteLine(formatter.Format(response));
 
-        var response = engine.LoadWorld("the-goblins-lair");
+        response = engine.ProcessInput(null);
+        console.WriteLine(formatter.Format(response));
+
+        response = engine.LoadWorld("the-goblins-lair");
         console.WriteLine(formatter.Format(response));
 
         while (engine.Phase != GamePhase.Ended)

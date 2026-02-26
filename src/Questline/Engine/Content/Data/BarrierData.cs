@@ -1,4 +1,4 @@
-namespace Questline.Domain.Rooms.Data;
+namespace Questline.Engine.Content.Data;
 
 public class BarrierData
 {

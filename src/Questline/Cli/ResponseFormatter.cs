@@ -8,12 +8,16 @@ public class ResponseFormatter
 {
     public string Format(IResponse response) => response switch
     {
-        Responses.CharacterCreationResponse r => FormatCharacterCreation(r),
+        Responses.LoginResponse r                     => FormatLogin(r),
+        Responses.GetAdventuresResponse r             => FormatGetAdventures(r),
+        Responses.CharacterCreationResponse r         => FormatCharacterCreation(r),
         Responses.CharacterCreationCompleteResponse r => FormatCharacterCreationComplete(r),
-        Responses.GameStartedResponse r => FormatGameStarted(r),
-        Responses.PlayerMovedResponse r => FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
-        Responses.RoomDetailsResponse r => FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
-        Responses.ItemTakenResponse r => $"You pick up the {r.ItemName}.",
+        Responses.GameStartedResponse r               => FormatGameStarted(r),
+        Responses.PlayerMovedResponse r =>
+            FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
+        Responses.RoomDetailsResponse r =>
+            FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
+        Responses.ItemTakenResponse r   => $"You pick up the {r.ItemName}.",
         Responses.ItemDroppedResponse r => $"You drop the {r.ItemName}.",
         Responses.PlayerInventoryResponse r => r.Items.Count == 0
             ? "You are not carrying anything."
@@ -21,10 +25,19 @@ public class ResponseFormatter
         Responses.ExamineResponse r => r.Description,
         Responses.UseItemResponse r => r.ResultMessage,
         Responses.VersionResponse r => $"Questline v{r.Version}",
-        Responses.GameQuitResponse => "Goodbye!",
-        ErrorResponse r => r.ErrorMessage,
-        _ => response.ToString() ?? ""
+        Responses.GameQuitResponse  => "Goodbye!",
+        ErrorResponse r             => r.ErrorMessage,
+        _                           => response.ToString() ?? ""
     };
+
+    private string FormatLogin(Responses.LoginResponse response) => $"Welcome back to Questline, {response.PlayerName}";
+
+    private string FormatGetAdventures(Responses.GetAdventuresResponse response)
+    {
+        var idx = 1;
+        return
+            $"Please select an adventure:\n{string.Join("\n", response.Adventures.Select(a => $"\t{idx++}. {a.Name}"))}";
+    }
 
     private static string FormatCharacterCreation(Responses.CharacterCreationResponse r)
     {
@@ -37,10 +50,8 @@ public class ResponseFormatter
         return r.Prompt;
     }
 
-    private static string FormatCharacterCreationComplete(Responses.CharacterCreationCompleteResponse r)
-    {
-        return $"You have created your character.\n{FormatCharacterSummary(r.Summary)}";
-    }
+    private static string FormatCharacterCreationComplete(Responses.CharacterCreationCompleteResponse r) =>
+        $"You have created your character.\n{FormatCharacterSummary(r.Summary)}";
 
     private static string FormatGameStarted(Responses.GameStartedResponse r)
     {
@@ -69,8 +80,8 @@ public class ResponseFormatter
     }
 
     private static string FormatRoomView(
-        string name,
-        string description,
+        string                name,
+        string                description,
         IReadOnlyList<string> exits,
         IReadOnlyList<string> items,
         IReadOnlyList<string> lockedBarriers)

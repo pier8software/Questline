@@ -4,5 +4,7 @@ public enum GamePhase
 {
     CharacterCreation,
     Playing,
-    Ended
+    Ended,
+    AdventureSelection,
+    Login
 }

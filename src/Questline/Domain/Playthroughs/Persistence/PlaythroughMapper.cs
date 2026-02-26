@@ -11,7 +11,6 @@ public class PlaythroughMapper : IPersistenceMapper<Playthrough, PlaythroughDocu
     {
         Id          = entity.Id,
         PlayerId    = entity.PlayerId,
-        AdventureId = entity.AdventureId,
         CharacterId = entity.CharacterId,
         StartedAt   = entity.StartedAt,
         UpdatedAt   = entity.LastSavedAt
