@@ -1,4 +1,4 @@
-using Questline.Domain.Shared.Data;
+using Questline.Engine.Core;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
@@ -9,13 +9,13 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 {
     public IResponse Handle(GameState state, Requests.UseItemCommand command)
     {
-        var item = state.Player.Character.FindInventoryItemByName(command.ItemName);
+        var item = state.Character.FindInventoryItemByName(command.ItemName);
         if (item is null)
         {
-            return Responses.UseItemResponse.Error($"You don't have '{command.ItemName}'.");
+            return new ErrorResponse($"You don't have '{command.ItemName}'.");
         }
 
-        var room = state.GetRoom(state.Player.Character.Location);
+        var room = state.Adventure.GetRoom(state.Character.Location);
 
         Barrier? barrier = null;
 
@@ -29,7 +29,7 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
                     continue;
                 }
 
-                var b = state.GetBarrier(exit.BarrierId);
+                var b = state.Adventure.GetBarrier(exit.BarrierId);
                 if (b is not null && b.Name.Equals(command.TargetName, StringComparison.OrdinalIgnoreCase))
                 {
                     barrier = b;
@@ -39,7 +39,7 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 
             if (barrier is null)
             {
-                return Responses.UseItemResponse.Error($"You don't see '{command.TargetName}' here.");
+                return new ErrorResponse($"You don't see '{command.TargetName}' here.");
             }
         }
         else
@@ -52,7 +52,7 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
                     continue;
                 }
 
-                var b = state.GetBarrier(exit.BarrierId);
+                var b = state.Adventure.GetBarrier(exit.BarrierId);
                 if (b is not null && !b.IsUnlocked)
                 {
                     barrier = b;
@@ -62,21 +62,21 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 
             if (barrier is null)
             {
-                return Responses.UseItemResponse.Error("There is nothing to use that on.");
+                return new ErrorResponse("There is nothing to use that on.");
             }
         }
 
         if (barrier.IsUnlocked)
         {
-            return Responses.UseItemResponse.Error($"The {barrier.Name} is already unlocked.");
+            return new ErrorResponse($"The {barrier.Name} is already unlocked.");
         }
 
         if (item.Id != barrier.UnlockItemId)
         {
-            return Responses.UseItemResponse.Error($"The {item.Name} doesn't work on the {barrier.Name}.");
+            return new ErrorResponse($"The {item.Name} doesn't work on the {barrier.Name}.");
         }
 
         barrier.Unlock();
-        return Responses.UseItemResponse.Success(barrier.UnlockMessage);
+        return new Responses.UseItemResponse(barrier.UnlockMessage);
     }
 }

@@ -1,4 +1,4 @@
-using Questline.Domain.Shared.Data;
+using Questline.Engine.Core;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
@@ -9,18 +9,18 @@ public class ExamineCommandHandler : IRequestHandler<Requests.ExamineCommand>
     public IResponse Handle(GameState state, Requests.ExamineCommand command)
     {
         // Search order: inventory items > room items > room features
-        var inventoryItem = state.Player.Character.FindInventoryItemByName(command.TargetName);
+        var inventoryItem = state.Character.FindInventoryItemByName(command.TargetName);
         if (inventoryItem is not null)
         {
-            return Responses.ExamineResponse.Success(inventoryItem.Description);
+            return new Responses.ExamineResponse(inventoryItem.Description);
         }
 
-        var room = state.GetRoom(state.Player.Character.Location);
+        var room = state.Adventure.GetRoom(state.Character.Location);
 
         var roomItem = room.FindItemByName(command.TargetName);
         if (roomItem is not null)
         {
-            return Responses.ExamineResponse.Success(roomItem.Description);
+            return new Responses.ExamineResponse(roomItem.Description);
         }
 
         var feature = room.Features.FirstOrDefault(f =>
@@ -28,9 +28,9 @@ public class ExamineCommandHandler : IRequestHandler<Requests.ExamineCommand>
             f.Keywords.Any(k => k.Equals(command.TargetName, StringComparison.OrdinalIgnoreCase)));
         if (feature is not null)
         {
-            return Responses.ExamineResponse.Success(feature.Description);
+            return new Responses.ExamineResponse(feature.Description);
         }
 
-        return Responses.ExamineResponse.Error($"You don't see '{command.TargetName}' here.");
+        return new ErrorResponse($"You don't see '{command.TargetName}' here.");
     }
 }

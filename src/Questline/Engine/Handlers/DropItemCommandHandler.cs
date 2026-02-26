@@ -1,4 +1,4 @@
-using Questline.Domain.Shared.Data;
+using Questline.Engine.Core;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
@@ -8,16 +8,16 @@ public class DropItemCommandHandler : IRequestHandler<Requests.DropItemCommand>
 {
     public IResponse Handle(GameState state, Requests.DropItemCommand command)
     {
-        var item = state.Player.Character.FindInventoryItemByName(command.ItemName);
+        var item = state.Character.FindInventoryItemByName(command.ItemName);
 
         if (item is null)
         {
             return new Responses.ItemDroppedResponse($"You are not carrying '{command.ItemName}'.");
         }
 
-        state.Player.Character.RemoveInventoryItem(item);
+        state.Character.RemoveInventoryItem(item);
 
-        var room = state.GetRoom(state.Player.Character.Location);
+        var room = state.Adventure.GetRoom(state.Character.Location);
         room.AddItem(item);
 
         return new Responses.ItemDroppedResponse(item.Name);

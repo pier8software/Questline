@@ -1,5 +1,6 @@
 using System.Reflection;
 using Questline.Domain.Shared.Data;
+using Questline.Engine.Core;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 

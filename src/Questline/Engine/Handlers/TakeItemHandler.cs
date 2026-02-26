@@ -1,4 +1,4 @@
-using Questline.Domain.Shared.Data;
+using Questline.Engine.Core;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
@@ -8,17 +8,17 @@ public class TakeItemHandler : IRequestHandler<Requests.TakeItemCommand>
 {
     public IResponse Handle(GameState state, Requests.TakeItemCommand request)
     {
-        var room = state.GetRoom(state.Player.Character.Location);
+        var room = state.Adventure.GetRoom(state.Character.Location);
         var item = room.FindItemByName(request.ItemName);
 
         if (item is null)
         {
-            return Responses.ItemTakenResponse.Error($"There is no '{request.ItemName}' here.");
+            return new ErrorResponse($"There is no '{request.ItemName}' here.");
         }
 
         room.RemoveItem(item);
-        state.Player.Character.AddInventoryItem(item);
+        state.Character.AddInventoryItem(item);
 
-        return Responses.ItemTakenResponse.Success(item.Name);
+        return new Responses.ItemTakenResponse(item.Name);
     }
 }

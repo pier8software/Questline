@@ -9,7 +9,7 @@ using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Core;
 
-public class GameStateContext
+public class GameState
 {
     public GamePhase        Phase     { get; set; } = GamePhase.Started;
     public Player           Player    { get; set; } = null!;
@@ -33,8 +33,9 @@ public class GameEngine(
     IGameContentLoader            contentLoader,
     CharacterCreationStateMachine stateMachine)
 {
-    private readonly GameStateContext                 _state         = new();
-    private readonly IReadOnlyDictionary<int, string> _adventures    = new Dictionary<int, string>
+    private readonly GameState _state = new();
+
+    private readonly IReadOnlyDictionary<int, string> _adventures = new Dictionary<int, string>
     {
         [1] = "the-goblins-lair"
     };
@@ -65,7 +66,7 @@ public class GameEngine(
             return parseResult.Error!;
         }
 
-        var response = dispatcher.Send(null, parseResult.Request!);
+        var response = dispatcher.Send(_state, parseResult.Request!);
 
         if (response is Responses.GameQuitedResponse)
         {
@@ -110,13 +111,16 @@ public class GameEngine(
             return parseResult.Error!;
         }
 
-        var response         = dispatcher.Send(null, parseResult.Request!);
+        var response         = dispatcher.Send(_state, parseResult.Request!);
         var loggedInResponse = response as Responses.LoggedInResponse;
 
         _state.Player = loggedInResponse!.Player;
-        _state.Phase  = GamePhase.Ended;
+        _state.Phase  = GamePhase.NewAdventure;
 
-        return response;
+        return loggedInResponse with
+        {
+            Adventures = [new Resources.AdventureSummary("the-goblins-lair", "The Goblins' Lair")]
+        };
     }
 
     private IResponse HandleGameStarted()

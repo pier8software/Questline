@@ -1,4 +1,4 @@
-using Questline.Domain.Shared.Data;
+using Questline.Engine.Core;
 
 namespace Questline.Framework.Mediator;
 

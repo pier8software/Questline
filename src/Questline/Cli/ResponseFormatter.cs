@@ -10,13 +10,39 @@ public class ResponseFormatter
     {
         Responses.GameStartedResponse                 => FormatGameStarted(),
         Responses.LoggedInResponse r                  => FormatLogin(r),
-        Responses.NewAdventureSelectedResponse r      => FormatAdventureSelected(r),
+        Responses.NewAdventureSelectedResponse        => FormatAdventureSelected(),
         Responses.CharacterCreationResponse r         => FormatCharacterCreation(r),
         Responses.CharacterCreationCompleteResponse r => FormatCharacterCreationComplete(r),
-        Responses.GameQuitedResponse                  => "Goodbye!",
-        ErrorResponse r                               => r.ErrorMessage,
-        _                                             => response.ToString() ?? ""
+        Responses.AdventureStartedResponse r          => FormatAdventureStarted(r),
+        Responses.PlayerMovedResponse r =>
+            FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
+        Responses.RoomDetailsResponse r =>
+            FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
+        Responses.ItemTakenResponse r   => $"You pick up the {r.ItemName}.",
+        Responses.ItemDroppedResponse r => $"You drop the {r.ItemName}.",
+        Responses.PlayerInventoryResponse r => r.Items.Count == 0
+            ? "You are not carrying anything."
+            : $"You are carrying: {string.Join(", ", r.Items)}",
+        Responses.ExamineResponse r  => r.Description,
+        Responses.UseItemResponse r  => r.ResultMessage,
+        Responses.VersionResponse r  => $"Questline v{r.Version}",
+        Responses.GameQuitedResponse => "Goodbye!",
+        ErrorResponse r              => r.ErrorMessage,
+        _                            => response.ToString() ?? ""
     };
+
+    private static string FormatGameStarted() =>
+        string.Join("\n", "Welcome adventure!", "type 'login <username>' to begin your adventure!");
+
+    private string FormatLogin(Responses.LoggedInResponse response)
+    {
+        var idx        = 1;
+        var adventures = string.Join("\n", response.Adventures.Select(a => $"\t{idx++}. {a.Name}"));
+        return $"Welcome back {response.Player.Name}!\nSelect an adventure to begin your journey:\n{adventures}";
+    }
+
+    private string FormatAdventureSelected() =>
+        string.Join("\n", "Lets create a character!", "Select your character's class:", "\t1. Fighter");
 
     private static string FormatCharacterCreation(Responses.CharacterCreationResponse r)
     {
@@ -31,6 +57,12 @@ public class ResponseFormatter
 
     private static string FormatCharacterCreationComplete(Responses.CharacterCreationCompleteResponse r) =>
         $"You have created your character.\n{FormatCharacterSummary(r.Summary)}";
+
+    private static string FormatAdventureStarted(Responses.AdventureStartedResponse r)
+    {
+        var roomView = FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers);
+        return $"Welcome {r.Character.Name}! Your adventure begins...\n{roomView}";
+    }
 
     private static string FormatCharacterSummary(CharacterSummary c)
     {
@@ -52,13 +84,27 @@ public class ResponseFormatter
                 """;
     }
 
-    private string FormatAdventureSelected(Responses.NewAdventureSelectedResponse response) =>
-        string.Join("\n", "Lets create a character!", "Select your character's class:", "\t1. Fighter");
+    private static string FormatRoomView(
+        string                name,
+        string                description,
+        IReadOnlyList<string> exits,
+        IReadOnlyList<string> items,
+        IReadOnlyList<string> lockedBarriers)
+    {
+        var parts = new List<string> { name, description };
 
-    private static string FormatGameStarted() =>
-        string.Join("\n", "Welcome adventure!", "type 'login <username>' to begin your adventure!");
+        if (items.Count > 0)
+        {
+            parts.Add($"You can see: {string.Join(", ", items)}");
+        }
 
-    private string FormatLogin(Responses.LoggedInResponse response) =>
-        string.Join("\n", $"Welcome back {response.Player.Name}!", "Select an adventure to begin your journey:",
-            response.Adventures.Select((a, i) => $"{i + 1}. {a.Name}"));
+        if (lockedBarriers.Count > 0)
+        {
+            parts.AddRange(lockedBarriers);
+        }
+
+        parts.Add($"Exits: {string.Join(", ", exits)}");
+
+        return string.Join("\n", parts);
+    }
 }

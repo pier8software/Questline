@@ -34,6 +34,7 @@ public static class ServiceCollectionExtensions
 
     private static void RegisterCommandHandlers(IServiceCollection services)
     {
+        services.AddSingleton<IRequestHandler<LoginCommand>, LoginCommandHandler>();
         services.AddSingleton<IRequestHandler<GetRoomDetailsQuery>, GetRoomDetailsHandler>();
         services.AddSingleton<IRequestHandler<MovePlayerCommand>, MovePlayerCommandHandler>();
         services.AddSingleton<IRequestHandler<TakeItemCommand>, TakeItemHandler>();
