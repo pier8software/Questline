@@ -11,7 +11,7 @@ The engine will then pass the result back to the cli for rendering.
 
 ## Domain Organisation
 
-`Domain/` is organised by feature, each with a consistent internal structure:
+`Domain/` is organised by bounded context, each with a consistent internal structure:
 
 ```
 Domain/

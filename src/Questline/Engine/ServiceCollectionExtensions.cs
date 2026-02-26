@@ -6,6 +6,7 @@ using Questline.Engine.Handlers;
 using Questline.Engine.Parsers;
 using Questline.Framework.FileSystem;
 using Questline.Framework.Mediator;
+using Questline.Framework.Persistence;
 using static Questline.Engine.Messages.Requests;
 
 namespace Questline.Engine;
@@ -21,10 +22,15 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<CharacterCreationStateMachine>();
         services.AddSingleton<GameEngine>();
 
+        RegisterPersistence(services);
+
         RegisterCommandHandlers(services);
 
         return services;
     }
+
+    private static void RegisterPersistence(IServiceCollection services) =>
+        services.AddMongoPersistence("mongodb://localhost:27017", "questline");
 
     private static void RegisterCommandHandlers(IServiceCollection services)
     {
