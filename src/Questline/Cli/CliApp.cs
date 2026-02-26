@@ -1,82 +1,35 @@
-using Questline.Domain.Characters.Entity;
-using Questline.Engine.Characters;
 using Questline.Engine.Core;
 using Questline.Engine.Messages;
 
 namespace Questline.Cli;
 
 public class CliApp(
-    IConsole                      console,
-    CharacterCreationStateMachine stateMachine,
+    IConsole          console,
+    ResponseFormatter formatter,
     GameEngine                    engine)
 {
     public void Run()
     {
-        DisplayWelcomeMessage();
+        var response = engine.ProcessInput(null);
+        console.WriteLine(formatter.Format(response));
 
-        var character = InitiateCharacterSetup();
-        if (character is null)
-        {
-            return;
-        }
-
-        LaunchGameSession(character);
-
-        HandleGameLoop();
-    }
-
-    private void HandleGameLoop()
-    {
-        while (true)
+        while (engine.Phase != GamePhase.Ended)
         {
             console.Write("> ");
             var input = console.ReadLine();
 
-            var result = engine.ProcessInput(input);
+            if (input is null)
+            {
+                break;
+            }
 
-            console.WriteLine(result.Message);
+            response = engine.ProcessInput(input);
+            console.WriteLine(formatter.Format(response));
 
-            if (result is Responses.GameQuited)
+            if (response is Responses.GameQuitedResponse)
             {
                 break;
             }
         }
     }
-
-    private void LaunchGameSession(Character character)
-    {
-        var message = engine.LaunchGame(character, "the-goblins-lair");
-        console.WriteLine(message.Message);
-    }
-
-    private Character? InitiateCharacterSetup()
-    {
-        console.WriteLine("Hit enter to create a new character...");
-        var input = console.ReadLine();
-        if (input is null)
-        {
-            return null;
-        }
-
-        while (true)
-        {
-            var response = stateMachine.ProcessInput(input);
-            console.WriteLine(response.Message);
-
-            if (response is Responses.CharacterCreationCompleteResponse characterResponse)
-            {
-                var character = characterResponse.Character;
-                console.WriteLine(character.ToCharacterSummary());
-                return character;
-            }
-
-            input = console.ReadLine();
-            if (input is null)
-            {
-                return null;
-            }
-        }
-    }
-
-    private void DisplayWelcomeMessage() => console.WriteLine("Welcome to Questline!");
 }

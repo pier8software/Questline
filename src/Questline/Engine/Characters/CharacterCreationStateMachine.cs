@@ -31,12 +31,15 @@ public class CharacterCreationStateMachine
 {
     private readonly CharacterCreationContext _context;
     private readonly IDice                    _dice;
+    private          Character?               _completedCharacter;
 
     public CharacterCreationStateMachine(IDice dice)
     {
         _dice    = dice;
         _context = InitializeCharacter();
     }
+
+    public Character? CompletedCharacter => _completedCharacter;
 
     public IResponse ProcessInput(string? input)
     {
@@ -68,12 +71,18 @@ public class CharacterCreationStateMachine
 
         if (_context.Class == null)
         {
-            return new Responses.CharacterCreationResponse(Prompts.SelectClass);
+            return new Responses.CharacterCreationResponse(
+                Responses.CharacterCreationStep.SelectClass,
+                "Select your character's class:",
+                [new Responses.CharacterCreationOption("1", "Fighter")]);
         }
 
         _context.State = CharacterCreationState.PendingRaceSelection;
 
-        return new Responses.CharacterCreationResponse(Prompts.SelectRace);
+        return new Responses.CharacterCreationResponse(
+            Responses.CharacterCreationStep.SelectRace,
+            "Select your character's race:",
+            [new Responses.CharacterCreationOption("1", "Human")]);
     }
 
     private IResponse ProcessRaceSelection(string? input)
@@ -86,12 +95,17 @@ public class CharacterCreationStateMachine
 
         if (_context.Race == null)
         {
-            return new Responses.CharacterCreationResponse(Prompts.SelectRace);
+            return new Responses.CharacterCreationResponse(
+                Responses.CharacterCreationStep.SelectRace,
+                "Select your character's race:",
+                [new Responses.CharacterCreationOption("1", "Human")]);
         }
 
         _context.State = CharacterCreationState.PendingHitPoints;
 
-        return new Responses.CharacterCreationResponse(Prompts.Continue);
+        return new Responses.CharacterCreationResponse(
+            Responses.CharacterCreationStep.RollHitPoints,
+            "Hit enter to continue.");
     }
 
     private IResponse ProcessHitPoints()
@@ -100,7 +114,9 @@ public class CharacterCreationStateMachine
 
         _context.State = CharacterCreationState.PendingCharacterName;
 
-        return new Responses.CharacterCreationResponse(Prompts.EnterName);
+        return new Responses.CharacterCreationResponse(
+            Responses.CharacterCreationStep.EnterName,
+            "Enter a name for your character");
     }
 
     private IResponse ProcessCharacterName(string? input)
@@ -110,12 +126,14 @@ public class CharacterCreationStateMachine
         var validationResult = CharacterNameValidator.Instance.Validate(characterName);
         if (!validationResult.IsValid)
         {
-            return new Responses.CharacterCreationResponse(validationResult.Errors.First().ErrorMessage);
+            return new Responses.CharacterCreationResponse(
+                Responses.CharacterCreationStep.EnterName,
+                validationResult.Errors.First().ErrorMessage);
         }
 
         _context.Name = characterName.Name!;
 
-        var character = Character.Create(
+        _completedCharacter = Character.Create(
             _context.Name,
             _context.Race,
             _context.Class,
@@ -124,15 +142,6 @@ public class CharacterCreationStateMachine
 
         _context.State = CharacterCreationState.Complete;
 
-        return new Responses.CharacterCreationCompleteResponse(Prompts.CharacterCreated, character);
-    }
-
-    private static class Prompts
-    {
-        public const string SelectClass      = "Select your character's class:\n\t1. Fighter";
-        public const string SelectRace       = "Select your character's race:\n\t1. Human";
-        public const string EnterName        = "Enter a name for your character";
-        public const string Continue         = "Hit enter to continue.";
-        public const string CharacterCreated = "You have created your character.";
+        return new Responses.CharacterCreationCompleteResponse(_completedCharacter.ToSummary());
     }
 }

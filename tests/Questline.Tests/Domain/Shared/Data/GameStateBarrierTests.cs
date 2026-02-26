@@ -33,7 +33,6 @@ public class GameStateBarrierTests
 
         var state = new GameState(
             new Dictionary<string, Room>(),
-            CreateTestPlayer(),
             new Dictionary<string, Barrier> { ["iron-door"] = barrier });
 
         state.GetBarrier("iron-door").ShouldBe(barrier);
@@ -43,8 +42,7 @@ public class GameStateBarrierTests
     public void GetBarrier_returns_null_when_not_found()
     {
         var state = new GameState(
-            new Dictionary<string, Room>(),
-            CreateTestPlayer());
+            new Dictionary<string, Room>());
 
         state.GetBarrier("nonexistent").ShouldBeNull();
     }
@@ -53,8 +51,7 @@ public class GameStateBarrierTests
     public void GetBarrier_returns_null_when_id_is_null()
     {
         var state = new GameState(
-            new Dictionary<string, Room>(),
-            CreateTestPlayer());
+            new Dictionary<string, Room>());
 
         state.GetBarrier(null).ShouldBeNull();
     }

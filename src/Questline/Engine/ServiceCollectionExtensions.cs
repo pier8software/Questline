@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<CharacterCreationStateMachine>();
         services.AddSingleton<GameEngine>();
 
-        RegisterPersistence(services);
+        //xRegisterPersistence(services);
 
         RegisterCommandHandlers(services);
 

@@ -1,5 +1,19 @@
-using Questline.Domain.Characters.Entity;
+using Questline.Framework.Domain;
 
 namespace Questline.Domain.Players.Entity;
 
-public record Player(string Id, Character Character);
+public class Player : DomainEntity
+{
+    public string Username { get; init; } = null!;
+    public string Name     { get; init; } = null!;
+
+    public static Player Create(string id, string username, string name)
+    {
+        return new Player
+        {
+            Id       = id,
+            Username = username,
+            Name     = name
+        };
+    }
+}

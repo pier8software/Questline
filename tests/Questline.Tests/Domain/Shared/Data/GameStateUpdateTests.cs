@@ -23,8 +23,7 @@ public class GameStateUpdateTests
     public void Character_mutation_is_visible_through_game_state()
     {
         var state = new GameState(
-            new Dictionary<string, Room>(),
-            CreateTestPlayer());
+            new Dictionary<string, Room>());
 
         state.Player.Character.MoveTo("end");
 
@@ -37,8 +36,7 @@ public class GameStateUpdateTests
         var lamp = new Item { Id = "lamp", Name   = "brass lamp", Description = "A shiny brass lamp." };
         var room = new Room { Id = "cellar", Name = "Cellar", Description     = "A damp cellar." };
         var state = new GameState(
-            new Dictionary<string, Room> { ["cellar"] = room },
-            CreateTestPlayer());
+            new Dictionary<string, Room> { ["cellar"] = room });
 
         state.GetRoom("cellar").AddItem(lamp);
 
@@ -60,7 +58,6 @@ public class GameStateUpdateTests
 
         var state = new GameState(
             new Dictionary<string, Room>(),
-            CreateTestPlayer(),
             new Dictionary<string, Barrier> { ["iron-door"] = barrier });
 
         state.GetBarrier("iron-door")!.Unlock();

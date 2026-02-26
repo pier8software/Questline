@@ -1,5 +1,4 @@
 using Questline.Domain.Characters.Entity;
-using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Data;
 using Questline.Engine.Content;
@@ -45,7 +44,7 @@ public class GameBuilder
 
     public Dictionary<string, Room> Build() => _rooms;
 
-    public WorldContent BuildWorldContent(string startingRoomId) =>
+    public AdventureContent BuildWorldContent(string startingRoomId) =>
         new(_rooms, _barriers, startingRoomId);
 
     public GameState BuildState(string playerId, string startLocation)
@@ -56,6 +55,6 @@ public class GameBuilder
 
         character.MoveTo(startLocation);
 
-        return new GameState(_rooms, new Player(playerId, character), _barriers);
+        return new GameState(_rooms, _barriers);
     }
 }

@@ -17,7 +17,7 @@ public class QuitGameHandlerTests
 
         var result = handler.Handle(state, new Requests.QuitGame());
 
-        result.ShouldBeOfType<Responses.GameQuited>();
+        result.ShouldBeOfType<Responses.GameQuitedResponse>();
         result.Message.ShouldBe("Goodbye!");
     }
 }

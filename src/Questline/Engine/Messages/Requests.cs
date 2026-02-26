@@ -6,6 +6,12 @@ namespace Questline.Engine.Messages;
 
 public static class Requests
 {
+    [Verbs("login")]
+    public record LoginCommand(string Username) : IRequest
+    {
+        public static IRequest CreateRequest(string[] args) => new LoginCommand(string.Join(" ", args));
+    }
+
     [Verbs("drop")]
     public record DropItemCommand(string ItemName) : IRequest
     {

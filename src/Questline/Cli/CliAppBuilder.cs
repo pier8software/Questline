@@ -10,6 +10,7 @@ public class CliAppBuilder
     public CliAppBuilder ConfigureServices()
     {
         _services.AddSingleton<IConsole, SystemConsole>();
+        _services.AddSingleton<ResponseFormatter>();
         _services.AddSingleton<CliApp>();
 
         _services.AddQuestlineEngine();
