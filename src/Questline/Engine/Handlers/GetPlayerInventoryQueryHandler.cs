@@ -1,4 +1,4 @@
-using Questline.Domain.Shared.Data;
+using Questline.Engine.Core;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
@@ -8,7 +8,7 @@ public class GetPlayerInventoryQueryHandler : IRequestHandler<Requests.GetPlayer
 {
     public IResponse Handle(GameState state, Requests.GetPlayerInventoryQuery command)
     {
-        var items = state.Player.Character.Inventory
+        var items = state.Character.Inventory
             .Select(i => i.Name)
             .ToList();
 

@@ -6,6 +6,12 @@ namespace Questline.Engine.Messages;
 
 public static class Requests
 {
+    [Verbs("login")]
+    public record LoginCommand(string Username) : IRequest
+    {
+        public static IRequest CreateRequest(string[] args) => new LoginCommand(string.Join(" ", args));
+    }
+
     [Verbs("drop")]
     public record DropItemCommand(string ItemName) : IRequest
     {
@@ -61,9 +67,9 @@ public static class Requests
     {
         public static IRequest CreateRequest(string[] args)
         {
-            var input = string.Join(" ", args);
-            var parts = input.Split(" on ", 2, StringSplitOptions.TrimEntries);
-            var itemName = parts[0];
+            var input      = string.Join(" ", args);
+            var parts      = input.Split(" on ", 2, StringSplitOptions.TrimEntries);
+            var itemName   = parts[0];
             var targetName = parts.Length > 1 ? parts[1] : null;
             return new UseItemCommand(itemName, targetName);
         }

@@ -4,12 +4,12 @@ namespace Questline.Domain.Rooms.Entity;
 
 public class Room
 {
-    private readonly Dictionary<Direction, Exit> _exits = new();
-    private readonly List<Feature> _features = [];
-    private readonly List<Item> _items = [];
+    private readonly Dictionary<Direction, Exit> _exits    = new();
+    private readonly List<Feature>               _features = [];
+    private readonly List<Item>                  _items    = [];
 
-    public required string Id { get; init; }
-    public required string Name { get; init; }
+    public required string Id          { get; init; }
+    public required string Name        { get; init; }
     public required string Description { get; init; }
 
     public IReadOnlyDictionary<Direction, Exit> Exits
@@ -43,10 +43,10 @@ public record Exit(string Destination, string? BarrierId = null);
 public enum Direction
 {
     Invalid = 0,
-    North = 1,
-    South = 2,
-    East = 3,
-    West = 4,
-    Up = 5,
-    Down = 6
+    North   = 1,
+    South   = 2,
+    East    = 3,
+    West    = 4,
+    Up      = 5,
+    Down    = 6
 }

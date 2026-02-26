@@ -17,7 +17,7 @@ public class VersionQueryHandlerTests
 
         var result = handler.Handle(state, new Requests.VersionQuery());
 
-        result.ShouldBeOfType<Responses.VersionResponse>();
-        result.Message.ShouldStartWith("Questline v");
+        var versionResult = result.ShouldBeOfType<Responses.VersionResponse>();
+        versionResult.Version.ShouldNotBeNullOrEmpty();
     }
 }

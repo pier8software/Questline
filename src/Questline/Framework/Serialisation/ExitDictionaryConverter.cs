@@ -28,7 +28,7 @@ public class ExitDictionaryConverter : JsonConverter<Dictionary<string, ExitData
 
             var exit = reader.TokenType switch
             {
-                JsonTokenType.String => new ExitData { Destination = reader.GetString()! },
+                JsonTokenType.String      => new ExitData { Destination = reader.GetString()! },
                 JsonTokenType.StartObject => JsonSerializer.Deserialize<ExitData>(ref reader, options)!,
                 _ => throw new JsonException(
                     $"Exit '{direction}' must be a string (room ID) or an object with 'destination'.")

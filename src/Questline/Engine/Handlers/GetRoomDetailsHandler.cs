@@ -1,4 +1,4 @@
-using Questline.Domain.Shared.Data;
+using Questline.Engine.Core;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
@@ -8,12 +8,12 @@ public class GetRoomDetailsHandler : IRequestHandler<Requests.GetRoomDetailsQuer
 {
     public IResponse Handle(GameState state, Requests.GetRoomDetailsQuery request)
     {
-        var room = state.GetRoom(state.Player.Character.Location);
-        var exits = room.Exits.Keys.Select(d => d.ToString()).ToList();
-        var items = room.Items.Select(i => i.Name).ToList();
+        var room           = state.Adventure.GetRoom(state.Character.Location);
+        var exits          = room.Exits.Keys.Select(d => d.ToString()).ToList();
+        var items          = room.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(state, room);
 
-        return Responses.RoomDetailsResponse.Success(room.Name, room.Description, exits, items, lockedBarriers);
+        return new Responses.RoomDetailsResponse(room.Name, room.Description, exits, items, lockedBarriers);
     }
 
     private static List<string> GetLockedBarrierDescriptions(GameState state, Domain.Rooms.Entity.Room room)
@@ -26,7 +26,7 @@ public class GetRoomDetailsHandler : IRequestHandler<Requests.GetRoomDetailsQuer
                 continue;
             }
 
-            var barrier = state.GetBarrier(exit.BarrierId);
+            var barrier = state.Adventure.GetBarrier(exit.BarrierId);
             if (barrier is not null && !barrier.IsUnlocked)
             {
                 descriptions.Add(barrier.Description);

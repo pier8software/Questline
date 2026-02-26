@@ -7,8 +7,8 @@ public class JsonFileLoader
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        ReadCommentHandling = JsonCommentHandling.Skip,
-        AllowTrailingCommas = true
+        ReadCommentHandling  = JsonCommentHandling.Skip,
+        AllowTrailingCommas  = true
     };
 
     public T LoadFile<T>(string filePath)

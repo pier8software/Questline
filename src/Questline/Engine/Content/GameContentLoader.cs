@@ -9,30 +9,30 @@ namespace Questline.Engine.Content;
 
 public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
 {
-    public WorldContent Load(string adventureId)
+    public AdventureContent Load(string adventureId)
     {
         var adventureData = loader.LoadFile<AdventureData>($"{adventureId}.json");
 
         var itemsDictionary = adventureData.Items.ToDictionary(i => i.Id, i => new Item
         {
-            Id = i.Id,
+            Id          = i.Id,
             Description = i.Description,
-            Name = i.Name
+            Name        = i.Name
         });
 
         var barriers = adventureData.Barriers.ToDictionary(b => b.Id, b => new Barrier
         {
-            Id = b.Id,
-            Name = b.Name,
-            Description = b.Description,
+            Id             = b.Id,
+            Name           = b.Name,
+            Description    = b.Description,
             BlockedMessage = b.BlockedMessage,
-            UnlockItemId = b.UnlockItemId,
-            UnlockMessage = b.UnlockMessage
+            UnlockItemId   = b.UnlockItemId,
+            UnlockMessage  = b.UnlockMessage
         });
 
         var rooms = BuildRooms(adventureData.Rooms, itemsDictionary);
 
-        return new WorldContent(rooms, barriers, adventureData.StartingRoomId);
+        return new AdventureContent(rooms, barriers, adventureData.StartingRoomId);
     }
 
     private static Dictionary<string, Room> BuildRooms(
@@ -54,9 +54,9 @@ public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
 
             var features = roomDetail.Features.Select(f => new Feature
             {
-                Id = f.Id,
-                Name = f.Name,
-                Keywords = f.Keywords,
+                Id          = f.Id,
+                Name        = f.Name,
+                Keywords    = f.Keywords,
                 Description = f.Description
             }).ToList();
 
@@ -65,12 +65,12 @@ public class GameContentLoader(JsonFileLoader loader) : IGameContentLoader
 
             var room = new Room
             {
-                Id = roomDetail.Id,
-                Name = roomDetail.Name,
+                Id          = roomDetail.Id,
+                Name        = roomDetail.Name,
                 Description = roomDetail.Description,
-                Exits = exits,
-                Items = roomItems,
-                Features = features
+                Exits       = exits,
+                Items       = roomItems,
+                Features    = features
             };
 
             rooms[roomDetail.Id] = room;

@@ -1,5 +1,5 @@
-using Questline.Domain.Shared.Data;
 using Questline.Domain.Shared.Entity;
+using Questline.Engine.Core;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
@@ -10,14 +10,14 @@ public class GetPlayerInventoryQueryHandlerTests
 {
     private static void GiveItemToPlayer(GameState state, Item item)
     {
-        state.Player.Character.AddInventoryItem(item);
+        state.Character.AddInventoryItem(item);
     }
 
     [Fact]
     public void Lists_carried_items()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var key = new Item { Id = "key", Name = "rusty key", Description = "A rusty iron key." };
+        var key  = new Item { Id = "key", Name  = "rusty key", Description  = "A rusty iron key." };
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .BuildState("player1", "cellar");
@@ -33,7 +33,7 @@ public class GetPlayerInventoryQueryHandlerTests
     }
 
     [Fact]
-    public void Empty_inventory_shows_not_carrying_anything()
+    public void Empty_inventory_returns_empty_items_list()
     {
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
@@ -42,7 +42,8 @@ public class GetPlayerInventoryQueryHandlerTests
 
         var result = handler.Handle(state, new Requests.GetPlayerInventoryQuery());
 
-        result.Message.ShouldContain("not carrying anything");
+        var inventoryResult = result.ShouldBeOfType<Responses.PlayerInventoryResponse>();
+        inventoryResult.Items.ShouldBeEmpty();
     }
 
     [Fact]
@@ -52,15 +53,15 @@ public class GetPlayerInventoryQueryHandlerTests
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .BuildState("player1", "cellar");
-        var getHandler = new TakeItemHandler();
+        var getHandler  = new TakeItemHandler();
         var dropHandler = new DropItemCommandHandler();
 
         getHandler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
-        state.Player.Character.Inventory.ShouldContain(lamp);
-        state.GetRoom("cellar").Items.ShouldBeEmpty();
+        state.Character.Inventory.ShouldContain(lamp);
+        state.Adventure.GetRoom("cellar").Items.ShouldBeEmpty();
 
         dropHandler.Handle(state, new Requests.DropItemCommand("brass lamp"));
-        state.Player.Character.Inventory.ShouldBeEmpty();
-        state.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
+        state.Character.Inventory.ShouldBeEmpty();
+        state.Adventure.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
     }
 }

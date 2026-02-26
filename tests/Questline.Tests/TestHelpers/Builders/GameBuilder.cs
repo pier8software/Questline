@@ -1,8 +1,8 @@
 using Questline.Domain.Characters.Entity;
-using Questline.Domain.Players.Entity;
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared.Data;
 using Questline.Engine.Content;
+using Questline.Engine.Core;
+using Questline.Domain.Players.Entity;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Tests.TestHelpers.Builders;
@@ -20,8 +20,8 @@ public class GameBuilder
             DefaultHitPoints, DefaultAbilityScores, location);
 
     private readonly Dictionary<string, Barrier> _barriers = new();
-    private readonly Dictionary<string, Room> _rooms = new();
-    private Func<string, Character>? _characterFactory;
+    private readonly Dictionary<string, Room>    _rooms    = new();
+    private          Func<string, Character>?    _characterFactory;
 
     public GameBuilder WithRoom(string id, string name, string description, Action<RoomBuilder>? configure = null)
     {
@@ -45,7 +45,7 @@ public class GameBuilder
 
     public Dictionary<string, Room> Build() => _rooms;
 
-    public WorldContent BuildWorldContent(string startingRoomId) =>
+    public AdventureContent BuildWorldContent(string startingRoomId) =>
         new(_rooms, _barriers, startingRoomId);
 
     public GameState BuildState(string playerId, string startLocation)
@@ -56,6 +56,15 @@ public class GameBuilder
 
         character.MoveTo(startLocation);
 
-        return new GameState(_rooms, new Player(playerId, character), _barriers);
+        var adventure = new AdventureContent(_rooms, _barriers, startLocation);
+        var player    = Player.Create(playerId, playerId, playerId);
+
+        return new GameState
+        {
+            Phase     = GamePhase.Playing,
+            Player    = player,
+            Adventure = adventure,
+            Character = character
+        };
     }
 }

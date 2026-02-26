@@ -2,7 +2,7 @@ using Questline.Engine.Content;
 
 namespace Questline.Tests.TestHelpers;
 
-public class FakeGameContentLoader(WorldContent worldContent) : IGameContentLoader
+public class FakeGameContentLoader(AdventureContent adventureContent) : IGameContentLoader
 {
-    public WorldContent Load(string adventureId) => worldContent;
+    public AdventureContent Load(string adventureId) => adventureContent;
 }

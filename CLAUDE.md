@@ -10,12 +10,13 @@ Questline text adventure game engine evolving toward a cooperative MUD platform.
 
 This is a monorepo containing multiple projects and folders.
 
-| Path                     | Purpose                                              |
-|--------------------------|------------------------------------------------------|
-| `src/Questline/`         | the core application code containing the game engine |
-| `tests/Questline.Tests/` | the tests for the application code                   |
-| `openspec/`              | OpenSpec configuration, specs, and change tracking   |
-| `content/adventures/`    | JSON adventure content                               |
+| Path                       | Purpose                                                                     |
+|----------------------------|-----------------------------------------------------------------------------|
+| `src/Questline/`           | the core application code containing the game engine                        |
+| `tests/Questline.Tests/`   | the tests for the application code                                          |
+| `devenv/Questline.DevEnv/` | project to orchestrate a local development environment for external systems |
+| `openspec/`                | OpenSpec configuration, specs, and change tracking                          |
+| `content/adventures/`      | JSON adventure content                                                      |
 
 ## `src/Questline/`: Application Code
 
@@ -23,23 +24,41 @@ This is a monorepo containing multiple projects and folders.
 
 - `Cli/` - The entry point for the terminal - Composition root, a thin client running the game engine
 - `Domain/` - Game Rules - Entities, data objects, value objects and validators
-- `Engine/` - The game engine - Loading content, parsing request and sending commands/queries to handlers. Requests, responses and request handlers live here.
-- `Framework/` - Core abstractions and utilities - This is where code for interacting with external systems lives, project agnostic code
+- `Engine/` - The game engine - Loading content, parsing request and sending commands/queries to handlers. Requests,
+  responses and request handlers live here.
+- `Framework/` - Core abstractions and utilities - This is where code for interacting with external systems lives,
+  project agnostic code
 
 ### Domain Feature-Folder Convention
 
-`Domain/` is organised by bounded context, a set of capabilities: `Players/`, `Rooms/`, `Shared/`. Each bounded context folder uses the same internal layout:
+`Domain/` is organised by bounded context, a set of capabilities: `Players/`, `Rooms/`, `Shared/`. Each bounded context
+folder uses the same internal layout:
 
 | Sub-folder | Contents                          |
 |------------|-----------------------------------|
 | `Entity/`  | Domain entities and value objects |
 | `Data/`    | Data objects (where applicable)   |
 
-New bounded context get their own top-level folder under `Domain/` following this layout. New capabilities related to an existing bounded context should be added to that context.
+New bounded context get their own top-level folder under `Domain/` following this layout. New capabilities related to an
+existing bounded context should be added to that context.
 
 ## `tests/Questline.Tests/`: Application Test Suite
 
-Follows a similar structure to the main application code project, i.e. tests for componentns of the game engine will live in the `Engine/` folder.
+Follows a similar structure to the main application code project, i.e. tests for componentns of the game engine will
+live in the `Engine/` folder.
+
+## `devenv/Questline.DevEnv/`: Development Environment Project
+
+This is an Aspire project, This project is used to orchestrate a local development environment for external systems. It
+provides a convenient way to set up and manage dependencies and configurations required for development, such as MongoDB.
+Before running the tests or running the game, the development environment must be running. To start the development
+environment run the following command:
+
+```
+aspire run
+```
+
+See @docs/devenv.md for more information.
 
 ## `openspec/`: OpenSpec
 

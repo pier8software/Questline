@@ -1,3 +1,4 @@
+using Questline.Domain.Characters.Data;
 using Questline.Domain.Shared.Entity;
 
 namespace Questline.Domain.Characters.Entity;
@@ -6,14 +7,14 @@ public class Character
 {
     private readonly List<Item> _inventory = [];
 
-    public string Name { get; private init; } = null!;
-    public Race Race { get; private init; }
-    public CharacterClass Class { get; private init; }
-    public int Level { get; private init; }
-    public int Experience { get; init; }
-    public AbilityScores AbilityScores { get; private init; } = null!;
-    public HitPoints HitPoints { get; private init; } = null!;
-    public string Location { get; private set; } = null!;
+    public string         Name          { get; private init; } = null!;
+    public Race           Race          { get; private init; }
+    public CharacterClass Class         { get; private init; }
+    public int            Level         { get; private init; }
+    public int            Experience    { get; init; }
+    public AbilityScores  AbilityScores { get; private init; } = null!;
+    public HitPoints      HitPoints     { get; private init; } = null!;
+    public string         Location      { get; private set; }  = null!;
 
     public IReadOnlyList<Item> Inventory
     {
@@ -22,23 +23,23 @@ public class Character
     }
 
     public static Character Create(
-        string name,
-        Race? race,
+        string          name,
+        Race?           race,
         CharacterClass? characterClass,
-        HitPoints hitPoints,
-        AbilityScores abilityScores,
-        string location = "")
+        HitPoints       hitPoints,
+        AbilityScores   abilityScores,
+        string          location = "")
     {
         return new Character
         {
-            Name = name,
-            Race = race.GetValueOrDefault(),
-            Class = characterClass.GetValueOrDefault(),
-            Level = 1,
-            Experience = 0,
+            Name          = name,
+            Race          = race.GetValueOrDefault(),
+            Class         = characterClass.GetValueOrDefault(),
+            Level         = 1,
+            Experience    = 0,
             AbilityScores = abilityScores,
-            HitPoints = hitPoints,
-            Location = location
+            HitPoints     = hitPoints,
+            Location      = location
         };
     }
 
@@ -51,23 +52,20 @@ public class Character
     public Item? FindInventoryItemByName(string name) =>
         _inventory.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-    public string ToCharacterSummary()
-    {
-        return $"""
-                Name: {Name}
-                Race: {Race}
-                Class: {Class}
-                Level: {Level}
-                HP: {HitPoints.CurrentHitPoints}/{HitPoints.MaxHitPoints}
-                XP: {Experience}
-
-                Ability Scores:
-                  STR: {AbilityScores.Strength}
-                  INT: {AbilityScores.Intelligence}
-                  WIS: {AbilityScores.Wisdom}
-                  DEX: {AbilityScores.Dexterity}
-                  CON: {AbilityScores.Constitution}
-                  CHA: {AbilityScores.Charisma}
-                """;
-    }
+    public CharacterSummary ToSummary() =>
+        new(
+            Name,
+            Race.ToString(),
+            Class.ToString(),
+            Level,
+            Experience,
+            HitPoints.MaxHitPoints,
+            HitPoints.CurrentHitPoints,
+            new AbilityScoresSummary(
+                AbilityScores.Strength.Score,
+                AbilityScores.Intelligence.Score,
+                AbilityScores.Wisdom.Score,
+                AbilityScores.Dexterity.Score,
+                AbilityScores.Constitution.Score,
+                AbilityScores.Charisma.Score));
 }
