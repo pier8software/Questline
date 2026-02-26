@@ -17,7 +17,7 @@ public class GetPlayerInventoryQueryHandlerTests
     public void Lists_carried_items()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var key = new Item { Id = "key", Name = "rusty key", Description = "A rusty iron key." };
+        var key  = new Item { Id = "key", Name  = "rusty key", Description  = "A rusty iron key." };
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .BuildState("player1", "cellar");
@@ -52,7 +52,7 @@ public class GetPlayerInventoryQueryHandlerTests
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
             .BuildState("player1", "cellar");
-        var getHandler = new TakeItemHandler();
+        var getHandler  = new TakeItemHandler();
         var dropHandler = new DropItemCommandHandler();
 
         getHandler.Handle(state, new Requests.TakeItemCommand("brass lamp"));

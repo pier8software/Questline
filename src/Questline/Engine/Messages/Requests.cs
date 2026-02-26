@@ -61,9 +61,9 @@ public static class Requests
     {
         public static IRequest CreateRequest(string[] args)
         {
-            var input = string.Join(" ", args);
-            var parts = input.Split(" on ", 2, StringSplitOptions.TrimEntries);
-            var itemName = parts[0];
+            var input      = string.Join(" ", args);
+            var parts      = input.Split(" on ", 2, StringSplitOptions.TrimEntries);
+            var itemName   = parts[0];
             var targetName = parts.Length > 1 ? parts[1] : null;
             return new UseItemCommand(itemName, targetName);
         }

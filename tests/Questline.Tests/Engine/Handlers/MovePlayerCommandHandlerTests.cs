@@ -12,8 +12,8 @@ public class MovePlayerCommandHandlerTests
     public void Returns_next_room_details_in_response()
     {
         var state = new GameBuilder()
-            .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
-            .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
+            .WithRoom("start", "Start",    "Starting room.", r => r.WithExit(Direction.North, "end"))
+            .WithRoom("end",   "End Room", "The end room.",  r => r.WithExit(Direction.South, "start"))
             .BuildState("player1", "start");
 
         var handler = new MovePlayerCommandHandler();
@@ -29,8 +29,8 @@ public class MovePlayerCommandHandlerTests
     public void Invalid_direction_returns_error_message()
     {
         var state = new GameBuilder()
-            .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
-            .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
+            .WithRoom("start", "Start",    "Starting room.", r => r.WithExit(Direction.North, "end"))
+            .WithRoom("end",   "End Room", "The end room.",  r => r.WithExit(Direction.South, "start"))
             .BuildState("player1", "start");
 
         var handler = new MovePlayerCommandHandler();
@@ -44,8 +44,8 @@ public class MovePlayerCommandHandlerTests
     public void Player_location_is_updated_after_moving()
     {
         var state = new GameBuilder()
-            .WithRoom("start", "Start", "Starting room.", r => r.WithExit(Direction.North, "end"))
-            .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
+            .WithRoom("start", "Start",    "Starting room.", r => r.WithExit(Direction.North, "end"))
+            .WithRoom("end",   "End Room", "The end room.",  r => r.WithExit(Direction.South, "start"))
             .BuildState("player1", "start");
 
         var handler = new MovePlayerCommandHandler();
@@ -74,12 +74,12 @@ public class MovePlayerCommandHandlerTests
     {
         var barrier = new Barrier
         {
-            Id = "iron-door",
-            Name = "iron door",
-            Description = "A heavy iron door.",
+            Id             = "iron-door",
+            Name           = "iron door",
+            Description    = "A heavy iron door.",
             BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId = "rusty-key",
-            UnlockMessage = "The rusty key turns in the lock..."
+            UnlockItemId   = "rusty-key",
+            UnlockMessage  = "The rusty key turns in the lock..."
         };
 
         var state = new GameBuilder()
@@ -102,12 +102,12 @@ public class MovePlayerCommandHandlerTests
     {
         var barrier = new Barrier
         {
-            Id = "iron-door",
-            Name = "iron door",
-            Description = "A heavy iron door.",
+            Id             = "iron-door",
+            Name           = "iron door",
+            Description    = "A heavy iron door.",
             BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId = "rusty-key",
-            UnlockMessage = "The rusty key turns in the lock..."
+            UnlockItemId   = "rusty-key",
+            UnlockMessage  = "The rusty key turns in the lock..."
         };
         barrier.Unlock();
 

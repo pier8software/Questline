@@ -10,7 +10,7 @@ public class RequestSender(IServiceProvider serviceProvider)
         var requestType = request.GetType();
 
         var requestHandlerType = typeof(IRequestHandler<>).MakeGenericType(requestType);
-        var handleMethod = requestHandlerType.GetMethod(nameof(IRequestHandler<>.Handle))!;
+        var handleMethod       = requestHandlerType.GetMethod(nameof(IRequestHandler<>.Handle))!;
 
         var handler = serviceProvider.GetRequiredService(requestHandlerType);
 

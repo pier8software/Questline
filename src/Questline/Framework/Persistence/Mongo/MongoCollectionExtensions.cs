@@ -10,8 +10,8 @@ public static class MongoCollectionExtensions
 
     public static async ValueTask<T> Load<T>(
         this IMongoCollection<T> collection,
-        string id,
-        CancellationToken cancellationToken = default) where T : Document
+        string                   id,
+        CancellationToken        cancellationToken = default) where T : Document
     {
         var document = await collection
             .Find(x => x.Id == id)
@@ -22,13 +22,14 @@ public static class MongoCollectionExtensions
         {
             throw new KeyNotFoundException($"Document with ID '{id}' not found.");
         }
+
         return document;
     }
 
     public static async Task<ReplaceOneResult> StoreDocument<T>(
         this IMongoCollection<T> collection,
-        T document,
-        CancellationToken cancellationToken = default) where T : Document
+        T                        document,
+        CancellationToken        cancellationToken = default) where T : Document
     {
         if (document is null)
         {
@@ -42,7 +43,7 @@ public static class MongoCollectionExtensions
         }
 
         document.ConcurrencyTag = Guid.NewGuid();
-        document.UpdatedAt = TimeProvider.System.GetUtcNow().UtcDateTime;
+        document.UpdatedAt      = TimeProvider.System.GetUtcNow().UtcDateTime;
 
         var result = await collection
             .ReplaceOneAsync(

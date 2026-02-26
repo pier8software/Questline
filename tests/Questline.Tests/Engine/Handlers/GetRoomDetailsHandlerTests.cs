@@ -21,14 +21,14 @@ public class GetRoomDetailsHandlerTests
                 r.WithExit(Direction.South, "entrance");
             })
             .WithRoom("throne-room", "Throne Room", "Grand throne room.")
-            .WithRoom("entrance", "Entrance", "The entrance.")
+            .WithRoom("entrance",    "Entrance",    "The entrance.")
             .BuildState("player1", "hallway");
         var handler = new GetRoomDetailsHandler();
 
         var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
-        var parts = lookResult.Message.Split('\n');
+        var parts      = lookResult.Message.Split('\n');
         parts[0].ShouldBe("Hallway");
         parts[1].ShouldBe("A long hallway.");
         parts[2].ShouldContain("You can see: brass lamp");
@@ -53,12 +53,12 @@ public class GetRoomDetailsHandlerTests
     {
         var barrier = new Barrier
         {
-            Id = "iron-door",
-            Name = "iron door",
-            Description = "A heavy iron door blocks the way North.",
+            Id             = "iron-door",
+            Name           = "iron door",
+            Description    = "A heavy iron door blocks the way North.",
             BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId = "rusty-key",
-            UnlockMessage = "The rusty key turns in the lock..."
+            UnlockItemId   = "rusty-key",
+            UnlockMessage  = "The rusty key turns in the lock..."
         };
 
         var state = new GameBuilder()
@@ -80,12 +80,12 @@ public class GetRoomDetailsHandlerTests
     {
         var barrier = new Barrier
         {
-            Id = "iron-door",
-            Name = "iron door",
-            Description = "A heavy iron door blocks the way North.",
+            Id             = "iron-door",
+            Name           = "iron door",
+            Description    = "A heavy iron door blocks the way North.",
             BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId = "rusty-key",
-            UnlockMessage = "The rusty key turns in the lock..."
+            UnlockItemId   = "rusty-key",
+            UnlockMessage  = "The rusty key turns in the lock..."
         };
         barrier.Unlock();
 

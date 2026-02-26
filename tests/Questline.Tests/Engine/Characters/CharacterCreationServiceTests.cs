@@ -41,7 +41,7 @@ public class CharacterCreationStateMachineTests
     {
         var sm = CreateStateMachine(DefaultRolls);
         sm.ProcessInput(null); // select class prompt
-        sm.ProcessInput("1"); // select fighter
+        sm.ProcessInput("1");  // select fighter
 
         var response = sm.ProcessInput("1");
 
@@ -54,8 +54,8 @@ public class CharacterCreationStateMachineTests
     {
         var sm = CreateStateMachine(DefaultRolls);
         sm.ProcessInput(null); // select class prompt
-        sm.ProcessInput("1"); // select fighter
-        sm.ProcessInput("1"); // select human
+        sm.ProcessInput("1");  // select fighter
+        sm.ProcessInput("1");  // select human
 
         var response = sm.ProcessInput(null); // roll HP
 
@@ -67,8 +67,8 @@ public class CharacterCreationStateMachineTests
     public void Entering_valid_name_completes_creation()
     {
         var sm = CreateStateMachine(DefaultRolls);
-        sm.ProcessInput("1"); // select fighter
-        sm.ProcessInput("1"); // select human
+        sm.ProcessInput("1");  // select fighter
+        sm.ProcessInput("1");  // select human
         sm.ProcessInput(null); // roll HP
 
         var response = sm.ProcessInput("Thorin");
@@ -86,8 +86,8 @@ public class CharacterCreationStateMachineTests
         // STR: 4+5+6=15, INT: 3+3+3=9, WIS: 2+4+6=12, DEX: 1+1+1=3, CON: 6+6+6=18, CHA: 5+5+5=15
         var sm = CreateStateMachine(4, 5, 6, 3, 3, 3, 2, 4, 6, 1, 1, 1, 6, 6, 6, 5, 5, 5, 7);
         sm.ProcessInput(null); // select class prompt
-        sm.ProcessInput("1"); // select fighter
-        sm.ProcessInput("1"); // select human
+        sm.ProcessInput("1");  // select fighter
+        sm.ProcessInput("1");  // select human
         sm.ProcessInput(null); // roll HP
 
         var response = (Responses.CharacterCreationCompleteResponse)sm.ProcessInput("Thorin");
@@ -105,8 +105,8 @@ public class CharacterCreationStateMachineTests
     {
         var sm = CreateStateMachine(DefaultRolls);
         sm.ProcessInput(null); // select class prompt
-        sm.ProcessInput("1"); // select fighter
-        sm.ProcessInput("1"); // select human
+        sm.ProcessInput("1");  // select fighter
+        sm.ProcessInput("1");  // select human
         sm.ProcessInput(null); // roll HP
 
         var response = (Responses.CharacterCreationCompleteResponse)sm.ProcessInput("Thorin");
@@ -120,8 +120,8 @@ public class CharacterCreationStateMachineTests
         // Last roll (index 18) is 4 for 1d8 HP
         var sm = CreateStateMachine(DefaultRolls);
         sm.ProcessInput(null); // select class prompt
-        sm.ProcessInput("1"); // select fighter
-        sm.ProcessInput("1"); // select human
+        sm.ProcessInput("1");  // select fighter
+        sm.ProcessInput("1");  // select human
         sm.ProcessInput(null); // roll HP
 
         var response = (Responses.CharacterCreationCompleteResponse)sm.ProcessInput("Thorin");
@@ -134,8 +134,8 @@ public class CharacterCreationStateMachineTests
     {
         var sm = CreateStateMachine(DefaultRolls);
         sm.ProcessInput(null); // select class prompt
-        sm.ProcessInput("1"); // select fighter
-        sm.ProcessInput("1"); // select human
+        sm.ProcessInput("1");  // select fighter
+        sm.ProcessInput("1");  // select human
         sm.ProcessInput(null); // roll HP
 
         var response = sm.ProcessInput("");

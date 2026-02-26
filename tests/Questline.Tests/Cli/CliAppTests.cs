@@ -42,13 +42,13 @@ public class CliAppTests
 
         var console = new FakeConsole();
 
-        var dice = new FakeDice(DefaultDiceRolls);
+        var dice         = new FakeDice(DefaultDiceRolls);
         var stateMachine = new CharacterCreationStateMachine(dice);
 
         var contentLoader = new FakeGameContentLoader(worldContent);
-        var dispatcher = new RequestSender(serviceProvider);
-        var parser = new Parser();
-        var gameEngine = new GameEngine(parser, dispatcher, contentLoader);
+        var dispatcher    = new RequestSender(serviceProvider);
+        var parser        = new Parser();
+        var gameEngine    = new GameEngine(parser, dispatcher, contentLoader);
 
         var app = new CliApp(console, stateMachine, gameEngine);
 
@@ -87,7 +87,7 @@ public class CliAppTests
         loop.Run();
 
         var output = console.AllOutput;
-        var count = CountOccurrences(output, "Dungeon Entrance");
+        var count  = CountOccurrences(output, "Dungeon Entrance");
         count.ShouldBeGreaterThanOrEqualTo(2);
     }
 

@@ -6,9 +6,9 @@ using Questline.Engine.Messages;
 namespace Questline.Cli;
 
 public class CliApp(
-    IConsole console,
+    IConsole                      console,
     CharacterCreationStateMachine stateMachine,
-    GameEngine engine)
+    GameEngine                    engine)
 {
     public void Run()
     {

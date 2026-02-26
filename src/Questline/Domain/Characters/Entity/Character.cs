@@ -6,14 +6,14 @@ public class Character
 {
     private readonly List<Item> _inventory = [];
 
-    public string Name { get; private init; } = null!;
-    public Race Race { get; private init; }
-    public CharacterClass Class { get; private init; }
-    public int Level { get; private init; }
-    public int Experience { get; init; }
-    public AbilityScores AbilityScores { get; private init; } = null!;
-    public HitPoints HitPoints { get; private init; } = null!;
-    public string Location { get; private set; } = null!;
+    public string         Name          { get; private init; } = null!;
+    public Race           Race          { get; private init; }
+    public CharacterClass Class         { get; private init; }
+    public int            Level         { get; private init; }
+    public int            Experience    { get; init; }
+    public AbilityScores  AbilityScores { get; private init; } = null!;
+    public HitPoints      HitPoints     { get; private init; } = null!;
+    public string         Location      { get; private set; }  = null!;
 
     public IReadOnlyList<Item> Inventory
     {
@@ -22,23 +22,23 @@ public class Character
     }
 
     public static Character Create(
-        string name,
-        Race? race,
+        string          name,
+        Race?           race,
         CharacterClass? characterClass,
-        HitPoints hitPoints,
-        AbilityScores abilityScores,
-        string location = "")
+        HitPoints       hitPoints,
+        AbilityScores   abilityScores,
+        string          location = "")
     {
         return new Character
         {
-            Name = name,
-            Race = race.GetValueOrDefault(),
-            Class = characterClass.GetValueOrDefault(),
-            Level = 1,
-            Experience = 0,
+            Name          = name,
+            Race          = race.GetValueOrDefault(),
+            Class         = characterClass.GetValueOrDefault(),
+            Level         = 1,
+            Experience    = 0,
             AbilityScores = abilityScores,
-            HitPoints = hitPoints,
-            Location = location
+            HitPoints     = hitPoints,
+            Location      = location
         };
     }
 

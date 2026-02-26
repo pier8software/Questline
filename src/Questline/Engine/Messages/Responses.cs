@@ -14,8 +14,8 @@ public static class Responses
 
         public string Message { get; }
 
-        public static UseItemResponse Success(string message) => new(message);
-        public static UseItemResponse Error(string errorMessage) => new(errorMessage);
+        public static UseItemResponse Success(string message)      => new(message);
+        public static UseItemResponse Error(string   errorMessage) => new(errorMessage);
     }
 
     public record ExamineResponse : IResponse
@@ -27,8 +27,8 @@ public static class Responses
 
         public string Message { get; }
 
-        public static ExamineResponse Success(string description) => new(description);
-        public static ExamineResponse Error(string errorMessage) => new(errorMessage);
+        public static ExamineResponse Success(string description)  => new(description);
+        public static ExamineResponse Error(string   errorMessage) => new(errorMessage);
     }
 
     public record PlayerMovedResponse
@@ -42,10 +42,10 @@ public static class Responses
         public string Message { get; }
 
         public static PlayerMovedResponse Success(
-            string roomName,
-            string description,
-            IReadOnlyList<string> exits,
-            IReadOnlyList<string> items,
+            string                 roomName,
+            string                 description,
+            IReadOnlyList<string>  exits,
+            IReadOnlyList<string>  items,
             IReadOnlyList<string>? lockedBarriers = null) =>
             new(FormatRoomDescription(roomName, description, exits, items, lockedBarriers));
 
@@ -117,8 +117,8 @@ public static class Responses
             return string.Join("\n", parts);
         }
 
-        public static RoomDetailsResponse Success(string name, string description, List<string> exits,
-            List<string> items, List<string>? lockedBarriers = null) =>
+        public static RoomDetailsResponse Success(string       name,  string        description, List<string> exits,
+                                                  List<string> items, List<string>? lockedBarriers = null) =>
             new(FormatRoomDescription(name, description, exits, items, lockedBarriers));
 
         public static RoomDetailsResponse Error(string errorMessage) => new(errorMessage);
@@ -133,8 +133,8 @@ public static class Responses
 
         public string Message { get; }
 
-        public static ItemTakenResponse Success(string item) => new($"You pick up the {item}.");
-        public static ItemTakenResponse Error(string errorMessage) => new(errorMessage);
+        public static ItemTakenResponse Success(string item)         => new($"You pick up the {item}.");
+        public static ItemTakenResponse Error(string   errorMessage) => new(errorMessage);
     }
 
     public record VersionResponse(string Version) : IResponse
@@ -161,11 +161,11 @@ public static class Responses
         public string Message { get; }
 
         private static string FormatRoomDescription(
-            string characterName,
-            string roomName,
-            string description,
-            IReadOnlyList<string> exits,
-            IReadOnlyList<string> items,
+            string                 characterName,
+            string                 roomName,
+            string                 description,
+            IReadOnlyList<string>  exits,
+            IReadOnlyList<string>  items,
             IReadOnlyList<string>? lockedBarriers = null)
         {
             var parts = new List<string>
@@ -191,11 +191,11 @@ public static class Responses
         }
 
         public static GameInitialisedResponse Create(
-            string characterName,
-            string roomName,
-            string description,
-            List<string> exits,
-            List<string> items,
+            string        characterName,
+            string        roomName,
+            string        description,
+            List<string>  exits,
+            List<string>  items,
             List<string>? lockedBarriers = null) =>
             new(FormatRoomDescription(characterName, roomName, description, exits, items, lockedBarriers));
     }

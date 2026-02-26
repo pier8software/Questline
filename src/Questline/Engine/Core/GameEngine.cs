@@ -9,7 +9,10 @@ using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Core;
 
-public class GameEngine(Parser parser, RequestSender dispatcher, IGameContentLoader contentLoader)
+public class GameEngine(
+    Parser             parser,
+    RequestSender      dispatcher,
+    IGameContentLoader contentLoader)
 {
     private GameState? _state;
 
@@ -31,9 +34,9 @@ public class GameEngine(Parser parser, RequestSender dispatcher, IGameContentLoa
         character.MoveTo(world.StartingRoomId);
 
         _state = new GameState(world.Rooms, new Player(Guid.NewGuid().ToString(), character), world.Barriers);
-        var startingRoom = _state.GetRoom(world.StartingRoomId);
-        var exits = startingRoom.Exits.Keys.Select(d => d.ToString()).ToList();
-        var items = startingRoom.Items.Select(i => i.Name).ToList();
+        var startingRoom   = _state.GetRoom(world.StartingRoomId);
+        var exits          = startingRoom.Exits.Keys.Select(d => d.ToString()).ToList();
+        var items          = startingRoom.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(startingRoom.Exits);
 
         List<string> GetLockedBarrierDescriptions(IReadOnlyDictionary<Direction, Exit> roomExits)

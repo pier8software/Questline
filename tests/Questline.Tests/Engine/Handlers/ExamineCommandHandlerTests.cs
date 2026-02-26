@@ -53,9 +53,9 @@ public class ExamineCommandHandlerTests
     {
         var feature = new Feature
         {
-            Id = "strange-symbols",
-            Name = "strange symbols",
-            Keywords = ["symbols", "carvings"],
+            Id          = "strange-symbols",
+            Name        = "strange symbols",
+            Keywords    = ["symbols", "carvings"],
             Description = "Ancient runes etched into the stone walls."
         };
 
@@ -75,9 +75,9 @@ public class ExamineCommandHandlerTests
     {
         var feature = new Feature
         {
-            Id = "strange-symbols",
-            Name = "strange symbols",
-            Keywords = ["symbols", "carvings"],
+            Id          = "strange-symbols",
+            Name        = "strange symbols",
+            Keywords    = ["symbols", "carvings"],
             Description = "Ancient runes etched into the stone walls."
         };
 

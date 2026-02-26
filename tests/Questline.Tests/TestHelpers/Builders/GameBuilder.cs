@@ -20,8 +20,8 @@ public class GameBuilder
             DefaultHitPoints, DefaultAbilityScores, location);
 
     private readonly Dictionary<string, Barrier> _barriers = new();
-    private readonly Dictionary<string, Room> _rooms = new();
-    private Func<string, Character>? _characterFactory;
+    private readonly Dictionary<string, Room>    _rooms    = new();
+    private          Func<string, Character>?    _characterFactory;
 
     public GameBuilder WithRoom(string id, string name, string description, Action<RoomBuilder>? configure = null)
     {

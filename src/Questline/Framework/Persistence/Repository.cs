@@ -2,7 +2,9 @@ using Questline.Framework.Domain;
 
 namespace Questline.Framework.Persistence;
 
-public abstract class Repository<TEntity, TDocument>(IDataContext dataContext, IPersistenceMapper<TEntity, TDocument> mapper)
+public abstract class Repository<TEntity, TDocument>(
+    IDataContext                           dataContext,
+    IPersistenceMapper<TEntity, TDocument> mapper)
     where TEntity : DomainEntity
     where TDocument : Document
 {

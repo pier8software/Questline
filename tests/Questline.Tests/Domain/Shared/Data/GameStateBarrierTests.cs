@@ -23,12 +23,12 @@ public class GameStateBarrierTests
     {
         var barrier = new Barrier
         {
-            Id = "iron-door",
-            Name = "iron door",
-            Description = "A heavy iron door.",
+            Id             = "iron-door",
+            Name           = "iron door",
+            Description    = "A heavy iron door.",
             BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId = "rusty-key",
-            UnlockMessage = "The rusty key turns in the lock..."
+            UnlockItemId   = "rusty-key",
+            UnlockMessage  = "The rusty key turns in the lock..."
         };
 
         var state = new GameState(

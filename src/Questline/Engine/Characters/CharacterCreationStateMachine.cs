@@ -10,11 +10,11 @@ public class CharacterCreationContext
 {
     public CharacterCreationState State { get; set; } = CharacterCreationState.PendingAbilityScores;
 
-    public string Name { get; set; } = null!;
-    public Race? Race { get; set; }
-    public CharacterClass? Class { get; set; }
-    public HitPoints HitPoints { get; set; } = null!;
-    public AbilityScores AbilityScores { get; init; } = null!;
+    public string          Name          { get; set; } = null!;
+    public Race?           Race          { get; set; }
+    public CharacterClass? Class         { get; set; }
+    public HitPoints       HitPoints     { get; set; }  = null!;
+    public AbilityScores   AbilityScores { get; init; } = null!;
 }
 
 public enum CharacterCreationState
@@ -30,11 +30,11 @@ public enum CharacterCreationState
 public class CharacterCreationStateMachine
 {
     private readonly CharacterCreationContext _context;
-    private readonly IDice _dice;
+    private readonly IDice                    _dice;
 
     public CharacterCreationStateMachine(IDice dice)
     {
-        _dice = dice;
+        _dice    = dice;
         _context = InitializeCharacter();
     }
 
@@ -43,9 +43,9 @@ public class CharacterCreationStateMachine
         return _context.State switch
         {
             CharacterCreationState.PendingClassSelection => ProcessClassSelection(input),
-            CharacterCreationState.PendingRaceSelection => ProcessRaceSelection(input),
-            CharacterCreationState.PendingHitPoints => ProcessHitPoints(),
-            CharacterCreationState.PendingCharacterName => ProcessCharacterName(input),
+            CharacterCreationState.PendingRaceSelection  => ProcessRaceSelection(input),
+            CharacterCreationState.PendingHitPoints      => ProcessHitPoints(),
+            CharacterCreationState.PendingCharacterName  => ProcessCharacterName(input),
 
             _ => throw new ArgumentOutOfRangeException()
         };
@@ -54,7 +54,7 @@ public class CharacterCreationStateMachine
     private CharacterCreationContext InitializeCharacter() =>
         new()
         {
-            State = CharacterCreationState.PendingClassSelection,
+            State         = CharacterCreationState.PendingClassSelection,
             AbilityScores = AbilityScoresCalculator.Calculate(_dice)
         };
 
@@ -63,7 +63,7 @@ public class CharacterCreationStateMachine
         _context.Class = input?.ToLower() switch
         {
             "1" or "fighter" => CharacterClass.Fighter,
-            _ => null
+            _                => null
         };
 
         if (_context.Class == null)
@@ -81,7 +81,7 @@ public class CharacterCreationStateMachine
         _context.Race = input?.ToLower() switch
         {
             "1" or "human" => Race.Human,
-            _ => null
+            _              => null
         };
 
         if (_context.Race == null)
@@ -129,10 +129,10 @@ public class CharacterCreationStateMachine
 
     private static class Prompts
     {
-        public const string SelectClass = "Select your character's class:\n\t1. Fighter";
-        public const string SelectRace = "Select your character's race:\n\t1. Human";
-        public const string EnterName = "Enter a name for your character";
-        public const string Continue = "Hit enter to continue.";
+        public const string SelectClass      = "Select your character's class:\n\t1. Fighter";
+        public const string SelectRace       = "Select your character's race:\n\t1. Human";
+        public const string EnterName        = "Enter a name for your character";
+        public const string Continue         = "Hit enter to continue.";
         public const string CharacterCreated = "You have created your character.";
     }
 }

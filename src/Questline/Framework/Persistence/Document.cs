@@ -8,4 +8,5 @@ public abstract class Document<TId>
 }
 
 public abstract class Document : Document<string>
-{ }
+{
+}

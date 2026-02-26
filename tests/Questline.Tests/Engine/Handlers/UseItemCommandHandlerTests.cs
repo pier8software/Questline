@@ -12,12 +12,12 @@ public class UseItemCommandHandlerTests
 {
     private static Barrier CreateBarrier() => new()
     {
-        Id = "iron-door",
-        Name = "iron door",
-        Description = "A heavy iron door blocks the way North.",
+        Id             = "iron-door",
+        Name           = "iron door",
+        Description    = "A heavy iron door blocks the way North.",
         BlockedMessage = "The iron door is locked tight.",
-        UnlockItemId = "rusty-key",
-        UnlockMessage = "The rusty key turns in the lock and the iron door swings open."
+        UnlockItemId   = "rusty-key",
+        UnlockMessage  = "The rusty key turns in the lock and the iron door swings open."
     };
 
     private static void GiveItemToPlayer(GameState state, Item item)
@@ -29,7 +29,7 @@ public class UseItemCommandHandlerTests
     public void Correct_item_on_barrier_unlocks_it()
     {
         var barrier = CreateBarrier();
-        var key = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
+        var key     = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
 
         var state = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
@@ -51,7 +51,7 @@ public class UseItemCommandHandlerTests
     public void Wrong_item_returns_error_and_barrier_stays_locked()
     {
         var barrier = CreateBarrier();
-        var torch = new Item { Id = "torch", Name = "torch", Description = "A flickering torch." };
+        var torch   = new Item { Id = "torch", Name = "torch", Description = "A flickering torch." };
 
         var state = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
@@ -92,7 +92,7 @@ public class UseItemCommandHandlerTests
     public void Contextual_use_unlocks_matching_barrier_in_room()
     {
         var barrier = CreateBarrier();
-        var key = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
+        var key     = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
 
         var state = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
@@ -117,7 +117,7 @@ public class UseItemCommandHandlerTests
 
         var state = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.", r => r.WithExit(Direction.North, "beyond"))
-            .WithRoom("beyond", "Beyond", "Beyond the door.")
+            .WithRoom("beyond",  "Beyond",  "Beyond the door.")
             .BuildState("player1", "chamber");
 
         GiveItemToPlayer(state, key);

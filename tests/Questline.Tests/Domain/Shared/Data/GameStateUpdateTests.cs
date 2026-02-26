@@ -34,8 +34,8 @@ public class GameStateUpdateTests
     [Fact]
     public void Room_mutation_is_visible_through_game_state()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
+        var lamp = new Item { Id = "lamp", Name   = "brass lamp", Description = "A shiny brass lamp." };
+        var room = new Room { Id = "cellar", Name = "Cellar", Description     = "A damp cellar." };
         var state = new GameState(
             new Dictionary<string, Room> { ["cellar"] = room },
             CreateTestPlayer());
@@ -50,12 +50,12 @@ public class GameStateUpdateTests
     {
         var barrier = new Barrier
         {
-            Id = "iron-door",
-            Name = "iron door",
-            Description = "A heavy iron door.",
+            Id             = "iron-door",
+            Name           = "iron door",
+            Description    = "A heavy iron door.",
             BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId = "rusty-key",
-            UnlockMessage = "The rusty key turns in the lock..."
+            UnlockItemId   = "rusty-key",
+            UnlockMessage  = "The rusty key turns in the lock..."
         };
 
         var state = new GameState(

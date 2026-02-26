@@ -42,11 +42,11 @@ public class RequestsTests
     [Theory]
     [InlineData("north", Direction.North)]
     [InlineData("south", Direction.South)]
-    [InlineData("east", Direction.East)]
-    [InlineData("west", Direction.West)]
-    [InlineData("up", Direction.Up)]
-    [InlineData("down", Direction.Down)]
-    [InlineData("left", Direction.Invalid)]
+    [InlineData("east",  Direction.East)]
+    [InlineData("west",  Direction.West)]
+    [InlineData("up",    Direction.Up)]
+    [InlineData("down",  Direction.Down)]
+    [InlineData("left",  Direction.Invalid)]
     public void Can_create_MovePlayerCommand(string direction, Direction expectedDirection)
     {
         var request = Requests.MovePlayerCommand.CreateRequest([direction]);

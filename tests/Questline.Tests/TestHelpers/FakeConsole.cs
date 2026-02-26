@@ -5,7 +5,7 @@ namespace Questline.Tests.TestHelpers;
 public class FakeConsole : IConsole
 {
     private readonly Queue<string> _inputs = new();
-    private readonly List<string> _output = new();
+    private readonly List<string>  _output = new();
 
     public IReadOnlyList<string> Output => _output;
 
@@ -13,7 +13,7 @@ public class FakeConsole : IConsole
 
     public string? ReadLine() => _inputs.Count > 0 ? _inputs.Dequeue() : null;
 
-    public void Write(string text) => _output.Add(text);
+    public void Write(string     text) => _output.Add(text);
     public void WriteLine(string text) => _output.Add(text + "\n");
 
     public void QueueInput(params string[] lines)

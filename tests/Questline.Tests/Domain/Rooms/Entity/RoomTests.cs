@@ -8,8 +8,8 @@ public class RoomTests
     [Fact]
     public void Can_add_an_item_to_a_rooms_inventory()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
+        var lamp = new Item { Id = "lamp", Name   = "brass lamp", Description = "A shiny brass lamp." };
+        var room = new Room { Id = "cellar", Name = "Cellar", Description     = "A damp cellar." };
 
         room.AddItem(lamp);
 
@@ -22,10 +22,10 @@ public class RoomTests
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var room = new Room
         {
-            Id = "cellar",
-            Name = "Cellar",
+            Id          = "cellar",
+            Name        = "Cellar",
             Description = "A damp cellar.",
-            Items = new List<Item> { lamp }
+            Items       = new List<Item> { lamp }
         };
 
         room.RemoveItem(lamp);
@@ -39,10 +39,10 @@ public class RoomTests
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var room = new Room
         {
-            Id = "cellar",
-            Name = "Cellar",
+            Id          = "cellar",
+            Name        = "Cellar",
             Description = "A damp cellar.",
-            Items = new List<Item> { lamp }
+            Items       = new List<Item> { lamp }
         };
 
         room.FindItemByName("BRASS LAMP").ShouldBe(lamp);
