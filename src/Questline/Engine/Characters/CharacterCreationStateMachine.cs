@@ -134,6 +134,7 @@ public class CharacterCreationStateMachine
         _context.Name = characterName.Name!;
 
         _completedCharacter = Character.Create(
+            Guid.NewGuid().ToString(),
             _context.Name,
             _context.Race,
             _context.Class,

@@ -8,12 +8,12 @@ namespace Questline.Engine.Handlers;
 
 public class VersionQueryHandler : IRequestHandler<Requests.VersionQuery>
 {
-    public IResponse Handle(GameState state, Requests.VersionQuery request)
+    public Task<IResponse> Handle(GameState state, Requests.VersionQuery request)
     {
         var version = Assembly.GetEntryAssembly()?
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
             .InformationalVersion ?? "unknown";
 
-        return new Responses.VersionResponse(version);
+        return Task.FromResult<IResponse>(new Responses.VersionResponse(version));
     }
 }

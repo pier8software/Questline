@@ -7,12 +7,12 @@ namespace Questline.Engine.Handlers;
 
 public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 {
-    public IResponse Handle(GameState state, Requests.UseItemCommand command)
+    public Task<IResponse> Handle(GameState state, Requests.UseItemCommand command)
     {
         var item = state.Character.FindInventoryItemByName(command.ItemName);
         if (item is null)
         {
-            return new ErrorResponse($"You don't have '{command.ItemName}'.");
+            return Task.FromResult<IResponse>(new ErrorResponse($"You don't have '{command.ItemName}'."));
         }
 
         var room = state.Adventure.GetRoom(state.Character.Location);
@@ -39,7 +39,7 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 
             if (barrier is null)
             {
-                return new ErrorResponse($"You don't see '{command.TargetName}' here.");
+                return Task.FromResult<IResponse>(new ErrorResponse($"You don't see '{command.TargetName}' here."));
             }
         }
         else
@@ -62,21 +62,21 @@ public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
 
             if (barrier is null)
             {
-                return new ErrorResponse("There is nothing to use that on.");
+                return Task.FromResult<IResponse>(new ErrorResponse("There is nothing to use that on."));
             }
         }
 
         if (barrier.IsUnlocked)
         {
-            return new ErrorResponse($"The {barrier.Name} is already unlocked.");
+            return Task.FromResult<IResponse>(new ErrorResponse($"The {barrier.Name} is already unlocked."));
         }
 
         if (item.Id != barrier.UnlockItemId)
         {
-            return new ErrorResponse($"The {item.Name} doesn't work on the {barrier.Name}.");
+            return Task.FromResult<IResponse>(new ErrorResponse($"The {item.Name} doesn't work on the {barrier.Name}."));
         }
 
         barrier.Unlock();
-        return new Responses.UseItemResponse(barrier.UnlockMessage);
+        return Task.FromResult<IResponse>(new Responses.UseItemResponse(barrier.UnlockMessage));
     }
 }

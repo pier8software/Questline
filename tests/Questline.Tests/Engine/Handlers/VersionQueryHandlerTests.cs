@@ -7,7 +7,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class VersionQueryHandlerTests
 {
     [Fact]
-    public void Returns_version_response_with_current_version()
+    public async Task Returns_version_response_with_current_version()
     {
         var state = new GameBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
@@ -15,7 +15,7 @@ public class VersionQueryHandlerTests
 
         var handler = new VersionQueryHandler();
 
-        var result = handler.Handle(state, new Requests.VersionQuery());
+        var result = await handler.Handle(state, new Requests.VersionQuery());
 
         var versionResult = result.ShouldBeOfType<Responses.VersionResponse>();
         versionResult.Version.ShouldNotBeNullOrEmpty();

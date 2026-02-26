@@ -9,7 +9,7 @@ namespace Questline.Tests.Framework.Mediator;
 public class RequestSenderTests
 {
     [Fact]
-    public void Registered_verb_executes_its_handler()
+    public async Task Registered_verb_executes_its_handler()
     {
         var state = new GameBuilder()
             .WithRoom("start", "Start", "A starting room.")
@@ -21,7 +21,7 @@ public class RequestSenderTests
 
         var dispatcher = new RequestSender(serviceProvider);
 
-        var result = dispatcher.Send(state, new Requests.GetRoomDetailsQuery());
+        var result = await dispatcher.Send(state, new Requests.GetRoomDetailsQuery());
 
         result.ShouldBeOfType<Responses.RoomDetailsResponse>();
     }

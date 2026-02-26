@@ -1,9 +1,10 @@
 using Questline.Domain.Characters.Data;
 using Questline.Domain.Shared.Entity;
+using Questline.Framework.Domain;
 
 namespace Questline.Domain.Characters.Entity;
 
-public class Character
+public class Character : DomainEntity
 {
     private readonly List<Item> _inventory = [];
 
@@ -23,6 +24,7 @@ public class Character
     }
 
     public static Character Create(
+        string          id,
         string          name,
         Race?           race,
         CharacterClass? characterClass,
@@ -32,6 +34,7 @@ public class Character
     {
         return new Character
         {
+            Id            = id,
             Name          = name,
             Race          = race.GetValueOrDefault(),
             Class         = characterClass.GetValueOrDefault(),

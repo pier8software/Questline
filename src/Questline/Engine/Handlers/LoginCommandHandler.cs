@@ -7,6 +7,6 @@ namespace Questline.Engine.Handlers;
 
 public class LoginCommandHandler : IRequestHandler<Requests.LoginCommand>
 {
-    public IResponse Handle(GameState state, Requests.LoginCommand request) =>
-        new Responses.LoggedInResponse(Player.Create(Guid.NewGuid().ToString(), request.Username, "Rich"), []);
+    public Task<IResponse> Handle(GameState state, Requests.LoginCommand request) =>
+        Task.FromResult<IResponse>(new Responses.LoggedInResponse(Player.Create(Guid.NewGuid().ToString(), request.Username, "Rich"), []));
 }

@@ -6,12 +6,12 @@ namespace Questline.Engine.Handlers;
 
 public class GetPlayerInventoryQueryHandler : IRequestHandler<Requests.GetPlayerInventoryQuery>
 {
-    public IResponse Handle(GameState state, Requests.GetPlayerInventoryQuery command)
+    public Task<IResponse> Handle(GameState state, Requests.GetPlayerInventoryQuery command)
     {
         var items = state.Character.Inventory
             .Select(i => i.Name)
             .ToList();
 
-        return new Responses.PlayerInventoryResponse(items);
+        return Task.FromResult<IResponse>(new Responses.PlayerInventoryResponse(items));
     }
 }

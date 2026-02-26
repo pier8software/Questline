@@ -27,7 +27,7 @@ public class UseItemCommandHandlerTests
     }
 
     [Fact]
-    public void Correct_item_on_barrier_unlocks_it()
+    public async Task Correct_item_on_barrier_unlocks_it()
     {
         var barrier = CreateBarrier();
         var key     = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
@@ -42,7 +42,7 @@ public class UseItemCommandHandlerTests
         GiveItemToPlayer(state, key);
         var handler = new UseItemCommandHandler();
 
-        var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
 
         var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
         useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
@@ -50,7 +50,7 @@ public class UseItemCommandHandlerTests
     }
 
     [Fact]
-    public void Wrong_item_returns_error_and_barrier_stays_locked()
+    public async Task Wrong_item_returns_error_and_barrier_stays_locked()
     {
         var barrier = CreateBarrier();
         var torch   = new Item { Id = "torch", Name = "torch", Description = "A flickering torch." };
@@ -65,7 +65,7 @@ public class UseItemCommandHandlerTests
         GiveItemToPlayer(state, torch);
         var handler = new UseItemCommandHandler();
 
-        var result = handler.Handle(state, new Requests.UseItemCommand("torch", "iron door"));
+        var result = await handler.Handle(state, new Requests.UseItemCommand("torch", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("The torch doesn't work on the iron door.");
@@ -73,7 +73,7 @@ public class UseItemCommandHandlerTests
     }
 
     [Fact]
-    public void Item_not_in_inventory_returns_error()
+    public async Task Item_not_in_inventory_returns_error()
     {
         var barrier = CreateBarrier();
 
@@ -86,14 +86,14 @@ public class UseItemCommandHandlerTests
 
         var handler = new UseItemCommandHandler();
 
-        var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("You don't have 'rusty key'.");
     }
 
     [Fact]
-    public void Contextual_use_unlocks_matching_barrier_in_room()
+    public async Task Contextual_use_unlocks_matching_barrier_in_room()
     {
         var barrier = CreateBarrier();
         var key     = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
@@ -108,7 +108,7 @@ public class UseItemCommandHandlerTests
         GiveItemToPlayer(state, key);
         var handler = new UseItemCommandHandler();
 
-        var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", null));
+        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", null));
 
         var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
         useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
@@ -116,7 +116,7 @@ public class UseItemCommandHandlerTests
     }
 
     [Fact]
-    public void Target_not_found_returns_error()
+    public async Task Target_not_found_returns_error()
     {
         var key = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
 
@@ -128,14 +128,14 @@ public class UseItemCommandHandlerTests
         GiveItemToPlayer(state, key);
         var handler = new UseItemCommandHandler();
 
-        var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("You don't see 'iron door' here.");
     }
 
     [Fact]
-    public void Already_unlocked_barrier_returns_informative_message()
+    public async Task Already_unlocked_barrier_returns_informative_message()
     {
         var barrier = CreateBarrier();
         barrier.Unlock();
@@ -151,7 +151,7 @@ public class UseItemCommandHandlerTests
         GiveItemToPlayer(state, key);
         var handler = new UseItemCommandHandler();
 
-        var result = handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("The iron door is already unlocked.");

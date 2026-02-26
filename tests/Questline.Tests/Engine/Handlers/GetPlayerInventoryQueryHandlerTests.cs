@@ -14,7 +14,7 @@ public class GetPlayerInventoryQueryHandlerTests
     }
 
     [Fact]
-    public void Lists_carried_items()
+    public async Task Lists_carried_items()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var key  = new Item { Id = "key", Name  = "rusty key", Description  = "A rusty iron key." };
@@ -25,7 +25,7 @@ public class GetPlayerInventoryQueryHandlerTests
         GiveItemToPlayer(state, key);
         var handler = new GetPlayerInventoryQueryHandler();
 
-        var result = handler.Handle(state, new Requests.GetPlayerInventoryQuery());
+        var result = await handler.Handle(state, new Requests.GetPlayerInventoryQuery());
 
         var inventoryResult = result.ShouldBeOfType<Responses.PlayerInventoryResponse>();
         inventoryResult.Items.ShouldContain("brass lamp");
@@ -33,21 +33,21 @@ public class GetPlayerInventoryQueryHandlerTests
     }
 
     [Fact]
-    public void Empty_inventory_returns_empty_items_list()
+    public async Task Empty_inventory_returns_empty_items_list()
     {
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .BuildState("player1", "cellar");
         var handler = new GetPlayerInventoryQueryHandler();
 
-        var result = handler.Handle(state, new Requests.GetPlayerInventoryQuery());
+        var result = await handler.Handle(state, new Requests.GetPlayerInventoryQuery());
 
         var inventoryResult = result.ShouldBeOfType<Responses.PlayerInventoryResponse>();
         inventoryResult.Items.ShouldBeEmpty();
     }
 
     [Fact]
-    public void Get_then_drop_round_trips_item_through_inventory()
+    public async Task Get_then_drop_round_trips_item_through_inventory()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var state = new GameBuilder()
@@ -56,11 +56,11 @@ public class GetPlayerInventoryQueryHandlerTests
         var getHandler  = new TakeItemHandler();
         var dropHandler = new DropItemCommandHandler();
 
-        getHandler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
+        await getHandler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
         state.Character.Inventory.ShouldContain(lamp);
         state.Adventure.GetRoom("cellar").Items.ShouldBeEmpty();
 
-        dropHandler.Handle(state, new Requests.DropItemCommand("brass lamp"));
+        await dropHandler.Handle(state, new Requests.DropItemCommand("brass lamp"));
         state.Character.Inventory.ShouldBeEmpty();
         state.Adventure.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
     }

@@ -16,7 +16,7 @@ public class ExamineCommandHandlerTests
     }
 
     [Fact]
-    public void Examine_inventory_item_shows_description()
+    public async Task Examine_inventory_item_shows_description()
     {
         var key = new Item
             { Id = "rusty-key", Name = "rusty key", Description = "An old iron key, its teeth worn by time." };
@@ -28,14 +28,14 @@ public class ExamineCommandHandlerTests
         GiveItemToPlayer(state, key);
         var handler = new ExamineCommandHandler();
 
-        var result = handler.Handle(state, new Requests.ExamineCommand("rusty key"));
+        var result = await handler.Handle(state, new Requests.ExamineCommand("rusty key"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("An old iron key, its teeth worn by time.");
     }
 
     [Fact]
-    public void Examine_room_item_shows_description()
+    public async Task Examine_room_item_shows_description()
     {
         var torch = new Item { Id = "torch", Name = "torch", Description = "A flickering wooden torch." };
 
@@ -45,14 +45,14 @@ public class ExamineCommandHandlerTests
 
         var handler = new ExamineCommandHandler();
 
-        var result = handler.Handle(state, new Requests.ExamineCommand("torch"));
+        var result = await handler.Handle(state, new Requests.ExamineCommand("torch"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("A flickering wooden torch.");
     }
 
     [Fact]
-    public void Examine_room_feature_by_keyword_shows_description()
+    public async Task Examine_room_feature_by_keyword_shows_description()
     {
         var feature = new Feature
         {
@@ -68,14 +68,14 @@ public class ExamineCommandHandlerTests
 
         var handler = new ExamineCommandHandler();
 
-        var result = handler.Handle(state, new Requests.ExamineCommand("symbols"));
+        var result = await handler.Handle(state, new Requests.ExamineCommand("symbols"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");
     }
 
     [Fact]
-    public void Examine_room_feature_by_name_shows_description()
+    public async Task Examine_room_feature_by_name_shows_description()
     {
         var feature = new Feature
         {
@@ -91,14 +91,14 @@ public class ExamineCommandHandlerTests
 
         var handler = new ExamineCommandHandler();
 
-        var result = handler.Handle(state, new Requests.ExamineCommand("strange symbols"));
+        var result = await handler.Handle(state, new Requests.ExamineCommand("strange symbols"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");
     }
 
     [Fact]
-    public void Examine_unknown_target_returns_error()
+    public async Task Examine_unknown_target_returns_error()
     {
         var state = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.")
@@ -106,7 +106,7 @@ public class ExamineCommandHandlerTests
 
         var handler = new ExamineCommandHandler();
 
-        var result = handler.Handle(state, new Requests.ExamineCommand("mysterious orb"));
+        var result = await handler.Handle(state, new Requests.ExamineCommand("mysterious orb"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("You don't see 'mysterious orb' here.");
