@@ -14,7 +14,7 @@ public class DropItemCommandHandlerTests
     }
 
     [Fact]
-    public void Returns_successful_drop_response()
+    public async Task Returns_successful_drop_response()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var state = new GameBuilder()
@@ -24,14 +24,14 @@ public class DropItemCommandHandlerTests
 
         var handler = new DropItemCommandHandler();
 
-        var result = handler.Handle(state, new Requests.DropItemCommand("brass lamp"));
+        var result = await handler.Handle(state, new Requests.DropItemCommand("brass lamp"));
 
         var dropResult = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
         dropResult.ItemName.ShouldBe("brass lamp");
     }
 
     [Fact]
-    public void Item_moves_from_inventory_to_room()
+    public async Task Item_moves_from_inventory_to_room()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var state = new GameBuilder()
@@ -40,14 +40,14 @@ public class DropItemCommandHandlerTests
         GiveItemToPlayer(state, lamp);
         var handler = new DropItemCommandHandler();
 
-        _ = handler.Handle(state, new Requests.DropItemCommand("brass lamp"));
+        _ = await handler.Handle(state, new Requests.DropItemCommand("brass lamp"));
 
         state.Character.Inventory.ShouldBeEmpty();
         state.Adventure.GetRoom("cellar").FindItemByName("brass lamp").ShouldBe(lamp);
     }
 
     [Fact]
-    public void Item_not_in_inventory_returns_error()
+    public async Task Item_not_in_inventory_returns_error()
     {
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
@@ -55,14 +55,14 @@ public class DropItemCommandHandlerTests
 
         var handler = new DropItemCommandHandler();
 
-        var result = handler.Handle(state, new Requests.DropItemCommand("lamp"));
+        var result = await handler.Handle(state, new Requests.DropItemCommand("lamp"));
 
         var dropResult = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
         dropResult.ItemName.ShouldContain("You are not carrying 'lamp'.");
     }
 
     [Fact]
-    public void Matching_is_case_insensitive()
+    public async Task Matching_is_case_insensitive()
     {
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
@@ -70,7 +70,7 @@ public class DropItemCommandHandlerTests
 
         var handler = new DropItemCommandHandler();
 
-        var result = handler.Handle(state, new Requests.DropItemCommand("BRASS LAMP"));
+        var result = await handler.Handle(state, new Requests.DropItemCommand("BRASS LAMP"));
 
         var dropResult = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
         dropResult.ItemName.ShouldContain("BRASS LAMP");

@@ -5,5 +5,5 @@ namespace Questline.Framework.Mediator;
 public interface IRequestHandler<in TRequest>
     where TRequest : IRequest
 {
-    IResponse Handle(GameState state, TRequest request);
+    Task<IResponse> Handle(GameState state, TRequest request);
 }

@@ -10,7 +10,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class GetRoomDetailsHandlerTests
 {
     [Fact]
-    public void Returns_response_with_room_details()
+    public async Task Returns_response_with_room_details()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var state = new GameBuilder()
@@ -25,7 +25,7 @@ public class GetRoomDetailsHandlerTests
             .BuildState("player1", "hallway");
         var handler = new GetRoomDetailsHandler();
 
-        var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
+        var result = await handler.Handle(state, new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.RoomName.ShouldBe("Hallway");
@@ -36,21 +36,21 @@ public class GetRoomDetailsHandlerTests
     }
 
     [Fact]
-    public void Response_omits_items_when_room_is_empty()
+    public async Task Response_omits_items_when_room_is_empty()
     {
         var state = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
             .BuildState("player1", "cellar");
         var handler = new GetRoomDetailsHandler();
 
-        var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
+        var result = await handler.Handle(state, new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.Items.ShouldBeEmpty();
     }
 
     [Fact]
-    public void Response_includes_locked_barrier_description()
+    public async Task Response_includes_locked_barrier_description()
     {
         var barrier = new Barrier
         {
@@ -71,14 +71,14 @@ public class GetRoomDetailsHandlerTests
 
         var handler = new GetRoomDetailsHandler();
 
-        var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
+        var result = await handler.Handle(state, new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.LockedBarriers.ShouldContain("A heavy iron door blocks the way North.");
     }
 
     [Fact]
-    public void Response_omits_barrier_line_when_unlocked()
+    public async Task Response_omits_barrier_line_when_unlocked()
     {
         var barrier = new Barrier
         {
@@ -100,7 +100,7 @@ public class GetRoomDetailsHandlerTests
 
         var handler = new GetRoomDetailsHandler();
 
-        var result = handler.Handle(state, new Requests.GetRoomDetailsQuery());
+        var result = await handler.Handle(state, new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.LockedBarriers.ShouldBeEmpty();

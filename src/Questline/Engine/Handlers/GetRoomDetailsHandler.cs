@@ -6,14 +6,14 @@ namespace Questline.Engine.Handlers;
 
 public class GetRoomDetailsHandler : IRequestHandler<Requests.GetRoomDetailsQuery>
 {
-    public IResponse Handle(GameState state, Requests.GetRoomDetailsQuery request)
+    public Task<IResponse> Handle(GameState state, Requests.GetRoomDetailsQuery request)
     {
         var room           = state.Adventure.GetRoom(state.Character.Location);
         var exits          = room.Exits.Keys.Select(d => d.ToString()).ToList();
         var items          = room.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(state, room);
 
-        return new Responses.RoomDetailsResponse(room.Name, room.Description, exits, items, lockedBarriers);
+        return Task.FromResult<IResponse>(new Responses.RoomDetailsResponse(room.Name, room.Description, exits, items, lockedBarriers));
     }
 
     private static List<string> GetLockedBarrierDescriptions(GameState state, Domain.Rooms.Entity.Room room)

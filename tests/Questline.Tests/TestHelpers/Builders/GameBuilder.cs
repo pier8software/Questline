@@ -16,7 +16,7 @@ public class GameBuilder
         new AbilityScore(10), new AbilityScore(10), new AbilityScore(10));
 
     private static readonly Func<string, Character> DefaultCharacterFactory =
-        location => Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+        location => Character.Create("test-character-id", "TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores, location);
 
     private readonly Dictionary<string, Barrier> _barriers = new();

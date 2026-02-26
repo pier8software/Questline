@@ -36,7 +36,7 @@ public static class MongoCollectionExtensions
             throw new ArgumentNullException(nameof(document), "Document cannot be null.");
         }
 
-        var replaceOptions = new ReplaceOptions();
+        var replaceOptions = new ReplaceOptions { IsUpsert = true };
         if (document.ConcurrencyTag.GetValueOrDefault() != Guid.Empty)
         {
             replaceOptions.IsUpsert = false;

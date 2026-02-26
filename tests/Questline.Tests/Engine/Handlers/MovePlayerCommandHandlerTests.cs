@@ -10,7 +10,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class MovePlayerCommandHandlerTests
 {
     [Fact]
-    public void Returns_next_room_details_in_response()
+    public async Task Returns_next_room_details_in_response()
     {
         var state = new GameBuilder()
             .WithRoom("start", "Start",    "Starting room.", r => r.WithExit(Direction.North, "end"))
@@ -19,7 +19,7 @@ public class MovePlayerCommandHandlerTests
 
         var handler = new MovePlayerCommandHandler();
 
-        var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
+        var result = await handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
         var moveResult = result.ShouldBeOfType<Responses.PlayerMovedResponse>();
         moveResult.RoomName.ShouldBe("End Room");
@@ -27,7 +27,7 @@ public class MovePlayerCommandHandlerTests
     }
 
     [Fact]
-    public void Invalid_direction_returns_error_message()
+    public async Task Invalid_direction_returns_error_message()
     {
         var state = new GameBuilder()
             .WithRoom("start", "Start",    "Starting room.", r => r.WithExit(Direction.North, "end"))
@@ -36,14 +36,14 @@ public class MovePlayerCommandHandlerTests
 
         var handler = new MovePlayerCommandHandler();
 
-        var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.East));
+        var result = await handler.Handle(state, new Requests.MovePlayerCommand(Direction.East));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("There is no exit to the East.");
     }
 
     [Fact]
-    public void Player_location_is_updated_after_moving()
+    public async Task Player_location_is_updated_after_moving()
     {
         var state = new GameBuilder()
             .WithRoom("start", "Start",    "Starting room.", r => r.WithExit(Direction.North, "end"))
@@ -52,13 +52,13 @@ public class MovePlayerCommandHandlerTests
 
         var handler = new MovePlayerCommandHandler();
 
-        _ = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
+        _ = await handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
         state.Character.Location.ShouldBe("end");
     }
 
     [Fact]
-    public void Player_location_is_not_updated_if_direction_is_invalid()
+    public async Task Player_location_is_not_updated_if_direction_is_invalid()
     {
         var state = new GameBuilder()
             .WithRoom("sealed", "Sealed Room", "No way north.")
@@ -66,13 +66,13 @@ public class MovePlayerCommandHandlerTests
 
         var handler = new MovePlayerCommandHandler();
 
-        _ = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
+        _ = await handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
         state.Character.Location.ShouldBe("sealed");
     }
 
     [Fact]
-    public void Player_location_is_not_updated_if_exit_is_blocked()
+    public async Task Player_location_is_not_updated_if_exit_is_blocked()
     {
         var barrier = new Barrier
         {
@@ -93,7 +93,7 @@ public class MovePlayerCommandHandlerTests
 
         var handler = new MovePlayerCommandHandler();
 
-        var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
+        var result = await handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("The iron door is locked tight.");
@@ -101,7 +101,7 @@ public class MovePlayerCommandHandlerTests
     }
 
     [Fact]
-    public void Player_location_is_updated_when_barrier_is_unlocked()
+    public async Task Player_location_is_updated_when_barrier_is_unlocked()
     {
         var barrier = new Barrier
         {
@@ -123,7 +123,7 @@ public class MovePlayerCommandHandlerTests
 
         var handler = new MovePlayerCommandHandler();
 
-        var result = handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
+        var result = await handler.Handle(state, new Requests.MovePlayerCommand(Direction.North));
 
         var moveResult = result.ShouldBeOfType<Responses.PlayerMovedResponse>();
         moveResult.RoomName.ShouldBe("End Room");

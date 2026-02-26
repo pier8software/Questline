@@ -58,35 +58,35 @@ public class CliAppTests
     }
 
     [Fact]
-    public void Displays_initial_room_on_start()
+    public async Task Displays_initial_room_on_start()
     {
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "quit"]);
 
-        loop.Run();
+        await loop.Run();
 
         console.AllOutput.ShouldContain("Dungeon Entrance");
         console.AllOutput.ShouldContain("A dark entrance to the dungeon.");
     }
 
     [Fact]
-    public void Displays_command_prompt()
+    public async Task Displays_command_prompt()
     {
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "quit"]);
 
-        loop.Run();
+        await loop.Run();
 
         console.AllOutput.ShouldContain("> ");
     }
 
     [Fact]
-    public void Look_command_displays_room_info()
+    public async Task Look_command_displays_room_info()
     {
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "look", "quit"]);
 
-        loop.Run();
+        await loop.Run();
 
         var output = console.AllOutput;
         var count  = CountOccurrences(output, "Dungeon Entrance");
@@ -94,45 +94,45 @@ public class CliAppTests
     }
 
     [Fact]
-    public void Go_command_moves_and_displays_new_room()
+    public async Task Go_command_moves_and_displays_new_room()
     {
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "go north", "quit"]);
 
-        loop.Run();
+        await loop.Run();
 
         console.AllOutput.ShouldContain("Torch-Lit Hallway");
     }
 
     [Fact]
-    public void Unknown_command_displays_error()
+    public async Task Unknown_command_displays_error()
     {
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "dance", "quit"]);
 
-        loop.Run();
+        await loop.Run();
 
         console.AllOutput.ShouldContain("don't understand");
     }
 
     [Fact]
-    public void Quit_command_exits_gracefully()
+    public async Task Quit_command_exits_gracefully()
     {
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "quit"]);
 
-        loop.Run();
+        await loop.Run();
 
         console.AllOutput.ShouldContain("Goodbye!");
     }
 
     [Fact]
-    public void Null_input_exits_loop()
+    public async Task Null_input_exits_loop()
     {
         var (loop, console) = CreateCliApp();
         // No input queued, ReadLine returns null at login prompt
 
-        loop.Run();
+        await loop.Run();
 
         // Should not hang — exits when input is null
     }

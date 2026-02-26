@@ -6,7 +6,7 @@ namespace Questline.Framework.Mediator;
 
 public class RequestSender(IServiceProvider serviceProvider)
 {
-    public IResponse Send(GameState? state, IRequest request)
+    public async Task<IResponse> Send(GameState? state, IRequest request)
     {
         var requestType = request.GetType();
 
@@ -15,6 +15,7 @@ public class RequestSender(IServiceProvider serviceProvider)
 
         var handler = serviceProvider.GetRequiredService(requestHandlerType);
 
-        return (IResponse)handleMethod.Invoke(handler, [state, request])!;
+        var task = (Task<IResponse>)handleMethod.Invoke(handler, [state, request])!;
+        return await task;
     }
 }

@@ -43,22 +43,28 @@ public class GameEngine(
     public GamePhase Phase => _state.Phase;
 
 
-    public IResponse ProcessInput(string? input)
+    public async Task<IResponse> ProcessInput(string? input)
     {
-        return _state.Phase switch
+        switch (_state.Phase)
         {
-            GamePhase.Started           => HandleGameStarted(),
-            GamePhase.Login             => HandleLogin(input),
-            GamePhase.NewAdventure      => HandleNewAdventure(input),
-            GamePhase.CharacterCreation => HandleCharacterCreation(input),
-            GamePhase.Playing           => HandleGamePlay(input),
-            GamePhase.Ended             => new Responses.GameQuitedResponse(),
-
-            _ => throw new ArgumentOutOfRangeException()
-        };
+            case GamePhase.Started:
+                return HandleGameStarted();
+            case GamePhase.Login:
+                return await HandleLogin(input);
+            case GamePhase.NewAdventure:
+                return HandleNewAdventure(input);
+            case GamePhase.CharacterCreation:
+                return HandleCharacterCreation(input);
+            case GamePhase.Playing:
+                return await HandleGamePlay(input);
+            case GamePhase.Ended:
+                return new Responses.GameQuitedResponse();
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
-    private IResponse HandleGamePlay(string? input)
+    private async Task<IResponse> HandleGamePlay(string? input)
     {
         var parseResult = parser.Parse(input);
         if (!parseResult.IsSuccess)
@@ -66,7 +72,7 @@ public class GameEngine(
             return parseResult.Error!;
         }
 
-        var response = dispatcher.Send(_state, parseResult.Request!);
+        var response = await dispatcher.Send(_state, parseResult.Request!);
 
         if (response is Responses.GameQuitedResponse)
         {
@@ -92,7 +98,7 @@ public class GameEngine(
 
     private IResponse HandleNewAdventure(string? input)
     {
-        if (!int.TryParse(input, out var adventureId) && !_adventures.ContainsKey(adventureId))
+        if (!int.TryParse(input, out var adventureId) || !_adventures.ContainsKey(adventureId))
         {
             return new ErrorResponse("Invalid selection.");
         }
@@ -103,7 +109,7 @@ public class GameEngine(
         return new Responses.NewAdventureSelectedResponse();
     }
 
-    private IResponse HandleLogin(string? input)
+    private async Task<IResponse> HandleLogin(string? input)
     {
         var parseResult = parser.Parse(input);
         if (!parseResult.IsSuccess)
@@ -111,7 +117,7 @@ public class GameEngine(
             return parseResult.Error!;
         }
 
-        var response         = dispatcher.Send(_state, parseResult.Request!);
+        var response         = await dispatcher.Send(_state, parseResult.Request!);
         var loggedInResponse = response as Responses.LoggedInResponse;
 
         _state.Player = loggedInResponse!.Player;

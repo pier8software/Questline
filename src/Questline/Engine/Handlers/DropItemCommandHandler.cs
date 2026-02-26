@@ -6,13 +6,13 @@ namespace Questline.Engine.Handlers;
 
 public class DropItemCommandHandler : IRequestHandler<Requests.DropItemCommand>
 {
-    public IResponse Handle(GameState state, Requests.DropItemCommand command)
+    public Task<IResponse> Handle(GameState state, Requests.DropItemCommand command)
     {
         var item = state.Character.FindInventoryItemByName(command.ItemName);
 
         if (item is null)
         {
-            return new Responses.ItemDroppedResponse($"You are not carrying '{command.ItemName}'.");
+            return Task.FromResult<IResponse>(new Responses.ItemDroppedResponse($"You are not carrying '{command.ItemName}'."));
         }
 
         state.Character.RemoveInventoryItem(item);
@@ -20,6 +20,6 @@ public class DropItemCommandHandler : IRequestHandler<Requests.DropItemCommand>
         var room = state.Adventure.GetRoom(state.Character.Location);
         room.AddItem(item);
 
-        return new Responses.ItemDroppedResponse(item.Name);
+        return Task.FromResult<IResponse>(new Responses.ItemDroppedResponse(item.Name));
     }
 }

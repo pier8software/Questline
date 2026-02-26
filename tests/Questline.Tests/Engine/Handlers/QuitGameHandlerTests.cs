@@ -7,7 +7,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class QuitGameHandlerTests
 {
     [Fact]
-    public void Returns_quited_response()
+    public async Task Returns_quited_response()
     {
         var state = new GameBuilder()
             .WithRoom("tavern", "The Tavern", "A cozy tavern.")
@@ -15,7 +15,7 @@ public class QuitGameHandlerTests
 
         var handler = new QuitGameHandler();
 
-        var result = handler.Handle(state, new Requests.QuitGame());
+        var result = await handler.Handle(state, new Requests.QuitGame());
 
         result.ShouldBeOfType<Responses.GameQuitedResponse>();
     }

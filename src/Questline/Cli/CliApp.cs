@@ -8,9 +8,9 @@ public class CliApp(
     ResponseFormatter formatter,
     GameEngine                    engine)
 {
-    public void Run()
+    public async Task Run()
     {
-        var response = engine.ProcessInput(null);
+        var response = await engine.ProcessInput(null);
         console.WriteLine(formatter.Format(response));
 
         while (engine.Phase != GamePhase.Ended)
@@ -23,7 +23,7 @@ public class CliApp(
                 break;
             }
 
-            response = engine.ProcessInput(input);
+            response = await engine.ProcessInput(input);
             console.WriteLine(formatter.Format(response));
 
             if (response is Responses.GameQuitedResponse)

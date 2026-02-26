@@ -14,7 +14,7 @@ public class CharacterTests
     [Fact]
     public void Moving_the_character_updates_their_location()
     {
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+        var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores, "start");
 
         character.MoveTo("end");
@@ -25,7 +25,7 @@ public class CharacterTests
     [Fact]
     public void Can_add_a_new_item_to_a_characters_inventory()
     {
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+        var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores, "start");
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
 
@@ -38,7 +38,7 @@ public class CharacterTests
     public void Can_remove_an_item_from_a_characters_inventory()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+        var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores, "start");
         character.AddInventoryItem(lamp);
 
@@ -51,7 +51,7 @@ public class CharacterTests
     public void FindInventoryItemByName_returns_item_case_insensitively()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+        var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores, "start");
         character.AddInventoryItem(lamp);
 
@@ -61,7 +61,7 @@ public class CharacterTests
     [Fact]
     public void FindInventoryItemByName_returns_null_when_not_found()
     {
-        var character = Character.Create("TestHero", Race.Human, CharacterClass.Fighter,
+        var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores, "start");
 
         character.FindInventoryItemByName("sword").ShouldBeNull();

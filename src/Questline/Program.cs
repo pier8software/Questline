@@ -4,4 +4,4 @@ var cliApp = new CliAppBuilder()
     .ConfigureServices()
     .Build();
 
-cliApp.Run();
+await cliApp.Run();

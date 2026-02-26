@@ -6,13 +6,13 @@ namespace Questline.Engine.Handlers;
 
 public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerCommand>
 {
-    public IResponse Handle(GameState state, Requests.MovePlayerCommand command)
+    public Task<IResponse> Handle(GameState state, Requests.MovePlayerCommand command)
     {
         var currentRoom = state.Adventure.GetRoom(state.Character.Location);
 
         if (!currentRoom.Exits.TryGetValue(command.Direction, out var exit))
         {
-            return new ErrorResponse($"There is no exit to the {command.Direction}.");
+            return Task.FromResult<IResponse>(new ErrorResponse($"There is no exit to the {command.Direction}."));
         }
 
         if (exit.BarrierId is not null)
@@ -20,7 +20,7 @@ public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerComma
             var barrier = state.Adventure.GetBarrier(exit.BarrierId);
             if (barrier is not null && !barrier.IsUnlocked)
             {
-                return new ErrorResponse(barrier.BlockedMessage);
+                return Task.FromResult<IResponse>(new ErrorResponse(barrier.BlockedMessage));
             }
         }
 
@@ -31,7 +31,7 @@ public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerComma
         var items          = newRoom.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(state, newRoom);
 
-        return new Responses.PlayerMovedResponse(newRoom.Name, newRoom.Description, exits, items, lockedBarriers);
+        return Task.FromResult<IResponse>(new Responses.PlayerMovedResponse(newRoom.Name, newRoom.Description, exits, items, lockedBarriers));
     }
 
     private static List<string> GetLockedBarrierDescriptions(GameState state, Domain.Rooms.Entity.Room room)
