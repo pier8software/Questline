@@ -1,0 +1,21 @@
+---
+config:
+      theme: redux
+---
+flowchart TD
+        A(["Start"])
+        A --> B["Welcome"]
+        B --> C{"SignUp or Login"}
+        C --> D["SignUp"]
+        C --> E["Login"]
+        D --> F{"SignUp or Login"}
+        E --> F{"Start New or Continue Existing Adventure"}
+        F --> G["Continue Exitsting"]
+        F --> H["Start New"]
+        G --> I["Select Saved Adventure"]
+        H --> J["Select New Adventure"]
+        J --> K["Create Character"]
+        K --> L["Play Adventure"]
+        I --> L
+        L --> M["Quit"]
+        M --> N["End"]
