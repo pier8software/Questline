@@ -2,8 +2,9 @@
 
 ## Test First, Always
 
-No production code without a failing test. 100% coverage is not nessary, 100% value is.
-Value lies in testing the behaviour of the code is valid, not, for example, checking if properties have been set when a class is created.
+No production code without a failing test. 100% code coverage is not nessary, 100% behaviour coverage is.
+Value lies in testing the behaviour of the code is valid, not, for example, checking if properties have been set when a
+class is created.
 
 ## Stack
 
@@ -12,7 +13,8 @@ Value lies in testing the behaviour of the code is valid, not, for example, chec
 
 ## Naming Convention
 
-Plain English, fact-based naming. Test names are declarative statements describing behaviour from a business perspective.
+Plain English, fact-based naming. Test names are declarative statements describing behaviour from a business
+perspective.
 
 ### Format
 
@@ -86,7 +88,8 @@ Shared test infrastructure lives in `TestHelpers/` (with builders in `TestHelper
 
 ## Test Builders
 
-`GameBuilder` and `RoomBuilder` provide a fluent API for constructing game state in tests. Handler tests use these to set up `GameState` without coupling to data-loading internals.
+`GameBuilder` and `RoomBuilder` provide a fluent API for constructing game state in tests. Handler tests use these to
+set up `GameState` without coupling to data-loading internals.
 
 ```csharp
 var rooms = new GameBuilder()
@@ -100,7 +103,8 @@ var rooms = new GameBuilder()
 var state = new GameState(rooms, new Player { Id = "player1", Character = new Character("Hero", Race.Human, CharacterClass.Fighter) { Location = "start" } });
 ```
 
-- `GameBuilder.WithRoom(id, name, description, configure?)` — adds a room, optionally configuring it via a `RoomBuilder` callback
+- `GameBuilder.WithRoom(id, name, description, configure?)` — adds a room, optionally configuring it via a `RoomBuilder`
+  callback
 - `RoomBuilder.WithExit(direction, destinationId)` — adds an exit
 - `RoomBuilder.WithItem(item)` — places an item in the room
 
@@ -108,10 +112,10 @@ var state = new GameState(rooms, new Player { Id = "player1", Character = new Ch
 
 Each spec requirement should have corresponding tests. Map scenarios to test methods:
 
-| Spec Scenario | Test Method |
-|---------------|-------------|
+| Spec Scenario                                      | Test Method                     |
+|----------------------------------------------------|---------------------------------|
 | `WHEN an Item is added THEN FindByName returns it` | `Added_item_is_found_by_name()` |
-| `WHEN Inventory is empty THEN IsEmpty is true` | `New_inventory_is_empty()` |
+| `WHEN Inventory is empty THEN IsEmpty is true`     | `New_inventory_is_empty()`      |
 
 ## Before Committing
 
