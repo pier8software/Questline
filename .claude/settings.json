@@ -1,16 +1,28 @@
 {
     "permissions": {
         "allow": [
-            "Bash(openspec init:*)",
             "Bash(dotnet test:*)",
             "Bash(dotnet build:*)",
+            "Bash(openspec:*)",
+            "Bash(openspec init:*)",
+            "Bash(openspec create:*)",
             "Bash(openspec new:*)",
             "Bash(openspec status:*)",
+            "Bash(openspec list:*)",
             "Bash(openspec instructions proposal:*)",
             "Bash(openspec instructions specs:*)",
             "Bash(openspec instructions design:*)",
             "Bash(openspec instructions tasks:*)",
-            "Bash(openspec archive add-quit-handler-tests:*)"
+            "Bash(openspec instructions apply:*)",
+            "Bash(git show:*)",
+            "Bash(gh repo:*)",
+            "Bash(gh api:*)",
+            "Bash(echo:*)",
+            "Bash(find:*)"
         ]
-    }
+    },
+    "enabledMcpjsonServers": [
+        "aspire",
+        "context7"
+    ]
 }
