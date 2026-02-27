@@ -1,53 +1,54 @@
+using Questline.Domain.Playthroughs.Entity;
+using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Core;
 using Questline.Engine.Messages;
+using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Handlers;
 
-public class MovePlayerCommandHandler : IRequestHandler<Requests.MovePlayerCommand>
+public class MovePlayerCommandHandler(
+    IGameSession           session,
+    IPlaythroughRepository playthroughRepository,
+    IRoomRepository        roomRepository) : IRequestHandler<Requests.MovePlayerCommand>
 {
-    public Task<IResponse> Handle(GameState state, Requests.MovePlayerCommand command)
+    public async Task<IResponse> Handle(Requests.MovePlayerCommand command)
     {
-        var currentRoom = state.Adventure.GetRoom(state.Character.Location);
+        var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
+        var currentRoom = await roomRepository.GetById(playthrough.AdventureId, playthrough.Location);
 
         if (!currentRoom.Exits.TryGetValue(command.Direction, out var exit))
         {
-            return Task.FromResult<IResponse>(new ErrorResponse($"There is no exit to the {command.Direction}."));
+            return new ErrorResponse($"There is no exit to the {command.Direction}.");
         }
 
-        if (exit.BarrierId is not null)
+        if (exit.Barrier is not null && !playthrough.IsBarrierUnlocked(exit.Barrier.Id))
         {
-            var barrier = state.Adventure.GetBarrier(exit.BarrierId);
-            if (barrier is not null && !barrier.IsUnlocked)
-            {
-                return Task.FromResult<IResponse>(new ErrorResponse(barrier.BlockedMessage));
-            }
+            return new ErrorResponse(exit.Barrier.BlockedMessage);
         }
 
-        state.Character.MoveTo(exit.Destination);
+        playthrough.MoveTo(exit.Destination);
+        await playthroughRepository.Save(playthrough);
 
-        var newRoom        = state.Adventure.GetRoom(exit.Destination);
+        var newRoom        = await roomRepository.GetById(playthrough.AdventureId, exit.Destination);
+        var roomItems      = playthrough.GetRecordedRoomItems(newRoom.Id) ?? newRoom.Items.ToList();
         var exits          = newRoom.Exits.Keys.Select(d => d.ToString()).ToList();
-        var items          = newRoom.Items.Select(i => i.Name).ToList();
-        var lockedBarriers = GetLockedBarrierDescriptions(state, newRoom);
+        var items          = roomItems.Select(i => i.Name).ToList();
+        var lockedBarriers = GetLockedBarrierDescriptions(newRoom.Exits, playthrough);
 
-        return Task.FromResult<IResponse>(new Responses.PlayerMovedResponse(newRoom.Name, newRoom.Description, exits, items, lockedBarriers));
+        return new Responses.PlayerMovedResponse(newRoom.Name, newRoom.Description, exits, items, lockedBarriers);
     }
 
-    private static List<string> GetLockedBarrierDescriptions(GameState state, Domain.Rooms.Entity.Room room)
+    private static List<string> GetLockedBarrierDescriptions(
+        IReadOnlyDictionary<Direction, Exit> exits,
+        Playthrough                          playthrough)
     {
         var descriptions = new List<string>();
-        foreach (var (_, roomExit) in room.Exits)
+        foreach (var (_, exit) in exits)
         {
-            if (roomExit.BarrierId is null)
+            if (exit.Barrier is not null && !playthrough.IsBarrierUnlocked(exit.Barrier.Id))
             {
-                continue;
-            }
-
-            var b = state.Adventure.GetBarrier(roomExit.BarrierId);
-            if (b is not null && !b.IsUnlocked)
-            {
-                descriptions.Add(b.Description);
+                descriptions.Add(exit.Barrier.Description);
             }
         }
 

@@ -1,6 +1,5 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
-using Questline.Engine.Core;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
@@ -10,25 +9,21 @@ namespace Questline.Tests.Engine.Handlers;
 
 public class ExamineCommandHandlerTests
 {
-    private static void GiveItemToPlayer(GameState state, Item item)
-    {
-        state.Character.AddInventoryItem(item);
-    }
-
     [Fact]
     public async Task Examine_inventory_item_shows_description()
     {
         var key = new Item
             { Id = "rusty-key", Name = "rusty key", Description = "An old iron key, its teeth worn by time." };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.")
-            .BuildState("player1", "chamber");
+            .WithInventoryItem(key)
+            .Build("chamber");
 
-        GiveItemToPlayer(state, key);
-        var handler = new ExamineCommandHandler();
+        var handler = new ExamineCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.ExamineCommand("rusty key"));
+        var result = await handler.Handle(new Requests.ExamineCommand("rusty key"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("An old iron key, its teeth worn by time.");
@@ -39,13 +34,14 @@ public class ExamineCommandHandlerTests
     {
         var torch = new Item { Id = "torch", Name = "torch", Description = "A flickering wooden torch." };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.", r => r.WithItem(torch))
-            .BuildState("player1", "chamber");
+            .Build("chamber");
 
-        var handler = new ExamineCommandHandler();
+        var handler = new ExamineCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.ExamineCommand("torch"));
+        var result = await handler.Handle(new Requests.ExamineCommand("torch"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("A flickering wooden torch.");
@@ -62,13 +58,14 @@ public class ExamineCommandHandlerTests
             Description = "Ancient runes etched into the stone walls."
         };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.", r => r.WithFeature(feature))
-            .BuildState("player1", "chamber");
+            .Build("chamber");
 
-        var handler = new ExamineCommandHandler();
+        var handler = new ExamineCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.ExamineCommand("symbols"));
+        var result = await handler.Handle(new Requests.ExamineCommand("symbols"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");
@@ -85,13 +82,14 @@ public class ExamineCommandHandlerTests
             Description = "Ancient runes etched into the stone walls."
         };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.", r => r.WithFeature(feature))
-            .BuildState("player1", "chamber");
+            .Build("chamber");
 
-        var handler = new ExamineCommandHandler();
+        var handler = new ExamineCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.ExamineCommand("strange symbols"));
+        var result = await handler.Handle(new Requests.ExamineCommand("strange symbols"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");
@@ -100,13 +98,14 @@ public class ExamineCommandHandlerTests
     [Fact]
     public async Task Examine_unknown_target_returns_error()
     {
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.")
-            .BuildState("player1", "chamber");
+            .Build("chamber");
 
-        var handler = new ExamineCommandHandler();
+        var handler = new ExamineCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.ExamineCommand("mysterious orb"));
+        var result = await handler.Handle(new Requests.ExamineCommand("mysterious orb"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("You don't see 'mysterious orb' here.");

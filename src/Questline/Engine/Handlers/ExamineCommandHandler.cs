@@ -1,26 +1,34 @@
 using Questline.Engine.Core;
 using Questline.Engine.Messages;
+using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Handlers;
 
-public class ExamineCommandHandler : IRequestHandler<Requests.ExamineCommand>
+public class ExamineCommandHandler(
+    IGameSession           session,
+    IPlaythroughRepository playthroughRepository,
+    IRoomRepository        roomRepository) : IRequestHandler<Requests.ExamineCommand>
 {
-    public Task<IResponse> Handle(GameState state, Requests.ExamineCommand command)
+    public async Task<IResponse> Handle(Requests.ExamineCommand command)
     {
+        var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
+
         // Search order: inventory items > room items > room features
-        var inventoryItem = state.Character.FindInventoryItemByName(command.TargetName);
+        var inventoryItem = playthrough.FindInventoryItemByName(command.TargetName);
         if (inventoryItem is not null)
         {
-            return Task.FromResult<IResponse>(new Responses.ExamineResponse(inventoryItem.Description));
+            return new Responses.ExamineResponse(inventoryItem.Description);
         }
 
-        var room = state.Adventure.GetRoom(state.Character.Location);
+        var room      = await roomRepository.GetById(playthrough.AdventureId, playthrough.Location);
+        var roomItems = playthrough.GetRecordedRoomItems(room.Id) ?? room.Items.ToList();
 
-        var roomItem = room.FindItemByName(command.TargetName);
+        var roomItem = roomItems.FirstOrDefault(i =>
+            i.Name.Equals(command.TargetName, StringComparison.OrdinalIgnoreCase));
         if (roomItem is not null)
         {
-            return Task.FromResult<IResponse>(new Responses.ExamineResponse(roomItem.Description));
+            return new Responses.ExamineResponse(roomItem.Description);
         }
 
         var feature = room.Features.FirstOrDefault(f =>
@@ -28,9 +36,9 @@ public class ExamineCommandHandler : IRequestHandler<Requests.ExamineCommand>
             f.Keywords.Any(k => k.Equals(command.TargetName, StringComparison.OrdinalIgnoreCase)));
         if (feature is not null)
         {
-            return Task.FromResult<IResponse>(new Responses.ExamineResponse(feature.Description));
+            return new Responses.ExamineResponse(feature.Description);
         }
 
-        return Task.FromResult<IResponse>(new ErrorResponse($"You don't see '{command.TargetName}' here."));
+        return new ErrorResponse($"You don't see '{command.TargetName}' here.");
     }
 }

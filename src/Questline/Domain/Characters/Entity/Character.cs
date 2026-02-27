@@ -1,13 +1,10 @@
 using Questline.Domain.Characters.Data;
-using Questline.Domain.Shared.Entity;
 using Questline.Framework.Domain;
 
 namespace Questline.Domain.Characters.Entity;
 
 public class Character : DomainEntity
 {
-    private readonly List<Item> _inventory = [];
-
     public string         Name          { get; private init; } = null!;
     public Race           Race          { get; private init; }
     public CharacterClass Class         { get; private init; }
@@ -15,13 +12,6 @@ public class Character : DomainEntity
     public int            Experience    { get; init; }
     public AbilityScores  AbilityScores { get; private init; } = null!;
     public HitPoints      HitPoints     { get; private init; } = null!;
-    public string         Location      { get; private set; }  = null!;
-
-    public IReadOnlyList<Item> Inventory
-    {
-        get => _inventory;
-        private init => _inventory = [..value];
-    }
 
     public static Character Create(
         string          id,
@@ -29,8 +19,7 @@ public class Character : DomainEntity
         Race?           race,
         CharacterClass? characterClass,
         HitPoints       hitPoints,
-        AbilityScores   abilityScores,
-        string          location = "")
+        AbilityScores   abilityScores)
     {
         return new Character
         {
@@ -41,19 +30,9 @@ public class Character : DomainEntity
             Level         = 1,
             Experience    = 0,
             AbilityScores = abilityScores,
-            HitPoints     = hitPoints,
-            Location      = location
+            HitPoints     = hitPoints
         };
     }
-
-    public void MoveTo(string locationId) => Location = locationId;
-
-    public void AddInventoryItem(Item item) => _inventory.Add(item);
-
-    public void RemoveInventoryItem(Item item) => _inventory.Remove(item);
-
-    public Item? FindInventoryItemByName(string name) =>
-        _inventory.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
     public CharacterSummary ToSummary() =>
         new(

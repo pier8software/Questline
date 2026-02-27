@@ -13,7 +13,7 @@ public class GetRoomDetailsHandlerTests
     public async Task Returns_response_with_room_details()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("hallway", "Hallway", "A long hallway.", r =>
             {
                 r.WithItem(lamp);
@@ -22,10 +22,12 @@ public class GetRoomDetailsHandlerTests
             })
             .WithRoom("throne-room", "Throne Room", "Grand throne room.")
             .WithRoom("entrance",    "Entrance",    "The entrance.")
-            .BuildState("player1", "hallway");
-        var handler = new GetRoomDetailsHandler();
+            .Build("hallway");
 
-        var result = await handler.Handle(state, new Requests.GetRoomDetailsQuery());
+        var handler = new GetRoomDetailsHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+
+        var result = await handler.Handle(new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.RoomName.ShouldBe("Hallway");
@@ -38,12 +40,14 @@ public class GetRoomDetailsHandlerTests
     [Fact]
     public async Task Response_omits_items_when_room_is_empty()
     {
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
-            .BuildState("player1", "cellar");
-        var handler = new GetRoomDetailsHandler();
+            .Build("cellar");
 
-        var result = await handler.Handle(state, new Requests.GetRoomDetailsQuery());
+        var handler = new GetRoomDetailsHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+
+        var result = await handler.Handle(new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.Items.ShouldBeEmpty();
@@ -62,16 +66,16 @@ public class GetRoomDetailsHandlerTests
             UnlockMessage  = "The rusty key turns in the lock..."
         };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
-                r => r.WithExit(Direction.North, new Exit("beyond", "iron-door")))
+                r => r.WithExit(Direction.North, new Exit("beyond", barrier)))
             .WithRoom("beyond", "Beyond", "Beyond the door.")
-            .WithBarrier(barrier)
-            .BuildState("player1", "chamber");
+            .Build("chamber");
 
-        var handler = new GetRoomDetailsHandler();
+        var handler = new GetRoomDetailsHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.GetRoomDetailsQuery());
+        var result = await handler.Handle(new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.LockedBarriers.ShouldContain("A heavy iron door blocks the way North.");
@@ -89,18 +93,18 @@ public class GetRoomDetailsHandlerTests
             UnlockItemId   = "rusty-key",
             UnlockMessage  = "The rusty key turns in the lock..."
         };
-        barrier.Unlock();
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
-                r => r.WithExit(Direction.North, new Exit("beyond", "iron-door")))
+                r => r.WithExit(Direction.North, new Exit("beyond", barrier)))
             .WithRoom("beyond", "Beyond", "Beyond the door.")
-            .WithBarrier(barrier)
-            .BuildState("player1", "chamber");
+            .WithUnlockedBarrier("iron-door")
+            .Build("chamber");
 
-        var handler = new GetRoomDetailsHandler();
+        var handler = new GetRoomDetailsHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.GetRoomDetailsQuery());
+        var result = await handler.Handle(new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.LockedBarriers.ShouldBeEmpty();

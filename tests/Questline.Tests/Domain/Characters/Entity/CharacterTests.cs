@@ -1,5 +1,4 @@
 using Questline.Domain.Characters.Entity;
-using Questline.Domain.Shared.Entity;
 
 namespace Questline.Tests.Domain.Characters.Entity;
 
@@ -12,58 +11,32 @@ public class CharacterTests
         new AbilityScore(10), new AbilityScore(10), new AbilityScore(10));
 
     [Fact]
-    public void Moving_the_character_updates_their_location()
+    public void Create_sets_all_character_properties()
     {
         var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start");
+            DefaultHitPoints, DefaultAbilityScores);
 
-        character.MoveTo("end");
-
-        character.Location.ShouldBe("end");
+        character.Id.ShouldBe("test-id");
+        character.Name.ShouldBe("TestHero");
+        character.Race.ShouldBe(Race.Human);
+        character.Class.ShouldBe(CharacterClass.Fighter);
+        character.Level.ShouldBe(1);
+        character.Experience.ShouldBe(0);
+        character.HitPoints.ShouldBe(DefaultHitPoints);
+        character.AbilityScores.ShouldBe(DefaultAbilityScores);
     }
 
     [Fact]
-    public void Can_add_a_new_item_to_a_characters_inventory()
+    public void ToSummary_returns_character_summary()
     {
         var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start");
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+            DefaultHitPoints, DefaultAbilityScores);
 
-        character.AddInventoryItem(lamp);
+        var summary = character.ToSummary();
 
-        character.Inventory.Contains(lamp).ShouldBeTrue();
-    }
-
-    [Fact]
-    public void Can_remove_an_item_from_a_characters_inventory()
-    {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start");
-        character.AddInventoryItem(lamp);
-
-        character.RemoveInventoryItem(lamp);
-
-        character.Inventory.ShouldBeEmpty();
-    }
-
-    [Fact]
-    public void FindInventoryItemByName_returns_item_case_insensitively()
-    {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start");
-        character.AddInventoryItem(lamp);
-
-        character.FindInventoryItemByName("BRASS LAMP").ShouldBe(lamp);
-    }
-
-    [Fact]
-    public void FindInventoryItemByName_returns_null_when_not_found()
-    {
-        var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, "start");
-
-        character.FindInventoryItemByName("sword").ShouldBeNull();
+        summary.Name.ShouldBe("TestHero");
+        summary.Race.ShouldBe("Human");
+        summary.Class.ShouldBe("Fighter");
+        summary.Level.ShouldBe(1);
     }
 }

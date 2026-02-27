@@ -8,7 +8,4 @@ public class Barrier
     public required string BlockedMessage { get; init; }
     public required string UnlockItemId   { get; init; }
     public required string UnlockMessage  { get; init; }
-    public          bool   IsUnlocked     { get; private set; }
-
-    public void Unlock() => IsUnlocked = true;
 }
