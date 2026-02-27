@@ -1,82 +1,77 @@
 using Questline.Engine.Core;
 using Questline.Engine.Messages;
+using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Engine.Handlers;
 
-public class UseItemCommandHandler : IRequestHandler<Requests.UseItemCommand>
+public class UseItemCommandHandler(
+    IGameSession           session,
+    IPlaythroughRepository playthroughRepository,
+    IRoomRepository        roomRepository) : IRequestHandler<Requests.UseItemCommand>
 {
-    public Task<IResponse> Handle(GameState state, Requests.UseItemCommand command)
+    public async Task<IResponse> Handle(Requests.UseItemCommand command)
     {
-        var item = state.Character.FindInventoryItemByName(command.ItemName);
+        var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
+        var item        = playthrough.FindInventoryItemByName(command.ItemName);
+
         if (item is null)
         {
-            return Task.FromResult<IResponse>(new ErrorResponse($"You don't have '{command.ItemName}'."));
+            return new ErrorResponse($"You don't have '{command.ItemName}'.");
         }
 
-        var room = state.Adventure.GetRoom(state.Character.Location);
+        var room = await roomRepository.GetById(playthrough.Location);
 
         Barrier? barrier = null;
 
         if (command.TargetName is not null)
         {
-            // Targeted use: find barrier by name in room exits
             foreach (var (_, exit) in room.Exits)
             {
-                if (exit.BarrierId is null)
+                if (exit.Barrier is not null &&
+                    exit.Barrier.Name.Equals(command.TargetName, StringComparison.OrdinalIgnoreCase))
                 {
-                    continue;
-                }
-
-                var b = state.Adventure.GetBarrier(exit.BarrierId);
-                if (b is not null && b.Name.Equals(command.TargetName, StringComparison.OrdinalIgnoreCase))
-                {
-                    barrier = b;
+                    barrier = exit.Barrier;
                     break;
                 }
             }
 
             if (barrier is null)
             {
-                return Task.FromResult<IResponse>(new ErrorResponse($"You don't see '{command.TargetName}' here."));
+                return new ErrorResponse($"You don't see '{command.TargetName}' here.");
             }
         }
         else
         {
-            // Contextual use: find first locked barrier in room exits
             foreach (var (_, exit) in room.Exits)
             {
-                if (exit.BarrierId is null)
+                if (exit.Barrier is not null && !playthrough.IsBarrierUnlocked(exit.Barrier.Id))
                 {
-                    continue;
-                }
-
-                var b = state.Adventure.GetBarrier(exit.BarrierId);
-                if (b is not null && !b.IsUnlocked)
-                {
-                    barrier = b;
+                    barrier = exit.Barrier;
                     break;
                 }
             }
 
             if (barrier is null)
             {
-                return Task.FromResult<IResponse>(new ErrorResponse("There is nothing to use that on."));
+                return new ErrorResponse("There is nothing to use that on.");
             }
         }
 
-        if (barrier.IsUnlocked)
+        if (playthrough.IsBarrierUnlocked(barrier.Id))
         {
-            return Task.FromResult<IResponse>(new ErrorResponse($"The {barrier.Name} is already unlocked."));
+            return new ErrorResponse($"The {barrier.Name} is already unlocked.");
         }
 
         if (item.Id != barrier.UnlockItemId)
         {
-            return Task.FromResult<IResponse>(new ErrorResponse($"The {item.Name} doesn't work on the {barrier.Name}."));
+            return new ErrorResponse($"The {item.Name} doesn't work on the {barrier.Name}.");
         }
 
-        barrier.Unlock();
-        return Task.FromResult<IResponse>(new Responses.UseItemResponse(barrier.UnlockMessage));
+        playthrough.UnlockBarrier(barrier.Id);
+        await playthroughRepository.Save(playthrough);
+
+        return new Responses.UseItemResponse(barrier.UnlockMessage);
     }
 }

@@ -1,23 +1,13 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
+using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Tests.Domain.Rooms.Entity;
 
 public class RoomTests
 {
     [Fact]
-    public void Can_add_an_item_to_a_rooms_inventory()
-    {
-        var lamp = new Item { Id = "lamp", Name   = "brass lamp", Description = "A shiny brass lamp." };
-        var room = new Room { Id = "cellar", Name = "Cellar", Description     = "A damp cellar." };
-
-        room.AddItem(lamp);
-
-        room.FindItemByName("brass lamp").ShouldBe(lamp);
-    }
-
-    [Fact]
-    public void Can_remove_an_item_from_a_rooms_inventory()
+    public void Room_stores_items_as_read_only()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var room = new Room
@@ -25,34 +15,47 @@ public class RoomTests
             Id          = "cellar",
             Name        = "Cellar",
             Description = "A damp cellar.",
-            Items       = new List<Item> { lamp }
+            Items       = [lamp]
         };
 
-        room.RemoveItem(lamp);
-
-        room.Items.ShouldBeEmpty();
+        room.Items.ShouldContain(lamp);
     }
 
     [Fact]
-    public void FindItemByName_returns_item_case_insensitively()
+    public void Room_stores_exits()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
         var room = new Room
         {
-            Id          = "cellar",
-            Name        = "Cellar",
-            Description = "A damp cellar.",
-            Items       = new List<Item> { lamp }
+            Id          = "hallway",
+            Name        = "Hallway",
+            Description = "A long hallway.",
+            Exits       = new Dictionary<Direction, Exit>
+            {
+                [Direction.North] = new("throne-room"),
+                [Direction.South] = new("entrance")
+            }
         };
 
-        room.FindItemByName("BRASS LAMP").ShouldBe(lamp);
+        room.Exits.ShouldContainKey(Direction.North);
+        room.Exits.ShouldContainKey(Direction.South);
     }
 
     [Fact]
-    public void FindItemByName_returns_null_when_not_found()
+    public void Exit_can_embed_barrier()
     {
-        var room = new Room { Id = "cellar", Name = "Cellar", Description = "A damp cellar." };
+        var barrier = new Barrier
+        {
+            Id             = "iron-door",
+            Name           = "iron door",
+            Description    = "A heavy iron door.",
+            BlockedMessage = "The iron door is locked tight.",
+            UnlockItemId   = "rusty-key",
+            UnlockMessage  = "The rusty key turns in the lock..."
+        };
 
-        room.FindItemByName("sword").ShouldBeNull();
+        var exit = new Exit("beyond", barrier);
+
+        exit.Barrier.ShouldNotBeNull();
+        exit.Barrier!.Id.ShouldBe("iron-door");
     }
 }

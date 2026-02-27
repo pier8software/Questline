@@ -1,6 +1,5 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
-using Questline.Engine.Core;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
@@ -21,32 +20,27 @@ public class UseItemCommandHandlerTests
         UnlockMessage  = "The rusty key turns in the lock and the iron door swings open."
     };
 
-    private static void GiveItemToPlayer(GameState state, Item item)
-    {
-        state.Character.AddInventoryItem(item);
-    }
-
     [Fact]
     public async Task Correct_item_on_barrier_unlocks_it()
     {
         var barrier = CreateBarrier();
         var key     = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
-                r => r.WithExit(Direction.North, new Exit("beyond", "iron-door")))
+                r => r.WithExit(Direction.North, new Exit("beyond", barrier)))
             .WithRoom("beyond", "Beyond", "Beyond the door.")
-            .WithBarrier(barrier)
-            .BuildState("player1", "chamber");
+            .WithInventoryItem(key)
+            .Build("chamber");
 
-        GiveItemToPlayer(state, key);
-        var handler = new UseItemCommandHandler();
+        var handler = new UseItemCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
 
         var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
         useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
-        state.Adventure.GetBarrier("iron-door")!.IsUnlocked.ShouldBeTrue();
+        fixture.Playthrough.IsBarrierUnlocked("iron-door").ShouldBeTrue();
     }
 
     [Fact]
@@ -55,21 +49,21 @@ public class UseItemCommandHandlerTests
         var barrier = CreateBarrier();
         var torch   = new Item { Id = "torch", Name = "torch", Description = "A flickering torch." };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
-                r => r.WithExit(Direction.North, new Exit("beyond", "iron-door")))
+                r => r.WithExit(Direction.North, new Exit("beyond", barrier)))
             .WithRoom("beyond", "Beyond", "Beyond the door.")
-            .WithBarrier(barrier)
-            .BuildState("player1", "chamber");
+            .WithInventoryItem(torch)
+            .Build("chamber");
 
-        GiveItemToPlayer(state, torch);
-        var handler = new UseItemCommandHandler();
+        var handler = new UseItemCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.UseItemCommand("torch", "iron door"));
+        var result = await handler.Handle(new Requests.UseItemCommand("torch", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("The torch doesn't work on the iron door.");
-        state.Adventure.GetBarrier("iron-door")!.IsUnlocked.ShouldBeFalse();
+        fixture.Playthrough.IsBarrierUnlocked("iron-door").ShouldBeFalse();
     }
 
     [Fact]
@@ -77,16 +71,16 @@ public class UseItemCommandHandlerTests
     {
         var barrier = CreateBarrier();
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
-                r => r.WithExit(Direction.North, new Exit("beyond", "iron-door")))
+                r => r.WithExit(Direction.North, new Exit("beyond", barrier)))
             .WithRoom("beyond", "Beyond", "Beyond the door.")
-            .WithBarrier(barrier)
-            .BuildState("player1", "chamber");
+            .Build("chamber");
 
-        var handler = new UseItemCommandHandler();
+        var handler = new UseItemCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("You don't have 'rusty key'.");
@@ -98,21 +92,21 @@ public class UseItemCommandHandlerTests
         var barrier = CreateBarrier();
         var key     = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
-                r => r.WithExit(Direction.North, new Exit("beyond", "iron-door")))
+                r => r.WithExit(Direction.North, new Exit("beyond", barrier)))
             .WithRoom("beyond", "Beyond", "Beyond the door.")
-            .WithBarrier(barrier)
-            .BuildState("player1", "chamber");
+            .WithInventoryItem(key)
+            .Build("chamber");
 
-        GiveItemToPlayer(state, key);
-        var handler = new UseItemCommandHandler();
+        var handler = new UseItemCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", null));
+        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", null));
 
         var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
         useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
-        state.Adventure.GetBarrier("iron-door")!.IsUnlocked.ShouldBeTrue();
+        fixture.Playthrough.IsBarrierUnlocked("iron-door").ShouldBeTrue();
     }
 
     [Fact]
@@ -120,15 +114,16 @@ public class UseItemCommandHandlerTests
     {
         var key = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.", r => r.WithExit(Direction.North, "beyond"))
             .WithRoom("beyond",  "Beyond",  "Beyond the door.")
-            .BuildState("player1", "chamber");
+            .WithInventoryItem(key)
+            .Build("chamber");
 
-        GiveItemToPlayer(state, key);
-        var handler = new UseItemCommandHandler();
+        var handler = new UseItemCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("You don't see 'iron door' here.");
@@ -138,20 +133,20 @@ public class UseItemCommandHandlerTests
     public async Task Already_unlocked_barrier_returns_informative_message()
     {
         var barrier = CreateBarrier();
-        barrier.Unlock();
-        var key = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
+        var key     = new Item { Id = "rusty-key", Name = "rusty key", Description = "An old iron key." };
 
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("chamber", "Chamber", "A dark chamber.",
-                r => r.WithExit(Direction.North, new Exit("beyond", "iron-door")))
+                r => r.WithExit(Direction.North, new Exit("beyond", barrier)))
             .WithRoom("beyond", "Beyond", "Beyond the door.")
-            .WithBarrier(barrier)
-            .BuildState("player1", "chamber");
+            .WithInventoryItem(key)
+            .WithUnlockedBarrier("iron-door")
+            .Build("chamber");
 
-        GiveItemToPlayer(state, key);
-        var handler = new UseItemCommandHandler();
+        var handler = new UseItemCommandHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("The iron door is already unlocked.");

@@ -1,9 +1,10 @@
+using Questline.Domain.Adventures.Entity;
 using Questline.Domain.Characters.Entity;
+using Questline.Domain.Playthroughs.Entity;
 using Questline.Domain.Rooms.Entity;
-using Questline.Engine.Content;
+using Questline.Domain.Shared.Entity;
 using Questline.Engine.Core;
-using Questline.Domain.Players.Entity;
-using Barrier = Questline.Domain.Rooms.Entity.Barrier;
+using Questline.Engine.Repositories;
 
 namespace Questline.Tests.TestHelpers.Builders;
 
@@ -15,13 +16,16 @@ public class GameBuilder
         new AbilityScore(10), new AbilityScore(10), new AbilityScore(10),
         new AbilityScore(10), new AbilityScore(10), new AbilityScore(10));
 
-    private static readonly Func<string, Character> DefaultCharacterFactory =
-        location => Character.Create("test-character-id", "TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores, location);
+    private readonly Dictionary<string, Room> _rooms = new();
 
-    private readonly Dictionary<string, Barrier> _barriers = new();
-    private readonly Dictionary<string, Room>    _rooms    = new();
-    private          Func<string, Character>?    _characterFactory;
+    private readonly string           _adventureId   = "test-adventure";
+    private readonly string           _characterName = "TestHero";
+    private readonly Race             _race          = Race.Human;
+    private readonly CharacterClass   _class         = CharacterClass.Fighter;
+    private readonly AbilityScores    _abilityScores = DefaultAbilityScores;
+    private readonly HitPoints        _hitPoints     = DefaultHitPoints;
+    private          List<Item>?      _inventoryItems;
+    private          HashSet<string>? _unlockedBarriers;
 
     public GameBuilder WithRoom(string id, string name, string description, Action<RoomBuilder>? configure = null)
     {
@@ -31,40 +35,96 @@ public class GameBuilder
         return this;
     }
 
-    public GameBuilder WithBarrier(Barrier barrier)
+    public GameBuilder WithInventoryItem(Item item)
     {
-        _barriers[barrier.Id] = barrier;
+        _inventoryItems ??= [];
+        _inventoryItems.Add(item);
         return this;
     }
 
-    public GameBuilder WithCharacter(Character character)
+    public GameBuilder WithUnlockedBarrier(string barrierId)
     {
-        _characterFactory = _ => character;
+        _unlockedBarriers ??= [];
+        _unlockedBarriers.Add(barrierId);
         return this;
     }
 
-    public Dictionary<string, Room> Build() => _rooms;
-
-    public AdventureContent BuildWorldContent(string startingRoomId) =>
-        new(_rooms, _barriers, startingRoomId);
-
-    public GameState BuildState(string playerId, string startLocation)
+    public GameFixture Build(string startLocation)
     {
-        var character = _characterFactory is not null
-            ? _characterFactory(startLocation)
-            : DefaultCharacterFactory(startLocation);
-
-        character.MoveTo(startLocation);
-
-        var adventure = new AdventureContent(_rooms, _barriers, startLocation);
-        var player    = Player.Create(playerId, playerId, playerId);
-
-        return new GameState
+        var playthrough = new Playthrough
         {
-            Phase     = GamePhase.Playing,
-            Player    = player,
-            Adventure = adventure,
-            Character = character
+            Id               = "test-playthrough",
+            AdventureId      = _adventureId,
+            StartingRoomId   = startLocation,
+            CharacterName    = _characterName,
+            Race             = _race,
+            Class            = _class,
+            AbilityScores    = _abilityScores,
+            HitPoints        = _hitPoints,
+            Location         = startLocation,
+            Inventory        = _inventoryItems   ?? [],
+            UnlockedBarriers = _unlockedBarriers ?? []
         };
+
+        var playthroughRepo = new FakePlaythroughRepository(playthrough);
+        var roomRepo        = new FakeRoomRepository(_rooms);
+        var session         = new FakeGameSession(playthrough.Id);
+
+        return new GameFixture(playthrough, playthroughRepo, roomRepo, session);
     }
+}
+
+public record GameFixture(
+    Playthrough               Playthrough,
+    FakePlaythroughRepository PlaythroughRepository,
+    FakeRoomRepository        RoomRepository,
+    FakeGameSession           Session);
+
+public class FakePlaythroughRepository : IPlaythroughRepository
+{
+    private readonly Dictionary<string, Playthrough> _store = new();
+
+    public FakePlaythroughRepository()
+    {
+    }
+
+    public FakePlaythroughRepository(Playthrough playthrough)
+    {
+        _store[playthrough.Id] = playthrough;
+    }
+
+    public Task<Playthrough> GetById(string id) =>
+        Task.FromResult(_store[id]);
+
+    public Task Save(Playthrough playthrough)
+    {
+        _store[playthrough.Id] = playthrough;
+        return Task.CompletedTask;
+    }
+}
+
+public class FakeRoomRepository(Dictionary<string, Room> rooms) : IRoomRepository
+{
+    public Task<Room> GetById(string roomId) =>
+        Task.FromResult(rooms[roomId]);
+}
+
+public class FakeAdventureRepository : IAdventureRepository
+{
+    private readonly Dictionary<string, Adventure> _store = new();
+
+    public FakeAdventureRepository(Adventure adventure)
+    {
+        _store[adventure.Id] = adventure;
+    }
+
+    public Task<Adventure> GetById(string id) =>
+        Task.FromResult(_store[id]);
+}
+
+public class FakeGameSession(string playthroughId) : IGameSession
+{
+    public string? PlaythroughId { get; private set; } = playthroughId;
+
+    public void SetPlaythroughId(string id) => PlaythroughId = id;
 }

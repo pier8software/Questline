@@ -12,13 +12,14 @@ public class TakeItemHandlerTests
     public async Task Returns_successful_take_response()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
-            .BuildState("player1", "cellar");
+            .Build("cellar");
 
-        var handler = new TakeItemHandler();
+        var handler = new TakeItemHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
+        var result = await handler.Handle(new Requests.TakeItemCommand("brass lamp"));
 
         var takeResult = result.ShouldBeOfType<Responses.ItemTakenResponse>();
         takeResult.ItemName.ShouldBe("brass lamp");
@@ -28,27 +29,32 @@ public class TakeItemHandlerTests
     public async Task Item_moves_from_room_to_inventory()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
-            .BuildState("player1", "cellar");
-        var handler = new TakeItemHandler();
+            .Build("cellar");
 
-        _ = await handler.Handle(state, new Requests.TakeItemCommand("brass lamp"));
+        var handler = new TakeItemHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        state.Character.Inventory.ShouldContain(lamp);
-        state.Adventure.GetRoom("cellar").FindItemByName("brass lamp").ShouldBeNull();
+        _ = await handler.Handle(new Requests.TakeItemCommand("brass lamp"));
+
+        fixture.Playthrough.Inventory.ShouldContain(lamp);
+        var recordedItems = fixture.Playthrough.GetRecordedRoomItems("cellar");
+        recordedItems.ShouldNotBeNull();
+        recordedItems!.ShouldNotContain(i => i.Name == "brass lamp");
     }
 
     [Fact]
     public async Task Item_not_in_room_returns_error_message()
     {
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.")
-            .BuildState("player1", "cellar");
+            .Build("cellar");
 
-        var handler = new TakeItemHandler();
+        var handler = new TakeItemHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(state, new Requests.TakeItemCommand("lamp"));
+        var result = await handler.Handle(new Requests.TakeItemCommand("lamp"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldContain("There is no 'lamp' here.");
@@ -58,12 +64,14 @@ public class TakeItemHandlerTests
     public async Task Matching_is_case_insensitive()
     {
         var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var state = new GameBuilder()
+        var fixture = new GameBuilder()
             .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
-            .BuildState("player1", "cellar");
-        var handler = new TakeItemHandler();
+            .Build("cellar");
 
-        var result = await handler.Handle(state, new Requests.TakeItemCommand("BRASS LAMP"));
+        var handler = new TakeItemHandler(
+            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+
+        var result = await handler.Handle(new Requests.TakeItemCommand("BRASS LAMP"));
 
         var takeResult = result.ShouldBeOfType<Responses.ItemTakenResponse>();
         takeResult.ItemName.ShouldBe("brass lamp");

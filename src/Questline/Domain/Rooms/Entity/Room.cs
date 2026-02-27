@@ -1,44 +1,22 @@
 using Questline.Domain.Shared.Entity;
+using Questline.Framework.Domain;
 
 namespace Questline.Domain.Rooms.Entity;
 
-public class Room
+public class Room : DomainEntity
 {
-    private readonly Dictionary<Direction, Exit> _exits    = new();
-    private readonly List<Feature>               _features = [];
-    private readonly List<Item>                  _items    = [];
-
-    public required string Id          { get; init; }
     public required string Name        { get; init; }
     public required string Description { get; init; }
 
-    public IReadOnlyDictionary<Direction, Exit> Exits
-    {
-        get => _exits;
-        init => _exits = new Dictionary<Direction, Exit>(value);
-    }
+    public IReadOnlyDictionary<Direction, Exit> Exits { get; init; } =
+        new Dictionary<Direction, Exit>();
 
-    public IReadOnlyList<Item> Items
-    {
-        get => _items;
-        init => _items = [..value];
-    }
+    public IReadOnlyList<Item> Items { get; init; } = [];
 
-    public IReadOnlyList<Feature> Features
-    {
-        get => _features;
-        init => _features = [..value];
-    }
-
-    public void AddItem(Item item) => _items.Add(item);
-
-    public void RemoveItem(Item item) => _items.Remove(item);
-
-    public Item? FindItemByName(string name) =>
-        _items.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+    public IReadOnlyList<Feature> Features { get; init; } = [];
 }
 
-public record Exit(string Destination, string? BarrierId = null);
+public record Exit(string Destination, Barrier? Barrier = null);
 
 public enum Direction
 {

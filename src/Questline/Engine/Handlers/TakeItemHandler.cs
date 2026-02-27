@@ -1,24 +1,33 @@
 using Questline.Engine.Core;
 using Questline.Engine.Messages;
+using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Handlers;
 
-public class TakeItemHandler : IRequestHandler<Requests.TakeItemCommand>
+public class TakeItemHandler(
+    IGameSession           session,
+    IPlaythroughRepository playthroughRepository,
+    IRoomRepository        roomRepository) : IRequestHandler<Requests.TakeItemCommand>
 {
-    public Task<IResponse> Handle(GameState state, Requests.TakeItemCommand request)
+    public async Task<IResponse> Handle(Requests.TakeItemCommand request)
     {
-        var room = state.Adventure.GetRoom(state.Character.Location);
-        var item = room.FindItemByName(request.ItemName);
+        var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
+        var room        = await roomRepository.GetById(playthrough.Location);
+
+        var roomItems = playthrough.GetRecordedRoomItems(room.Id) ?? room.Items.ToList();
+        var item      = roomItems.FirstOrDefault(i => i.Name.Equals(request.ItemName, StringComparison.OrdinalIgnoreCase));
 
         if (item is null)
         {
-            return Task.FromResult<IResponse>(new ErrorResponse($"There is no '{request.ItemName}' here."));
+            return new ErrorResponse($"There is no '{request.ItemName}' here.");
         }
 
-        room.RemoveItem(item);
-        state.Character.AddInventoryItem(item);
+        roomItems.Remove(item);
+        playthrough.RecordRoomItems(room.Id, roomItems);
+        playthrough.AddInventoryItem(item);
+        await playthroughRepository.Save(playthrough);
 
-        return Task.FromResult<IResponse>(new Responses.ItemTakenResponse(item.Name));
+        return new Responses.ItemTakenResponse(item.Name);
     }
 }

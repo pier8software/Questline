@@ -141,6 +141,7 @@ public class CharacterCreationStateMachine
             _context.HitPoints,
             _context.AbilityScores);
 
+
         _context.State = CharacterCreationState.Complete;
 
         return new Responses.CharacterCreationCompleteResponse(_completedCharacter.ToSummary());
