@@ -22,7 +22,7 @@ public class DropItemCommandHandler(
 
         playthrough.RemoveInventoryItem(item);
 
-        var room      = await roomRepository.GetById(playthrough.AdventureId, playthrough.Location);
+        var room      = await roomRepository.GetById(playthrough.Location);
         var roomItems = playthrough.GetRecordedRoomItems(room.Id) ?? room.Items.ToList();
         roomItems.Add(item);
         playthrough.RecordRoomItems(room.Id, roomItems);

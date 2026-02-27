@@ -21,7 +21,7 @@ public class UseItemCommandHandler(
             return new ErrorResponse($"You don't have '{command.ItemName}'.");
         }
 
-        var room = await roomRepository.GetById(playthrough.AdventureId, playthrough.Location);
+        var room = await roomRepository.GetById(playthrough.Location);
 
         Barrier? barrier = null;
 

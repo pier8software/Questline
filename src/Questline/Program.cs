@@ -1,6 +1,6 @@
 using Questline.Cli;
 
-var cliApp = new CliAppBuilder()
+var cliApp = await new CliAppBuilder()
     .ConfigureServices()
     .Build();
 

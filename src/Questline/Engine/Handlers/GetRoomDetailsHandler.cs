@@ -15,7 +15,7 @@ public class GetRoomDetailsHandler(
     public async Task<IResponse> Handle(Requests.GetRoomDetailsQuery request)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
-        var room        = await roomRepository.GetById(playthrough.AdventureId, playthrough.Location);
+        var room        = await roomRepository.GetById(playthrough.Location);
 
         var roomItems      = playthrough.GetRecordedRoomItems(room.Id) ?? room.Items.ToList();
         var exits          = room.Exits.Keys.Select(d => d.ToString()).ToList();

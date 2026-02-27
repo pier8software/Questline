@@ -1,10 +1,10 @@
 using Questline.Domain.Shared.Entity;
+using Questline.Framework.Domain;
 
 namespace Questline.Domain.Rooms.Entity;
 
-public class Room
+public class Room : DomainEntity
 {
-    public required string Id          { get; init; }
     public required string Name        { get; init; }
     public required string Description { get; init; }
 

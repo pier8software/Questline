@@ -21,7 +21,7 @@ public class ExamineCommandHandler(
             return new Responses.ExamineResponse(inventoryItem.Description);
         }
 
-        var room      = await roomRepository.GetById(playthrough.AdventureId, playthrough.Location);
+        var room      = await roomRepository.GetById(playthrough.Location);
         var roomItems = playthrough.GetRecordedRoomItems(room.Id) ?? room.Items.ToList();
 
         var roomItem = roomItems.FirstOrDefault(i =>

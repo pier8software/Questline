@@ -13,7 +13,7 @@ public class TakeItemHandler(
     public async Task<IResponse> Handle(Requests.TakeItemCommand request)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
-        var room        = await roomRepository.GetById(playthrough.AdventureId, playthrough.Location);
+        var room        = await roomRepository.GetById(playthrough.Location);
 
         var roomItems = playthrough.GetRecordedRoomItems(room.Id) ?? room.Items.ToList();
         var item      = roomItems.FirstOrDefault(i => i.Name.Equals(request.ItemName, StringComparison.OrdinalIgnoreCase));

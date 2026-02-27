@@ -21,6 +21,7 @@ public enum GamePhase
 public class GameEngine(
     Parser                        parser,
     RequestSender                 dispatcher,
+    IAdventureRepository          adventureRepository,
     IRoomRepository               roomRepository,
     IPlaythroughRepository        playthroughRepository,
     IGameSession                  gameSession,
@@ -81,8 +82,8 @@ public class GameEngine(
 
         if (stateMachine.CompletedCharacter is { } character)
         {
-            var startingRoomId = await roomRepository.GetStartingRoomId(_selectedAdventureId);
-            var playthrough    = Playthrough.Create(_selectedAdventureId, startingRoomId, character);
+            var adventure   = await adventureRepository.GetById(_selectedAdventureId);
+            var playthrough = Playthrough.Create(_selectedAdventureId, adventure.StartingRoomId, character);
 
             await playthroughRepository.Save(playthrough);
             gameSession.SetPlaythroughId(playthrough.Id);
@@ -118,7 +119,7 @@ public class GameEngine(
         var response         = await dispatcher.Send(parseResult.Request!);
         var loggedInResponse = response as Responses.LoggedInResponse;
 
-        _phase  = GamePhase.NewAdventure;
+        _phase = GamePhase.NewAdventure;
 
         return loggedInResponse! with
         {
@@ -134,7 +135,7 @@ public class GameEngine(
 
     private async Task<IResponse> StartAdventure(Playthrough playthrough)
     {
-        var startingRoom   = await roomRepository.GetById(playthrough.AdventureId, playthrough.Location);
+        var startingRoom   = await roomRepository.GetById(playthrough.Location);
         var exits          = startingRoom.Exits.Keys.Select(d => d.ToString()).ToList();
         var items          = startingRoom.Items.Select(i => i.Name).ToList();
         var lockedBarriers = GetLockedBarrierDescriptions(startingRoom.Exits, playthrough);

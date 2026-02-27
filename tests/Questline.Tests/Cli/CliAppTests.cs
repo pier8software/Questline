@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
+using Questline.Domain.Adventures.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
 using Questline.Engine.Core;
@@ -37,12 +38,22 @@ public class CliAppTests
                 .Build()
         };
 
+        var adventure = new Adventure
+        {
+            Id             = "the-goblins-lair",
+            Name           = "The Goblins' Lair",
+            Description    = "A test adventure",
+            StartingRoomId = "entrance"
+        };
+
+        var adventureRepository   = new FakeAdventureRepository(adventure);
         var roomRepository        = new FakeRoomRepository(rooms);
-        var playthroughRepository = new InMemoryPlaythroughRepository();
+        var playthroughRepository = new FakePlaythroughRepository();
         var gameSession           = new GameSession();
 
         var serviceProvider = new ServiceCollection()
             .AddSingleton<IGameSession>(gameSession)
+            .AddSingleton<IAdventureRepository>(adventureRepository)
             .AddSingleton<IPlaythroughRepository>(playthroughRepository)
             .AddSingleton<IRoomRepository>(roomRepository)
             .AddSingleton<IRequestHandler<Requests.LoginCommand>, LoginCommandHandler>()
@@ -58,7 +69,7 @@ public class CliAppTests
 
         var dispatcher = new RequestSender(serviceProvider);
         var parser     = new Parser();
-        var gameEngine = new GameEngine(parser, dispatcher, roomRepository, playthroughRepository, gameSession, stateMachine);
+        var gameEngine = new GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepository, gameSession, stateMachine);
         var formatter  = new ResponseFormatter();
 
         var app = new CliApp(console, formatter, gameEngine);

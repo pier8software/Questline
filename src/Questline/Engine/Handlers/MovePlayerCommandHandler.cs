@@ -15,7 +15,7 @@ public class MovePlayerCommandHandler(
     public async Task<IResponse> Handle(Requests.MovePlayerCommand command)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
-        var currentRoom = await roomRepository.GetById(playthrough.AdventureId, playthrough.Location);
+        var currentRoom = await roomRepository.GetById(playthrough.Location);
 
         if (!currentRoom.Exits.TryGetValue(command.Direction, out var exit))
         {
@@ -30,7 +30,7 @@ public class MovePlayerCommandHandler(
         playthrough.MoveTo(exit.Destination);
         await playthroughRepository.Save(playthrough);
 
-        var newRoom        = await roomRepository.GetById(playthrough.AdventureId, exit.Destination);
+        var newRoom        = await roomRepository.GetById(exit.Destination);
         var roomItems      = playthrough.GetRecordedRoomItems(newRoom.Id) ?? newRoom.Items.ToList();
         var exits          = newRoom.Exits.Keys.Select(d => d.ToString()).ToList();
         var items          = roomItems.Select(i => i.Name).ToList();
