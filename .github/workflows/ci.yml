@@ -36,24 +36,41 @@ jobs:
           VERSION=$(grep -oP '(?<=<Version>)[^<]+' Directory.Build.props)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          if gh release view "v${{ steps.version.outputs.version }}" > /dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # Publish for all platforms
       - name: Publish win-x64
+        if: steps.check_release.outputs.exists == 'false'
         run: dotnet publish src/Questline -c Release -r win-x64 --self-contained -o publish/win-x64
 
       - name: Publish linux-x64
+        if: steps.check_release.outputs.exists == 'false'
         run: dotnet publish src/Questline -c Release -r linux-x64 --self-contained -o publish/linux-x64
 
       - name: Publish linux-arm64
+        if: steps.check_release.outputs.exists == 'false'
         run: dotnet publish src/Questline -c Release -r linux-arm64 --self-contained -o publish/linux-arm64
 
       - name: Publish osx-x64
+        if: steps.check_release.outputs.exists == 'false'
         run: dotnet publish src/Questline -c Release -r osx-x64 --self-contained -o publish/osx-x64
 
       - name: Publish osx-arm64
+        if: steps.check_release.outputs.exists == 'false'
         run: dotnet publish src/Questline -c Release -r osx-arm64 --self-contained -o publish/osx-arm64
 
       # Create zip archives
       - name: Create archives
+        if: steps.check_release.outputs.exists == 'false'
         run: |
           cd publish
           zip -r questline-win-x64.zip win-x64
@@ -64,6 +81,7 @@ jobs:
 
       # Create GitHub Release
       - name: Create Release
+        if: steps.check_release.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version }}
