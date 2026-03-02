@@ -36,8 +36,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IPersistenceMapper<Playthrough, PlaythroughDocument>, PlaythroughMapper>();
 
         services.AddSingleton<IAdventureRepository, AdventureRepository>();
-        services.AddSingleton<IRoomRepository, Persistence.Rooms.RoomRepository>();
-        services.AddSingleton<IPlaythroughRepository, Persistence.Playthroughs.PlaythroughRepository>();
+        services.AddSingleton<IRoomRepository, RoomRepository>();
+        services.AddSingleton<IPlaythroughRepository, PlaythroughRepository>();
 
         RegisterCommandHandlers(services);
 

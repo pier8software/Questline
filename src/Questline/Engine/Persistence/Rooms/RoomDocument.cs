@@ -4,11 +4,11 @@ namespace Questline.Engine.Persistence.Rooms;
 
 public class RoomDocument : Document
 {
-    public string                             Name        { get; set; } = null!;
-    public string                             Description { get; set; } = null!;
-    public Dictionary<string, ExitDocument>   Exits       { get; set; } = new();
-    public List<ItemDocument>                 Items       { get; set; } = [];
-    public List<FeatureDocument>              Features    { get; set; } = [];
+    public string                           Name        { get; set; } = null!;
+    public string                           Description { get; set; } = null!;
+    public Dictionary<string, ExitDocument> Exits       { get; set; } = new();
+    public List<ItemDocument>               Items       { get; set; } = [];
+    public List<FeatureDocument>            Features    { get; set; } = [];
 }
 
 public class ExitDocument
@@ -36,8 +36,8 @@ public class ItemDocument
 
 public class FeatureDocument
 {
-    public string   Id          { get; set; } = null!;
-    public string   Name        { get; set; } = null!;
-    public string[] Keywords    { get; set; } = [];
-    public string   Description { get; set; } = null!;
+    public string       Id          { get; set; } = null!;
+    public string       Name        { get; set; } = null!;
+    public List<string> Keywords    { get; set; } = [];
+    public string       Description { get; set; } = null!;
 }

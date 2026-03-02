@@ -1,0 +1,18 @@
+{
+    "profiles": {
+        "Questline: game": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "DOTNET_ENVIRONMENT": "Development"
+            },
+            "commandLineArgs": "--mode=game"
+        },
+        "Questline: deploy-content": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "DOTNET_ENVIRONMENT": "Development"
+            },
+            "commandLineArgs": "--mode=deploy-content"
+        }
+    }
+}
