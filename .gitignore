@@ -20,3 +20,6 @@ _ReSharper*/
 # VS build artifacts. Always want to ignore this.
 [Bb]in/
 [Oo]bj/
+
+# Claude Code
+.claude/settings.local.json
