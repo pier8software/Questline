@@ -1,7 +1,20 @@
 using Questline.Cli;
 
-var cliApp = await new CliAppBuilder()
-    .ConfigureServices()
-    .Build();
+try
+{
+    var mode = RunModeParser.Parse(args);
 
-await cliApp.Run();
+    var runMode = new CliAppBuilder()
+        .WithRunMode(mode)
+        .ConfigureServices()
+        .Build();
+
+    await runMode.RunAsync();
+}
+catch (ArgumentException ex)
+{
+    Console.Error.WriteLine(ex.Message);
+    return 1;
+}
+
+return 0;

@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddQuestlineEngine(this IServiceCollection services)
     {
         services.AddSingleton<JsonFileLoader>();
-        services.AddSingleton<ContentSeeder>();
+        services.AddSingleton<IContentSeeder, ContentSeeder>();
         services.AddSingleton<Parser>();
         services.AddSingleton<IDice, Dice>();
         services.AddSingleton<CharacterCreationStateMachine>();

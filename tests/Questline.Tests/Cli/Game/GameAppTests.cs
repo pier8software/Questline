@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
+using Questline.Cli.Game;
 using Questline.Domain.Adventures.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
@@ -12,9 +13,9 @@ using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers;
 using Questline.Tests.TestHelpers.Builders;
 
-namespace Questline.Tests.Cli;
+namespace Questline.Tests.Cli.Game;
 
-public class CliAppTests
+public class GameAppTests
 {
     // 3d6 x 6 ability scores = 18 rolls, then 1d8 for HP = 19 rolls total
     private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
@@ -22,7 +23,7 @@ public class CliAppTests
     // Login, select adventure, then character creation: select class (Fighter), select race (Human), continue (HP roll), enter name
     private static readonly string[] SetupInputs = ["login Player1", "1", "1", "1", "", "Hero"];
 
-    private static (CliApp app, FakeConsole console) CreateCliApp()
+    private static (GameApp app, FakeConsole console) CreateCliApp()
     {
         var rooms = new Dictionary<string, Room>
         {
@@ -72,7 +73,7 @@ public class CliAppTests
         var gameEngine = new GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepository, gameSession, stateMachine);
         var formatter  = new ResponseFormatter();
 
-        var app = new CliApp(console, formatter, gameEngine);
+        var app = new GameApp(console, formatter, gameEngine);
 
         return (app, console);
     }
@@ -83,7 +84,7 @@ public class CliAppTests
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "quit"]);
 
-        await loop.Run();
+        await loop.RunAsync();
 
         console.AllOutput.ShouldContain("Dungeon Entrance");
         console.AllOutput.ShouldContain("A dark entrance to the dungeon.");
@@ -95,7 +96,7 @@ public class CliAppTests
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "quit"]);
 
-        await loop.Run();
+        await loop.RunAsync();
 
         console.AllOutput.ShouldContain("> ");
     }
@@ -106,7 +107,7 @@ public class CliAppTests
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "look", "quit"]);
 
-        await loop.Run();
+        await loop.RunAsync();
 
         var output = console.AllOutput;
         var count  = CountOccurrences(output, "Dungeon Entrance");
@@ -119,7 +120,7 @@ public class CliAppTests
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "go north", "quit"]);
 
-        await loop.Run();
+        await loop.RunAsync();
 
         console.AllOutput.ShouldContain("Torch-Lit Hallway");
     }
@@ -130,7 +131,7 @@ public class CliAppTests
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "dance", "quit"]);
 
-        await loop.Run();
+        await loop.RunAsync();
 
         console.AllOutput.ShouldContain("don't understand");
     }
@@ -141,7 +142,7 @@ public class CliAppTests
         var (loop, console) = CreateCliApp();
         console.QueueInput([..SetupInputs, "quit"]);
 
-        await loop.Run();
+        await loop.RunAsync();
 
         console.AllOutput.ShouldContain("Goodbye!");
     }
@@ -152,7 +153,7 @@ public class CliAppTests
         var (loop, console) = CreateCliApp();
         // No input queued, ReadLine returns null at login prompt
 
-        await loop.Run();
+        await loop.RunAsync();
 
         // Should not hang — exits when input is null
     }
