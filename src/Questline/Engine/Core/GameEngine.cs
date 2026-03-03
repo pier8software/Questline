@@ -1,3 +1,4 @@
+using Questline.Domain.Playthroughs.Data;
 using Questline.Domain.Playthroughs.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
@@ -12,7 +13,9 @@ public enum GamePhase
 {
     Started,
     Login,
+    StartMenu,
     NewAdventure,
+    LoadGame,
     CharacterCreation,
     Playing,
     Ended
@@ -27,8 +30,9 @@ public class GameEngine(
     IGameSession                  gameSession,
     CharacterCreationStateMachine stateMachine)
 {
-    private GamePhase _phase               = GamePhase.Started;
-    private string    _selectedAdventureId = null!;
+    private GamePhase                                        _phase               = GamePhase.Started;
+    private string                                           _selectedAdventureId = null!;
+    private IReadOnlyDictionary<int, PlaythroughSummary>?    _savedPlaythroughs;
 
     private readonly IReadOnlyDictionary<int, string> _adventures = new Dictionary<int, string>
     {
@@ -45,8 +49,12 @@ public class GameEngine(
                 return HandleGameStarted();
             case GamePhase.Login:
                 return await HandleLogin(input);
+            case GamePhase.StartMenu:
+                return await HandleStartMenu(input);
             case GamePhase.NewAdventure:
                 return await HandleNewAdventure(input);
+            case GamePhase.LoadGame:
+                return await HandleLoadGame(input);
             case GamePhase.CharacterCreation:
                 return await HandleCharacterCreation(input);
             case GamePhase.Playing:
@@ -83,7 +91,7 @@ public class GameEngine(
         if (stateMachine.CompletedCharacter is { } character)
         {
             var adventure   = await adventureRepository.GetById(_selectedAdventureId);
-            var playthrough = Playthrough.Create(_selectedAdventureId, adventure.StartingRoomId, character);
+            var playthrough = Playthrough.Create(gameSession.Username!, _selectedAdventureId, adventure.StartingRoomId, character);
 
             await playthroughRepository.Save(playthrough);
             gameSession.SetPlaythroughId(playthrough.Id);
@@ -119,12 +127,50 @@ public class GameEngine(
         var response         = await dispatcher.Send(parseResult.Request!);
         var loggedInResponse = response as Responses.LoggedInResponse;
 
-        _phase = GamePhase.NewAdventure;
+        gameSession.SetUsername(loggedInResponse!.Player.Username);
+        _phase = GamePhase.StartMenu;
 
-        return loggedInResponse! with
+        return new Responses.StartMenuResponse();
+    }
+
+    private async Task<IResponse> HandleStartMenu(string? input)
+    {
+        switch (input)
         {
-            Adventures = [new Resources.AdventureSummary("the-goblins-lair", "The Goblins' Lair")]
-        };
+            case "1":
+                _phase = GamePhase.NewAdventure;
+                return new Responses.NewGameResponse(
+                    [new Resources.AdventureSummary("the-goblins-lair", "The Goblins' Lair")]);
+            case "2":
+                var playthroughs = await playthroughRepository.FindByUsername(gameSession.Username!);
+                if (playthroughs.Count == 0)
+                {
+                    return new Responses.NoSavedGamesResponse();
+                }
+
+                _savedPlaythroughs = playthroughs
+                    .Select((p, i) => (Index: i + 1, Summary: p))
+                    .ToDictionary(x => x.Index, x => x.Summary);
+                _phase = GamePhase.LoadGame;
+                return new Responses.SavedPlaythroughsResponse(playthroughs);
+            default:
+                return new ErrorResponse("Invalid selection.");
+        }
+    }
+
+    private async Task<IResponse> HandleLoadGame(string? input)
+    {
+        if (!int.TryParse(input, out var selection) ||
+            _savedPlaythroughs is null ||
+            !_savedPlaythroughs.TryGetValue(selection, out var summary))
+        {
+            return new ErrorResponse("Invalid selection.");
+        }
+
+        var playthrough = await playthroughRepository.GetById(summary.Id);
+        gameSession.SetPlaythroughId(playthrough.Id);
+        _phase = GamePhase.Playing;
+        return await StartAdventure(playthrough);
     }
 
     private IResponse HandleGameStarted()

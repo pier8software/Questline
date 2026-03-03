@@ -20,8 +20,8 @@ public class GameAppTests
     // 3d6 x 6 ability scores = 18 rolls, then 1d8 for HP = 19 rolls total
     private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
 
-    // Login, select adventure, then character creation: select class (Fighter), select race (Human), continue (HP roll), enter name
-    private static readonly string[] SetupInputs = ["login Player1", "1", "1", "1", "", "Hero"];
+    // Login, start menu (New Game), select adventure, then character creation: select class (Fighter), select race (Human), continue (HP roll), enter name
+    private static readonly string[] SetupInputs = ["login Player1", "1", "1", "1", "1", "", "Hero"];
 
     private static (GameApp app, FakeConsole console) CreateCliApp()
     {
