@@ -3,7 +3,6 @@ using Questline.Domain.Adventures.Entity;
 using Questline.Domain.Playthroughs.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
-using Questline.Engine.Content;
 using Questline.Engine.Core;
 using Questline.Engine.Handlers;
 using Questline.Engine.Parsers;
@@ -11,7 +10,6 @@ using Questline.Engine.Persistence.Adventures;
 using Questline.Engine.Persistence.Playthroughs;
 using Questline.Engine.Persistence.Rooms;
 using Questline.Engine.Repositories;
-using Questline.Framework.FileSystem;
 using Questline.Framework.Mediator;
 using Questline.Framework.Persistence;
 using static Questline.Engine.Messages.Requests;
@@ -22,8 +20,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddQuestlineEngine(this IServiceCollection services)
     {
-        services.AddSingleton<JsonFileLoader>();
-        services.AddSingleton<IContentSeeder, ContentSeeder>();
         services.AddSingleton<Parser>();
         services.AddSingleton<IDice, Dice>();
         services.AddSingleton<CharacterCreationStateMachine>();
