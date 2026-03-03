@@ -1,17 +1,23 @@
-using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli.DeployContent;
 using Questline.Cli.Game;
-using Questline.Engine;
 using Questline.Engine.Content;
 using Questline.Framework.FileSystem;
-using Questline.Framework.Persistence;
 
 namespace Questline.Cli;
 
 public class CliAppBuilder
 {
+    private const string DefaultConnectionString = "mongodb://localhost:27017";
+
     private readonly ServiceCollection _services = new();
+    private IConfiguration _configuration = new ConfigurationBuilder().Build();
     private RunMode _mode = RunMode.Game;
+
+    public CliAppBuilder WithConfiguration(IConfiguration configuration)
+    {
+        _configuration = configuration;
+        return this;
+    }
 
     public CliAppBuilder WithRunMode(RunMode mode)
     {
@@ -21,8 +27,10 @@ public class CliAppBuilder
 
     public CliAppBuilder ConfigureServices()
     {
+        var connectionString = _configuration.GetConnectionString("questline") ?? DefaultConnectionString;
+
         _services.AddSingleton<IConsole, SystemConsole>();
-        _services.AddMongoPersistence("mongodb://localhost:27017", "questline");
+        _services.AddMongoPersistence(connectionString, "questline");
 
         switch (_mode)
         {
@@ -47,4 +55,6 @@ public class CliAppBuilder
         var provider = _services.BuildServiceProvider();
         return provider.GetRequiredService<ICliApp>();
     }
+
+    public ServiceProvider BuildServiceProvider() => _services.BuildServiceProvider();
 }

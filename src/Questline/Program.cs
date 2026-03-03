@@ -1,10 +1,16 @@
+using Microsoft.Extensions.Configuration;
 using Questline.Cli;
 
 try
 {
     var mode = RunModeParser.Parse(args);
 
+    var configuration = new ConfigurationBuilder()
+        .AddEnvironmentVariables()
+        .Build();
+
     var runMode = new CliAppBuilder()
+        .WithConfiguration(configuration)
         .WithRunMode(mode)
         .ConfigureServices()
         .Build();
