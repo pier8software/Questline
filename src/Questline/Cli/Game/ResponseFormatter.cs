@@ -2,7 +2,7 @@ using Questline.Domain.Characters.Data;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
-namespace Questline.Cli;
+namespace Questline.Cli.Game;
 
 public class ResponseFormatter
 {

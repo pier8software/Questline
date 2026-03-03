@@ -8,4 +8,8 @@
         <UserSecretsId>e92f5599-f76c-419c-abdb-92cd546ca734</UserSecretsId>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Aspire.Hosting.MongoDB" Version="13.1.2" />
+    </ItemGroup>
+
 </Project>

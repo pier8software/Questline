@@ -1,8 +1,11 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-// add mongodb docker container
-builder.AddContainer("mongo", "mongo")
-    .WithEndpoint(27017, 27017, "tcp", isProxied: false)
-    .WithContainerRuntimeArgs("--network", "host");
+var mongo = builder.AddMongoDB("mongo")
+    .AddDatabase("questline");
+
+builder.AddDockerfile("content-deployer", "../../")
+    .WithArgs("--mode=deploy-content")
+    .WithReference(mongo)
+    .WaitFor(mongo);
 
 builder.Build().Run();

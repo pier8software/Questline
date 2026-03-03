@@ -26,7 +26,7 @@ The adventure manifest SHALL contain `id`, `name`, `description`, `startingRoomI
 
 ### Requirement: Loader constructs World from content files
 
-The adventure loader SHALL read the JSON files and construct a World with rooms, exits, items, features, and barriers.
+The adventure loader SHALL read the JSON files and construct a World with rooms, exits, items, features, and barriers. Content seeding SHALL be an explicit operation that can be invoked independently by any run mode, not a side-effect of application startup.
 
 #### Scenario: Load valid adventure
 
@@ -42,6 +42,11 @@ The adventure loader SHALL read the JSON files and construct a World with rooms,
 
 - **WHEN** a room definition contains a `features` array with an entry for "strange-symbols"
 - **THEN** the loaded Room SHALL contain a Feature with that Id, name, keywords, and description
+
+#### Scenario: Content seeding invoked independently
+
+- **WHEN** `ContentSeeder.SeedAdventure` is called outside of the game loop
+- **THEN** it SHALL load and store adventure content in the database without requiring game engine services
 
 ### Requirement: Exit formats — string and object
 

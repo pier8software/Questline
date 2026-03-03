@@ -6,7 +6,7 @@ public static class MongoCollectionExtensions
 {
     public static IMongoCollection<T> Documents<T>(
         this IMongoDatabase database) where T : Document =>
-        database.GetCollection<T>(GetCollectionName(typeof(T).Name));
+        database.GetCollection<T>(MongoCollectionName.For<T>());
 
     public static async ValueTask<T> Load<T>(
         this IMongoCollection<T> collection,
@@ -54,17 +54,5 @@ public static class MongoCollectionExtensions
             .ConfigureAwait(false);
 
         return result;
-    }
-
-    private static string GetCollectionName(string documentTypeName)
-    {
-        var documentSuffix = "document";
-        if (documentTypeName.EndsWith(documentSuffix, StringComparison.OrdinalIgnoreCase) &&
-            documentTypeName.Length > documentSuffix.Length)
-        {
-            return documentTypeName[..^documentSuffix.Length];
-        }
-
-        return documentTypeName;
     }
 }

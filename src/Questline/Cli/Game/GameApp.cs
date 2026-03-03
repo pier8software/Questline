@@ -1,14 +1,14 @@
 using Questline.Engine.Core;
 using Questline.Engine.Messages;
 
-namespace Questline.Cli;
+namespace Questline.Cli.Game;
 
-public class CliApp(
+public class GameApp(
     IConsole          console,
     ResponseFormatter formatter,
-    GameEngine                    engine)
+    GameEngine        engine) : ICliApp
 {
-    public async Task Run()
+    public async Task RunAsync()
     {
         var response = await engine.ProcessInput(null);
         console.WriteLine(formatter.Format(response));

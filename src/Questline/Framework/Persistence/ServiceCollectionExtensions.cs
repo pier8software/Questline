@@ -11,6 +11,8 @@ public static class ServiceCollectionExtensions
         string                  connectionString,
         string                  databaseName)
     {
+        MongoConventions.RegisterConventions();
+
         services.AddSingleton<IMongoClient>(_ => new MongoClient(connectionString));
         services.AddSingleton<IMongoDatabase>(sp => sp.GetRequiredService<IMongoClient>().GetDatabase(databaseName));
         services.AddSingleton<IDataContext, MongoDataContext>();

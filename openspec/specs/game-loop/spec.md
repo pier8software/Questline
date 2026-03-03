@@ -8,7 +8,7 @@ Define the game's main loop: startup display, prompt cycle, result rendering, an
 
 ### Requirement: Game displays initial room on start
 
-The game SHALL prompt for a character name, display a welcome message including the character's name, and then display the starting room's name, description, available items, locked barrier descriptions, and exits when the game begins.
+The game SHALL prompt for a character name, display a welcome message including the character's name, and then display the starting room's name, description, available items, locked barrier descriptions, and exits when the game begins. Adventure content SHALL already be present in the database, deployed via `deploy-content` mode before the game is started.
 
 #### Scenario: Game startup with character creation
 

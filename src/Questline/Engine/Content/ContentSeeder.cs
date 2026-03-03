@@ -7,7 +7,7 @@ using Questline.Framework.Persistence;
 
 namespace Questline.Engine.Content;
 
-public class ContentSeeder(IDataContext dataContext, JsonFileLoader fileLoader)
+public class ContentSeeder(IDataContext dataContext, JsonFileLoader fileLoader) : IContentSeeder
 {
     public async Task SeedAdventure(string filePath, CancellationToken cancellationToken = default)
     {

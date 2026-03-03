@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-03-03
+
+### Added
+
+- MongoDB persistence for rooms, playthroughs, and adventures replacing in-memory storage
+- Persistence framework with `Document`, `DomainEntity`, `Repository`, and `IDataContext` abstractions
+- MongoDB collection naming conventions (PascalCase, CamelCase, SnakeCase, KebabCase)
+- Local development environment using Aspire with MongoDB container orchestration
+- CLI run modes via `--mode` flag (`game` default, `deploy-content` for seeding)
+- Content deployment mode to seed adventure content and exit without entering the game loop
+- Dockerfile for building and running the content deployer container
+- `RunMode` enum and `IRunMode` interface for modular execution paths
+- Application flow diagram in docs
+
+### Changed
+
+- Game engine methods and all handlers converted to async (`async Task`)
+- Game engine interface refactored: replaced `AdventureContent` and `IGameContentLoader` with `IRoomRepository` and `IPlaythroughRepository`
+- `GameState` moved from `Domain.Shared` to `Engine.Core`; handlers use `Adventure` for room and barrier access
+- Domain refactored from immutable records to mutable classes with direct in-place updates
+- `Inventory` class removed in favour of `List<Item>` across the domain
+- Character properties moved from `Player` to `Character` model
+- MongoDB connection string made configurable via `IConfiguration` with localhost fallback
+
 ## [0.5.0] - 2026-02-19
 
 ### Added
