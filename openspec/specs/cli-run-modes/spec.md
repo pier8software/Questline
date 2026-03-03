@@ -33,13 +33,12 @@ The application SHALL accept a `--mode` command-line argument that determines th
 
 ### Requirement: Game mode runs the interactive game loop
 
-The game mode SHALL configure all game services, seed adventure content into the database, and start the interactive game loop.
+The game mode SHALL configure all game services and start the interactive game loop. Adventure content SHALL already be present in the database, deployed via `deploy-content` mode before the game is started.
 
 #### Scenario: Game mode starts the game
 
 - **WHEN** the application runs in game mode
-- **THEN** the application SHALL seed adventure content
-- **AND** the application SHALL start the interactive game loop
+- **THEN** the application SHALL start the interactive game loop
 - **AND** the player SHALL be able to interact with the game via console input
 
 ### Requirement: Deploy-content mode seeds content and exits
@@ -66,7 +65,12 @@ The deploy-content mode SHALL load adventure JSON files, deploy them to the data
 
 ### Requirement: Each run mode registers only its required services
 
-The application SHALL register only the services needed for the selected run mode. Game mode SHALL register the full game stack. Deploy-content mode SHALL register only persistence and content seeding services. The MongoDB connection string SHALL be read from `IConfiguration` rather than hardcoded, allowing it to be provided via environment variables, command-line arguments, or configuration files.
+The application SHALL register only the services needed for the selected run mode. Game mode SHALL register the game engine, parser, command handlers, and persistence services. Game mode SHALL NOT register content seeding or JSON file loading services. Deploy-content mode SHALL register only persistence and content seeding services. The MongoDB connection string SHALL be read from `IConfiguration` rather than hardcoded, allowing it to be provided via environment variables, command-line arguments, or configuration files.
+
+#### Scenario: Game mode does not register content seeding services
+
+- **WHEN** the application runs in game mode
+- **THEN** `IContentSeeder` and `JsonFileLoader` SHALL NOT be registered in the service container
 
 #### Scenario: Deploy-content mode does not register game engine
 
