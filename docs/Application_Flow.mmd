@@ -1,21 +1,34 @@
 ---
 config:
-      theme: redux
+    theme: redux
 ---
 flowchart TD
-        A(["Start"])
-        A --> B["Welcome"]
-        B --> C{"SignUp or Login"}
-        C --> D["SignUp"]
-        C --> E["Login"]
-        D --> F{"SignUp or Login"}
-        E --> F{"Start New or Continue Existing Adventure"}
-        F --> G["Continue Exitsting"]
-        F --> H["Start New"]
-        G --> I["Select Saved Adventure"]
-        H --> J["Select New Adventure"]
-        J --> K["Create Character"]
-        K --> L["Play Adventure"]
-        I --> L
-        L --> M["Quit"]
-        M --> N["End"]
+    Start(["Start"])
+    Splash["Welcome"]
+    Onboarding["Onboarding"]
+    OnboardingChoice{"Sign-up / Sign-in"}
+    SignUp[["Sign-Up"]]
+    SignIn[["Sign-In"]]
+    StartMenu["Start Menu"]
+    StartMenuChoice{"New Game / Load Game"}
+    SelectAdventure["Select Adventure"]
+    CreateCharacter["Create Character"]
+    GameLoop["Play Adventure"]
+    Quit["Quit"]
+    End(["End"])
+
+    Start --> Splash
+    Splash --> Onboarding
+    Onboarding --> OnboardingChoice
+    OnboardingChoice --> SignUp
+    OnboardingChoice --> SignIn
+    SignUp --> StartMenu
+    SignIn --> StartMenu
+    StartMenu --> StartMenuChoice
+    StartMenuChoice -- New Game ---> SelectAdventure
+    StartMenuChoice -- Load Game ---> GameLoop
+    SelectAdventure --> CreateCharacter
+    CreateCharacter --> GameLoop
+    GameLoop --> GameLoop
+    GameLoop --> Quit
+    Quit --> End
