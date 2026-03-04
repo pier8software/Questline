@@ -1,6 +1,6 @@
 using Questline.Domain.Playthroughs.Entity;
 using Questline.Tests.TestHelpers.Builders;
-using Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Domain.Playthroughs.Entity;
 

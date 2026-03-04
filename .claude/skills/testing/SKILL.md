@@ -87,10 +87,10 @@ public class When_item_is_in_room
 
     public When_item_is_in_room()
     {
-        _lamp = Templates.Items.Lamp;
-        _fixture = new ScenarioBuilder
-            .WithRoom(Templates.Rooms.Cellar.WithItems([_lamp]))
-            .Build();
+        _lamp = Items.BrassLamp;
+        _fixture = new GameBuilder()
+            .WithRoom(Rooms.Cellar.WithItem(_lamp))
+            .Build("cellar");
 
         _handler = new TakeItemHandler(
             _fixture.Session, _fixture.PlaythroughRepository, _fixture.RoomRepository);
@@ -145,11 +145,10 @@ public class When_exit_has_a_locked_barrier
 
     public When_exit_has_a_locked_barrier()
     {
-        _fixture = ScenarioBuilder
-            .WithRoom(Templates.Rooms.StandardRoom.WithExit(Direction.North, Templates.Exits.EndWithLockedDoor))
-            .WithRoom(Templates.Rooms.EndRoom.WithExit(Direction.South, Templates.Exits.Start))
-            .StartingRoom(Templates.Rooms.StandardRoom)
-            .Build();
+        _fixture = new GameBuilder()
+            .WithRoom(Rooms.StartRoom.WithExit(Direction.North, Exits.WithBarrier.WithDestination("end")))
+            .WithRoom(Rooms.EndRoom.WithExit(Direction.South, "start"))
+            .Build("start");
 
         _handler = new MovePlayerCommandHandler(...);
     }
@@ -242,7 +241,7 @@ Uses the `TestStack.Dossier` library to build up test data.
 
 ```csharp
 // tests/Questline.Tests/TestHelpers/Builders/RoomBuilder.cs
-public class RoomBuilder : TestDatBuilder<Room, RoomBuilder>
+public class RoomBuilder : TestDataBuilder<Room, RoomBuilder>
 {
     public RoomBuilder WithId(string id) =>
         Set(x => x.Id, id);
@@ -253,8 +252,8 @@ public class RoomBuilder : TestDatBuilder<Room, RoomBuilder>
     public RoomBuilder WithDescription(string description) =>
         Set(x => x.Description, description);
 
-    public RoomBuilder WithItems(IEnumerable<Item> items) =>
-        Set(x => x.Items, new List<Item>(items));
+    public RoomBuilder WithItem(ItemBuilder item) =>
+        ...;
 
     ...
 }
@@ -263,34 +262,40 @@ public class RoomBuilder : TestDatBuilder<Room, RoomBuilder>
 ### Example Template
 
 ```csharp
-// tests/Questline.Tests/TestHelpers/Builder/Templates/Rooms.cs
-public class Rooms
+// tests/Questline.Tests/TestHelpers/Builders/Templates/Rooms.cs
+namespace Questline.Tests.TestHelpers.Builders;
+
+public static partial class Templates
 {
-    public static RoomBuilder StandardRoom =>
-        new RoomBuilder()
-            .WithId("14a678b5-26c3-40ac-b550-bce00c3cb88a")
-            .WithName("Standard Room")
-            .WithDescription("A standard room.")
-            .WithItems([Templates.Items.Key]);
+    public static class Rooms
+    {
+        public static RoomBuilder Cellar =>
+            new RoomBuilder()
+                .WithId("cellar")
+                .WithName("Cellar")
+                .WithDescription("A damp cellar.");
+    }
 }
-````
+```
 
 When the same test object is constructed in multiple places, use the builder and template classes rather than copy-pasting the initialiser:
 
 ```csharp
-// tests/Questline.Tests/Engine/Handlers/DropItemCommandHandlerTests.cs
+// tests/Questline.Tests/Engine/Handlers/DropItemCommandHandler/When_item_is_in_inventory.cs
+using static Questline.Tests.TestHelpers.Builders.Templates;
+
 namespace Questline.Tests.Engine.Handlers;
 
-public class DropItemCommandHandlerTests
+public class When_item_is_in_inventory
 {
     private readonly GameFixture _fixture;
 
-    public DropItemCommandHandlerTests()
+    public When_item_is_in_inventory()
     {
-        _fixture = ScenarioBuilder
-        .WithRoom(Templates.Rooms.StandardRoom
-            .WithItems([Templates.Items.Key]))
-        .Build();
+        _fixture = new GameBuilder()
+            .WithRoom(Rooms.Cellar.WithItem(Items.BrassLamp))
+            .WithInventoryItem(Items.BrassLamp)
+            .Build("cellar");
     }
 }
 ```

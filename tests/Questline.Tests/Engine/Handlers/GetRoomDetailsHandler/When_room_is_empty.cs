@@ -1,7 +1,7 @@
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Engine.Handlers;
 

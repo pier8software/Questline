@@ -3,15 +3,15 @@ using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
-using Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Engine.Handlers;
 
-public class When_using_item_not_in_inventory
+public class When_used_item_is_not_in_inventory
 {
     private readonly UseItemCommandHandler _handler;
 
-    public When_using_item_not_in_inventory()
+    public When_used_item_is_not_in_inventory()
     {
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber

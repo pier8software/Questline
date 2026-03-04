@@ -1,6 +1,6 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
-using Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates;
 using TestStack.Dossier;
 
 namespace Questline.Tests.TestHelpers.Builders;

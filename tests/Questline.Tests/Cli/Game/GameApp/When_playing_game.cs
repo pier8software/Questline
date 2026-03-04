@@ -11,7 +11,7 @@ using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers;
 using Questline.Tests.TestHelpers.Builders;
-using Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Cli.Game;
 
