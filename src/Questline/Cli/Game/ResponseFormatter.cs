@@ -1,4 +1,5 @@
 using Questline.Domain.Characters.Data;
+using Questline.Domain.Playthroughs.Data;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 
@@ -10,6 +11,10 @@ public class ResponseFormatter
     {
         Responses.GameStartedResponse                 => FormatGameStarted(),
         Responses.LoggedInResponse r                  => FormatLogin(r),
+        Responses.StartMenuResponse                   => FormatStartMenu(),
+        Responses.NewGameResponse r                   => FormatNewGame(r),
+        Responses.SavedPlaythroughsResponse r         => FormatSavedPlaythroughs(r),
+        Responses.NoSavedGamesResponse                => "No saved games found.",
         Responses.NewAdventureSelectedResponse        => FormatAdventureSelected(),
         Responses.CharacterCreationResponse r         => FormatCharacterCreation(r),
         Responses.CharacterCreationCompleteResponse r => FormatCharacterCreationComplete(r),
@@ -33,6 +38,24 @@ public class ResponseFormatter
 
     private static string FormatGameStarted() =>
         string.Join("\n", "Welcome adventure!", "type 'login <username>' to begin your adventure!");
+
+    private static string FormatStartMenu() =>
+        string.Join("\n", "What would you like to do?", "\t1. New Game", "\t2. Load Game");
+
+    private static string FormatNewGame(Responses.NewGameResponse response)
+    {
+        var idx        = 1;
+        var adventures = string.Join("\n", response.Adventures.Select(a => $"\t{idx++}. {a.Name}"));
+        return $"Select an adventure to begin your journey:\n{adventures}";
+    }
+
+    private static string FormatSavedPlaythroughs(Responses.SavedPlaythroughsResponse response)
+    {
+        var idx   = 1;
+        var saves = string.Join("\n", response.Playthroughs.Select(p =>
+            $"\t{idx++}. {p.CharacterName} - {p.AdventureName} ({p.Location})"));
+        return $"Select a saved game:\n{saves}";
+    }
 
     private string FormatLogin(Responses.LoggedInResponse response)
     {

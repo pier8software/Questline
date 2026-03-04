@@ -1,5 +1,6 @@
 using Questline.Domain.Adventures.Entity;
 using Questline.Domain.Characters.Entity;
+using Questline.Domain.Playthroughs.Data;
 using Questline.Domain.Playthroughs.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
@@ -54,6 +55,7 @@ public class GameBuilder
         var playthrough = new Playthrough
         {
             Id               = "test-playthrough",
+            Username         = "test-user",
             AdventureId      = _adventureId,
             StartingRoomId   = startLocation,
             CharacterName    = _characterName,
@@ -101,6 +103,16 @@ public class FakePlaythroughRepository : IPlaythroughRepository
         _store[playthrough.Id] = playthrough;
         return Task.CompletedTask;
     }
+
+    public Task<IReadOnlyList<PlaythroughSummary>> FindByUsername(string username)
+    {
+        var summaries = _store.Values
+            .Where(p => p.Username == username)
+            .Select(p => new PlaythroughSummary(p.Id, p.CharacterName, p.AdventureId, p.Location))
+            .ToList();
+
+        return Task.FromResult<IReadOnlyList<PlaythroughSummary>>(summaries);
+    }
 }
 
 public class FakeRoomRepository(Dictionary<string, Room> rooms) : IRoomRepository
@@ -125,6 +137,8 @@ public class FakeAdventureRepository : IAdventureRepository
 public class FakeGameSession(string playthroughId) : IGameSession
 {
     public string? PlaythroughId { get; private set; } = playthroughId;
+    public string? Username { get; private set; }
 
     public void SetPlaythroughId(string id) => PlaythroughId = id;
+    public void SetUsername(string username) => Username = username;
 }

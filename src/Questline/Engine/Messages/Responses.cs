@@ -1,5 +1,6 @@
 using Questline.Domain.Characters.Data;
 using Questline.Domain.Players.Entity;
+using Questline.Domain.Playthroughs.Data;
 using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Messages;
@@ -19,6 +20,14 @@ public static class Responses
     public record GameQuitedResponse : IResponse;
 
     public record LoggedInResponse(Player Player, Resources.AdventureSummary[] Adventures) : IResponse;
+
+    public record StartMenuResponse : IResponse;
+
+    public record SavedPlaythroughsResponse(IReadOnlyList<PlaythroughSummary> Playthroughs) : IResponse;
+
+    public record NoSavedGamesResponse : IResponse;
+
+    public record NewGameResponse(Resources.AdventureSummary[] Adventures) : IResponse;
 
     public record NewAdventureSelectedResponse : IResponse;
 

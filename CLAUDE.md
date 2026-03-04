@@ -71,6 +71,7 @@ updated via OpenSpec change workflow, not edited directly.
 - `dotnet build` - Builds the solution
 - `dotnet test --no-build` - Run all tests
 - `dotnet run --project src/Questline` - Run the game
+- `aspire run` - Run the development environment
 
 ### GitHub Workflows
 

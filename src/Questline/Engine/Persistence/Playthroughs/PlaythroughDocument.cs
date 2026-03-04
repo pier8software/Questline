@@ -5,6 +5,7 @@ namespace Questline.Engine.Persistence.Playthroughs;
 
 public class PlaythroughDocument : Document
 {
+    public string                               Username          { get; set; } = null!;
     public string                               AdventureId       { get; set; } = null!;
     public string                               StartingRoomId    { get; set; } = null!;
     public string                               CharacterName     { get; set; } = null!;

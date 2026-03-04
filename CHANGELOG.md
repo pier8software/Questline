@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-03-03
+
+### Added
+
+- Start menu phase after login with "New Game" and "Load Game" options
+- Load Game: query and display saved playthroughs by player username
+- Resume gameplay from a loaded playthrough, restoring full character and world state
+- `Username` field on `Playthrough` entity and MongoDB document for player association
+- `FindByUsername` query on `PlaythroughRepository` for listing player saves
+- `Username` property on `GameSession` to track logged-in player identity
+- New response types: `StartMenuResponse`, `NewGameResponse`, `SavedPlaythroughsResponse`, `NoSavedGamesResponse`
+- `PlaythroughSummary` record for lightweight playthrough listing
+
+### Changed
+
+- Login now transitions to Start Menu instead of directly to adventure selection
+- `Playthrough.Create` factory method accepts a `username` parameter
+
 ## [0.6.0] - 2026-03-03
 
 ### Added

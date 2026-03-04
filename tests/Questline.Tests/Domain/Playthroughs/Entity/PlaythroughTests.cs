@@ -15,6 +15,7 @@ public class PlaythroughTests
     private static Playthrough CreatePlaythrough(string location = "start") => new()
     {
         Id             = "pt-1",
+        Username       = "test-user",
         AdventureId    = "test-adventure",
         StartingRoomId = "start",
         CharacterName  = "TestHero",
@@ -31,8 +32,9 @@ public class PlaythroughTests
         var character = Character.Create("char-1", "TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores);
 
-        var playthrough = Playthrough.Create("test-adventure", "start", character);
+        var playthrough = Playthrough.Create("alice", "test-adventure", "start", character);
 
+        playthrough.Username.ShouldBe("alice");
         playthrough.AdventureId.ShouldBe("test-adventure");
         playthrough.StartingRoomId.ShouldBe("start");
         playthrough.CharacterName.ShouldBe("TestHero");

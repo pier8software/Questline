@@ -11,6 +11,7 @@ public class PlaythroughMapper : IPersistenceMapper<Playthrough, PlaythroughDocu
     public Playthrough From(PlaythroughDocument document) => new()
     {
         Id             = document.Id,
+        Username       = document.Username,
         AdventureId    = document.AdventureId,
         StartingRoomId = document.StartingRoomId,
         CharacterName  = document.CharacterName,
@@ -49,6 +50,7 @@ public class PlaythroughMapper : IPersistenceMapper<Playthrough, PlaythroughDocu
     public PlaythroughDocument To(Playthrough entity) => new()
     {
         Id             = entity.Id,
+        Username       = entity.Username,
         AdventureId    = entity.AdventureId,
         StartingRoomId = entity.StartingRoomId,
         CharacterName  = entity.CharacterName,

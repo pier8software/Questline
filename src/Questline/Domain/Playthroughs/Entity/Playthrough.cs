@@ -11,6 +11,7 @@ public class Playthrough : DomainEntity
     private readonly HashSet<string>                 _unlockedBarriers = [];
     private readonly Dictionary<string, List<Item>>  _roomItems        = new();
 
+    public required string         Username       { get; init; }
     public required string         AdventureId    { get; init; }
     public required string         StartingRoomId { get; init; }
     public required string         CharacterName  { get; init; }
@@ -41,6 +42,7 @@ public class Playthrough : DomainEntity
     }
 
     public static Playthrough Create(
+        string    username,
         string    adventureId,
         string    startingRoomId,
         Character character)
@@ -48,6 +50,7 @@ public class Playthrough : DomainEntity
         return new Playthrough
         {
             Id             = Guid.NewGuid().ToString(),
+            Username       = username,
             AdventureId    = adventureId,
             StartingRoomId = startingRoomId,
             CharacterName  = character.Name,
