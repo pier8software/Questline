@@ -4,34 +4,20 @@ namespace Questline.Tests.Domain.Characters;
 
 public class CharacterNameValidatorTests
 {
-    [Fact]
-    public void Valid_name_returns_success() => CharacterNameValidator.HaveValidLength("Thorin").ShouldBeTrue();
+    [Theory]
+    [InlineData("Thorin")]
+    [InlineData("Sir Lancelot")]
+    [InlineData("Bo")]
+    [InlineData("Abcdefghijklmnopqrstuvwx")]
+    public void Valid_name_returns_success(string name) =>
+        CharacterNameValidator.HaveValidLength(name).ShouldBeTrue();
 
-    [Fact]
-    public void Name_with_spaces_is_valid() => CharacterNameValidator.HaveValidLength("Sir Lancelot").ShouldBeTrue();
-
-    [Fact]
-    public void Two_character_name_is_valid() => CharacterNameValidator.HaveValidLength("Bo").ShouldBeTrue();
-
-    [Fact]
-    public void Twenty_four_character_name_is_valid() =>
-        CharacterNameValidator.HaveValidLength("Abcdefghijklmnopqrstuvwx").ShouldBeTrue();
-
-    [Fact]
-    public void Empty_name_returns_failure() => CharacterNameValidator.HaveValidLength("").ShouldBeFalse();
-
-    [Fact]
-    public void Single_character_name_returns_failure() => CharacterNameValidator.HaveValidLength("A").ShouldBeFalse();
-
-    [Fact]
-    public void Name_longer_than_24_characters_returns_failure() =>
-        CharacterNameValidator.HaveValidLength("Abcdefghijklmnopqrstuvwxy").ShouldBeFalse();
-
-    [Fact]
-    public void Name_with_leading_whitespace_returns_failure() =>
-        CharacterNameValidator.HaveValidLength(" Thorin").ShouldBeFalse();
-
-    [Fact]
-    public void Name_with_trailing_whitespace_returns_failure() =>
-        CharacterNameValidator.HaveValidLength("Thorin ").ShouldBeFalse();
+    [Theory]
+    [InlineData("")]
+    [InlineData("A")]
+    [InlineData("Abcdefghijklmnopqrstuvwxy")]
+    [InlineData(" Thorin")]
+    [InlineData("Thorin ")]
+    public void Invalid_name_returns_failure(string name) =>
+        CharacterNameValidator.HaveValidLength(name).ShouldBeFalse();
 }

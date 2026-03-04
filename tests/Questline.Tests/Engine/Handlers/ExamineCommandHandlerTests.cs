@@ -8,84 +8,104 @@ namespace Questline.Tests.Engine.Handlers;
 
 public class ExamineCommandHandlerTests
 {
-    [Fact]
-    public async Task Examine_inventory_item_shows_description()
+    public class When_examining_inventory_item
     {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber)
-            .WithInventoryItem(Items.RustyKey)
-            .Build("chamber");
+        private readonly ExamineCommandHandler _handler;
 
-        var handler = new ExamineCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+        public When_examining_inventory_item()
+        {
+            var fixture = new GameBuilder()
+                .WithRoom(Rooms.Chamber)
+                .WithInventoryItem(Items.RustyKey)
+                .Build("chamber");
 
-        var result = await handler.Handle(new Requests.ExamineCommand("rusty key"));
+            _handler = new ExamineCommandHandler(
+                fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+        }
 
-        var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
-        examineResult.Description.ShouldBe("An old iron key, its teeth worn by time.");
+        [Fact]
+        public async Task Shows_item_description()
+        {
+            var result = await _handler.Handle(new Requests.ExamineCommand("rusty key"));
+
+            var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
+            examineResult.Description.ShouldBe("An old iron key, its teeth worn by time.");
+        }
     }
 
-    [Fact]
-    public async Task Examine_room_item_shows_description()
+    public class When_examining_room_item
     {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber.WithItem(Items.Torch))
-            .Build("chamber");
+        private readonly ExamineCommandHandler _handler;
 
-        var handler = new ExamineCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+        public When_examining_room_item()
+        {
+            var fixture = new GameBuilder()
+                .WithRoom(Rooms.Chamber.WithItem(Items.Torch))
+                .Build("chamber");
 
-        var result = await handler.Handle(new Requests.ExamineCommand("torch"));
+            _handler = new ExamineCommandHandler(
+                fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+        }
 
-        var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
-        examineResult.Description.ShouldBe("A flickering wooden torch.");
+        [Fact]
+        public async Task Shows_item_description()
+        {
+            var result = await _handler.Handle(new Requests.ExamineCommand("torch"));
+
+            var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
+            examineResult.Description.ShouldBe("A flickering wooden torch.");
+        }
     }
 
-    [Fact]
-    public async Task Examine_room_feature_by_keyword_shows_description()
+    public class When_examining_room_feature
     {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber.WithFeature(Features.StrangeSymbols))
-            .Build("chamber");
+        private readonly ExamineCommandHandler _handler;
 
-        var handler = new ExamineCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+        public When_examining_room_feature()
+        {
+            var fixture = new GameBuilder()
+                .WithRoom(Rooms.Chamber.WithFeature(Features.StrangeSymbols))
+                .Build("chamber");
 
-        var result = await handler.Handle(new Requests.ExamineCommand("symbols"));
+            _handler = new ExamineCommandHandler(
+                fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+        }
 
-        var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
-        examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");
+        [Fact]
+        public async Task Keyword_shows_description()
+        {
+            var result = await _handler.Handle(new Requests.ExamineCommand("symbols"));
+
+            var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
+            examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");
+        }
+
+        [Fact]
+        public async Task Full_name_shows_description()
+        {
+            var result = await _handler.Handle(new Requests.ExamineCommand("strange symbols"));
+
+            var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
+            examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");
+        }
     }
 
-    [Fact]
-    public async Task Examine_room_feature_by_name_shows_description()
+    public class When_target_is_not_found
     {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber.WithFeature(Features.StrangeSymbols))
-            .Build("chamber");
+        [Fact]
+        public async Task Returns_error_message()
+        {
+            var fixture = new GameBuilder()
+                .WithRoom(Rooms.Chamber)
+                .Build("chamber");
 
-        var handler = new ExamineCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+            var handler = new ExamineCommandHandler(
+                fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(new Requests.ExamineCommand("strange symbols"));
+            var result = await handler.Handle(new Requests.ExamineCommand("mysterious orb"));
 
-        var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
-        examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");
-    }
-
-    [Fact]
-    public async Task Examine_unknown_target_returns_error()
-    {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber)
-            .Build("chamber");
-
-        var handler = new ExamineCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
-
-        var result = await handler.Handle(new Requests.ExamineCommand("mysterious orb"));
-
-        var error = result.ShouldBeOfType<ErrorResponse>();
-        error.ErrorMessage.ShouldBe("You don't see 'mysterious orb' here.");
+            var error = result.ShouldBeOfType<ErrorResponse>();
+            error.ErrorMessage.ShouldBe("You don't see 'mysterious orb' here.");
+        }
     }
 }

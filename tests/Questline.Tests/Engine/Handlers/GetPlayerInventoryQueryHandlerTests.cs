@@ -1,4 +1,3 @@
-using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
@@ -47,7 +46,7 @@ public class GetPlayerInventoryQueryHandlerTests
     public async Task Get_then_drop_round_trips_item_through_inventory()
     {
         var fixture = new GameBuilder()
-            .WithRoom(Rooms.Cellar.WithItem(Items.BrassLamp.Build()))
+            .WithRoom(Rooms.Cellar.WithItem(Items.BrassLamp))
             .Build("cellar");
 
         var takeHandler = new TakeItemHandler(
@@ -56,7 +55,7 @@ public class GetPlayerInventoryQueryHandlerTests
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
         await takeHandler.Handle(new Requests.TakeItemCommand("brass lamp"));
-        fixture.Playthrough.Inventory.ShouldContain(Items.BrassLamp.Build());
+        fixture.Playthrough.Inventory.ShouldContain(i => i.Name == "brass lamp");
 
         await dropHandler.Handle(new Requests.DropItemCommand("brass lamp"));
         fixture.Playthrough.Inventory.ShouldBeEmpty();

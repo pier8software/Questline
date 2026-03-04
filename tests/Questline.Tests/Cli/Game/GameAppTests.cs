@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Questline.Cli;
 using Questline.Cli.Game;
-using Questline.Domain.Adventures.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
 using Questline.Engine.Core;
@@ -49,13 +48,12 @@ public class GameAppTests
                 .Build()
         };
 
-        var adventure = new Adventure
-        {
-            Id             = "the-goblins-lair",
-            Name           = "The Goblins' Lair",
-            Description    = "A test adventure",
-            StartingRoomId = "entrance"
-        };
+        var adventure = new AdventureBuilder()
+            .WithId("the-goblins-lair")
+            .WithName("The Goblins' Lair")
+            .WithDescription("A test adventure")
+            .WithStartingRoomId("entrance")
+            .Build();
 
         var adventureRepository   = new FakeAdventureRepository(adventure);
         var roomRepository        = new FakeRoomRepository(rooms);

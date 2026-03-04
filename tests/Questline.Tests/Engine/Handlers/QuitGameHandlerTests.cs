@@ -6,7 +6,7 @@ namespace Questline.Tests.Engine.Handlers;
 public class QuitGameHandlerTests
 {
     [Fact]
-    public async Task Returns_quited_response()
+    public async Task Returns_quit_response()
     {
         var handler = new QuitGameHandler();
 

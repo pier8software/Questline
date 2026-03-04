@@ -6,7 +6,7 @@ namespace Questline.Tests.Engine.Messages;
 public class RequestsTests
 {
     [Fact]
-    public void Can_create_DropItemCommand()
+    public void DropItemCommand_is_created_from_args()
     {
         var request = Requests.DropItemCommand.CreateRequest(["sword"]);
 
@@ -15,7 +15,7 @@ public class RequestsTests
     }
 
     [Fact]
-    public void Can_create_ExamineCommand()
+    public void ExamineCommand_is_created_from_args()
     {
         var request = Requests.ExamineCommand.CreateRequest(["sword"]);
 
@@ -24,7 +24,7 @@ public class RequestsTests
     }
 
     [Fact]
-    public void Can_create_GetRoomDetailsQuery()
+    public void GetRoomDetailsQuery_is_created_from_empty_args()
     {
         var request = Requests.GetRoomDetailsQuery.CreateRequest([]);
 
@@ -32,7 +32,7 @@ public class RequestsTests
     }
 
     [Fact]
-    public void Can_create_GetPlayerInventoryQuery()
+    public void GetPlayerInventoryQuery_is_created_from_empty_args()
     {
         var request = Requests.GetPlayerInventoryQuery.CreateRequest([]);
 
@@ -47,7 +47,7 @@ public class RequestsTests
     [InlineData("up",    Direction.Up)]
     [InlineData("down",  Direction.Down)]
     [InlineData("left",  Direction.Invalid)]
-    public void Can_create_MovePlayerCommand(string direction, Direction expectedDirection)
+    public void MovePlayerCommand_parses_direction_from_args(string direction, Direction expectedDirection)
     {
         var request = Requests.MovePlayerCommand.CreateRequest([direction]);
 
@@ -56,7 +56,7 @@ public class RequestsTests
     }
 
     [Fact]
-    public void Can_create_TakeItemCommand()
+    public void TakeItemCommand_is_created_from_args()
     {
         var request = Requests.TakeItemCommand.CreateRequest(["sword"]);
 
@@ -65,7 +65,7 @@ public class RequestsTests
     }
 
     [Fact]
-    public void Can_create_QuitGame()
+    public void QuitGame_is_created_from_empty_args()
     {
         var request = Requests.QuitGame.CreateRequest([]);
 
@@ -73,7 +73,7 @@ public class RequestsTests
     }
 
     [Fact]
-    public void Can_create_UseItemCommand()
+    public void UseItemCommand_parses_item_and_target_from_args()
     {
         var request = Requests.UseItemCommand.CreateRequest(["key", "on", "door"]);
 

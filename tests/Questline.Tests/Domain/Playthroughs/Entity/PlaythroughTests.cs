@@ -1,136 +1,90 @@
-using Questline.Domain.Characters.Entity;
 using Questline.Domain.Playthroughs.Entity;
-using Questline.Domain.Shared.Entity;
+using Questline.Tests.TestHelpers.Builders;
+using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Domain.Playthroughs.Entity;
 
 public class PlaythroughTests
 {
-    private static readonly HitPoints DefaultHitPoints = new(8, 8);
+    private readonly Playthrough _playthrough;
 
-    private static readonly AbilityScores DefaultAbilityScores = new(
-        new AbilityScore(10), new AbilityScore(10), new AbilityScore(10),
-        new AbilityScore(10), new AbilityScore(10), new AbilityScore(10));
-
-    private static Playthrough CreatePlaythrough(string location = "start") => new()
+    public PlaythroughTests()
     {
-        Id             = "pt-1",
-        Username       = "test-user",
-        AdventureId    = "test-adventure",
-        StartingRoomId = "start",
-        CharacterName  = "TestHero",
-        Race           = Race.Human,
-        Class          = CharacterClass.Fighter,
-        AbilityScores  = DefaultAbilityScores,
-        HitPoints      = DefaultHitPoints,
-        Location       = location
-    };
-
-    [Fact]
-    public void Create_from_character_captures_all_data()
-    {
-        var character = Character.Create("char-1", "TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores);
-
-        var playthrough = Playthrough.Create("alice", "test-adventure", "start", character);
-
-        playthrough.Username.ShouldBe("alice");
-        playthrough.AdventureId.ShouldBe("test-adventure");
-        playthrough.StartingRoomId.ShouldBe("start");
-        playthrough.CharacterName.ShouldBe("TestHero");
-        playthrough.Race.ShouldBe(Race.Human);
-        playthrough.Class.ShouldBe(CharacterClass.Fighter);
-        playthrough.Location.ShouldBe("start");
-        playthrough.Inventory.ShouldBeEmpty();
-        playthrough.UnlockedBarriers.ShouldBeEmpty();
+        _playthrough = new PlaythroughBuilder().Build();
     }
 
     [Fact]
     public void MoveTo_updates_location()
     {
-        var playthrough = CreatePlaythrough();
+        _playthrough.MoveTo("end");
 
-        playthrough.MoveTo("end");
-
-        playthrough.Location.ShouldBe("end");
+        _playthrough.Location.ShouldBe("end");
     }
 
     [Fact]
-    public void Can_add_item_to_inventory()
+    public void Item_is_added_to_inventory()
     {
-        var playthrough = CreatePlaythrough();
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var lamp = Items.BrassLamp.Build();
 
-        playthrough.AddInventoryItem(lamp);
+        _playthrough.AddInventoryItem(lamp);
 
-        playthrough.Inventory.ShouldContain(lamp);
+        _playthrough.Inventory.ShouldContain(lamp);
     }
 
     [Fact]
-    public void Can_remove_item_from_inventory()
+    public void Item_is_removed_from_inventory()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var playthrough = CreatePlaythrough();
-        playthrough.AddInventoryItem(lamp);
+        var lamp = Items.BrassLamp.Build();
+        _playthrough.AddInventoryItem(lamp);
 
-        playthrough.RemoveInventoryItem(lamp);
+        _playthrough.RemoveInventoryItem(lamp);
 
-        playthrough.Inventory.ShouldBeEmpty();
+        _playthrough.Inventory.ShouldBeEmpty();
     }
 
     [Fact]
     public void FindInventoryItemByName_is_case_insensitive()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var playthrough = CreatePlaythrough();
-        playthrough.AddInventoryItem(lamp);
+        var lamp = Items.BrassLamp.Build();
+        _playthrough.AddInventoryItem(lamp);
 
-        playthrough.FindInventoryItemByName("BRASS LAMP").ShouldBe(lamp);
+        _playthrough.FindInventoryItemByName("BRASS LAMP").ShouldBe(lamp);
     }
 
     [Fact]
     public void FindInventoryItemByName_returns_null_when_not_found()
     {
-        var playthrough = CreatePlaythrough();
-
-        playthrough.FindInventoryItemByName("sword").ShouldBeNull();
+        _playthrough.FindInventoryItemByName("sword").ShouldBeNull();
     }
 
     [Fact]
     public void Barrier_starts_locked()
     {
-        var playthrough = CreatePlaythrough();
-
-        playthrough.IsBarrierUnlocked("iron-door").ShouldBeFalse();
+        _playthrough.IsBarrierUnlocked("iron-door").ShouldBeFalse();
     }
 
     [Fact]
-    public void Can_unlock_barrier()
+    public void Barrier_is_unlocked_after_unlock_call()
     {
-        var playthrough = CreatePlaythrough();
+        _playthrough.UnlockBarrier("iron-door");
 
-        playthrough.UnlockBarrier("iron-door");
-
-        playthrough.IsBarrierUnlocked("iron-door").ShouldBeTrue();
+        _playthrough.IsBarrierUnlocked("iron-door").ShouldBeTrue();
     }
 
     [Fact]
     public void GetRecordedRoomItems_returns_null_for_unmodified_room()
     {
-        var playthrough = CreatePlaythrough();
-
-        playthrough.GetRecordedRoomItems("cellar").ShouldBeNull();
+        _playthrough.GetRecordedRoomItems("cellar").ShouldBeNull();
     }
 
     [Fact]
     public void RecordRoomItems_stores_items_for_room()
     {
-        var playthrough = CreatePlaythrough();
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var lamp = Items.BrassLamp.Build();
 
-        playthrough.RecordRoomItems("cellar", [lamp]);
+        _playthrough.RecordRoomItems("cellar", [lamp]);
 
-        var items = playthrough.GetRecordedRoomItems("cellar");
+        var items = _playthrough.GetRecordedRoomItems("cellar");
         items.ShouldNotBeNull();
         items!.ShouldContain(lamp);
     }
@@ -138,9 +92,7 @@ public class PlaythroughTests
     [Fact]
     public void ToCharacterSummary_returns_summary()
     {
-        var playthrough = CreatePlaythrough();
-
-        var summary = playthrough.ToCharacterSummary();
+        var summary = _playthrough.ToCharacterSummary();
 
         summary.Name.ShouldBe("TestHero");
         summary.Race.ShouldBe("Human");

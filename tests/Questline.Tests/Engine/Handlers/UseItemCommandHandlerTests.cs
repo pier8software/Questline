@@ -9,119 +9,130 @@ namespace Questline.Tests.Engine.Handlers;
 
 public class UseItemCommandHandlerTests
 {
-    [Fact]
-    public async Task Correct_item_on_barrier_unlocks_it()
+    public class When_using_correct_item_on_barrier
     {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
-            .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(Items.RustyKey)
-            .Build("chamber");
+        private readonly UseItemCommandHandler _handler;
+        private readonly GameFixture _fixture;
 
-        var handler = new UseItemCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+        public When_using_correct_item_on_barrier()
+        {
+            _fixture = new GameBuilder()
+                .WithRoom(Rooms.Chamber
+                    .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
+                .WithRoom(Rooms.BeyondRoom)
+                .WithInventoryItem(Items.RustyKey)
+                .Build("chamber");
 
-        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
+            _handler = new UseItemCommandHandler(
+                _fixture.Session, _fixture.PlaythroughRepository, _fixture.RoomRepository);
+        }
 
-        var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
-        useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
-        fixture.Playthrough.IsBarrierUnlocked("iron-door").ShouldBeTrue();
+        [Fact]
+        public async Task Barrier_is_unlocked_with_message()
+        {
+            var result = await _handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
+
+            var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
+            useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
+            _fixture.Playthrough.IsBarrierUnlocked("iron-door").ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Contextual_use_unlocks_matching_barrier_in_room()
+        {
+            var result = await _handler.Handle(new Requests.UseItemCommand("rusty key", null));
+
+            var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
+            useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
+            _fixture.Playthrough.IsBarrierUnlocked("iron-door").ShouldBeTrue();
+        }
     }
 
-    [Fact]
-    public async Task Wrong_item_returns_error_and_barrier_stays_locked()
+    public class When_using_wrong_item_on_barrier
     {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
-            .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(Items.Torch)
-            .Build("chamber");
+        [Fact]
+        public async Task Returns_error_and_barrier_stays_locked()
+        {
+            var fixture = new GameBuilder()
+                .WithRoom(Rooms.Chamber
+                    .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
+                .WithRoom(Rooms.BeyondRoom)
+                .WithInventoryItem(Items.Torch)
+                .Build("chamber");
 
-        var handler = new UseItemCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+            var handler = new UseItemCommandHandler(
+                fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(new Requests.UseItemCommand("torch", "iron door"));
+            var result = await handler.Handle(new Requests.UseItemCommand("torch", "iron door"));
 
-        var error = result.ShouldBeOfType<ErrorResponse>();
-        error.ErrorMessage.ShouldBe("The torch doesn't work on the iron door.");
-        fixture.Playthrough.IsBarrierUnlocked("iron-door").ShouldBeFalse();
+            var error = result.ShouldBeOfType<ErrorResponse>();
+            error.ErrorMessage.ShouldBe("The torch doesn't work on the iron door.");
+            fixture.Playthrough.IsBarrierUnlocked("iron-door").ShouldBeFalse();
+        }
     }
 
-    [Fact]
-    public async Task Item_not_in_inventory_returns_error()
+    public class When_item_is_not_in_inventory
     {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
-            .WithRoom(Rooms.BeyondRoom)
-            .Build("chamber");
+        [Fact]
+        public async Task Returns_error_message()
+        {
+            var fixture = new GameBuilder()
+                .WithRoom(Rooms.Chamber
+                    .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
+                .WithRoom(Rooms.BeyondRoom)
+                .Build("chamber");
 
-        var handler = new UseItemCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+            var handler = new UseItemCommandHandler(
+                fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
+            var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
 
-        var error = result.ShouldBeOfType<ErrorResponse>();
-        error.ErrorMessage.ShouldBe("You don't have 'rusty key'.");
+            var error = result.ShouldBeOfType<ErrorResponse>();
+            error.ErrorMessage.ShouldBe("You don't have 'rusty key'.");
+        }
     }
 
-    [Fact]
-    public async Task Contextual_use_unlocks_matching_barrier_in_room()
+    public class When_target_is_not_found
     {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
-            .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(Items.RustyKey)
-            .Build("chamber");
+        [Fact]
+        public async Task Returns_error_message()
+        {
+            var fixture = new GameBuilder()
+                .WithRoom(Rooms.Chamber.WithExit(Direction.North, "beyond"))
+                .WithRoom(Rooms.BeyondRoom)
+                .WithInventoryItem(Items.RustyKey)
+                .Build("chamber");
 
-        var handler = new UseItemCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+            var handler = new UseItemCommandHandler(
+                fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", null));
+            var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
 
-        var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
-        useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
-        fixture.Playthrough.IsBarrierUnlocked("iron-door").ShouldBeTrue();
+            var error = result.ShouldBeOfType<ErrorResponse>();
+            error.ErrorMessage.ShouldBe("You don't see 'iron door' here.");
+        }
     }
 
-    [Fact]
-    public async Task Target_not_found_returns_error()
+    public class When_barrier_is_already_unlocked
     {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber.WithExit(Direction.North, "beyond"))
-            .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(Items.RustyKey)
-            .Build("chamber");
+        [Fact]
+        public async Task Returns_informative_message()
+        {
+            var fixture = new GameBuilder()
+                .WithRoom(Rooms.Chamber
+                    .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
+                .WithRoom(Rooms.BeyondRoom)
+                .WithInventoryItem(Items.RustyKey)
+                .WithUnlockedBarrier("iron-door")
+                .Build("chamber");
 
-        var handler = new UseItemCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
+            var handler = new UseItemCommandHandler(
+                fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
+            var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
 
-        var error = result.ShouldBeOfType<ErrorResponse>();
-        error.ErrorMessage.ShouldBe("You don't see 'iron door' here.");
-    }
-
-    [Fact]
-    public async Task Already_unlocked_barrier_returns_informative_message()
-    {
-        var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
-            .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(Items.RustyKey)
-            .WithUnlockedBarrier("iron-door")
-            .Build("chamber");
-
-        var handler = new UseItemCommandHandler(
-            fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
-
-        var result = await handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
-
-        var error = result.ShouldBeOfType<ErrorResponse>();
-        error.ErrorMessage.ShouldBe("The iron door is already unlocked.");
+            var error = result.ShouldBeOfType<ErrorResponse>();
+            error.ErrorMessage.ShouldBe("The iron door is already unlocked.");
+        }
     }
 }
