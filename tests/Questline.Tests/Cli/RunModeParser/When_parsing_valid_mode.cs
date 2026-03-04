@@ -2,7 +2,7 @@ using Questline.Cli;
 
 namespace Questline.Tests.Cli;
 
-public class RunModeParserTests
+public class When_parsing_valid_mode
 {
     [Fact]
     public void Defaults_to_game_when_no_args()
@@ -34,15 +34,5 @@ public class RunModeParserTests
         var mode = RunModeParser.Parse(["--mode=Deploy-Content"]);
 
         mode.ShouldBe(RunMode.DeployContent);
-    }
-
-    [Fact]
-    public void Throws_for_invalid_mode()
-    {
-        var exception = Should.Throw<ArgumentException>(() => RunModeParser.Parse(["--mode=invalid"]));
-
-        exception.Message.ShouldContain("Unknown mode 'invalid'");
-        exception.Message.ShouldContain("game");
-        exception.Message.ShouldContain("deploy-content");
     }
 }

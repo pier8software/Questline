@@ -2,16 +2,8 @@ using Questline.Domain.Characters;
 
 namespace Questline.Tests.Domain.Characters;
 
-public class CharacterNameValidatorTests
+public class When_name_is_invalid
 {
-    [Theory]
-    [InlineData("Thorin")]
-    [InlineData("Sir Lancelot")]
-    [InlineData("Bo")]
-    [InlineData("Abcdefghijklmnopqrstuvwx")]
-    public void Valid_name_returns_success(string name) =>
-        CharacterNameValidator.HaveValidLength(name).ShouldBeTrue();
-
     [Theory]
     [InlineData("")]
     [InlineData("A")]

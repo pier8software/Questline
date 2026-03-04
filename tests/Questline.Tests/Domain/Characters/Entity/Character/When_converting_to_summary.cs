@@ -2,7 +2,7 @@ using Questline.Domain.Characters.Entity;
 
 namespace Questline.Tests.Domain.Characters.Entity;
 
-public class CharacterTests
+public class When_converting_to_summary
 {
     private static readonly HitPoints DefaultHitPoints = new(8, 8);
 

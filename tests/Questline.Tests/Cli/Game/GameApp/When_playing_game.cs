@@ -15,7 +15,7 @@ using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Cli.Game;
 
-public class GameAppTests
+public class When_playing_game
 {
     // 3d6 x 6 ability scores = 18 rolls, then 1d8 for HP = 19 rolls total
     private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];

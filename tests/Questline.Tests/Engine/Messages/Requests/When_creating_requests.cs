@@ -3,7 +3,7 @@ using Questline.Engine.Messages;
 
 namespace Questline.Tests.Engine.Messages;
 
-public class RequestsTests
+public class When_creating_requests
 {
     [Fact]
     public void DropItemCommand_is_created_from_args()

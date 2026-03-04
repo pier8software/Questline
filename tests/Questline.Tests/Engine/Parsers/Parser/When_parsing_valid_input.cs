@@ -3,7 +3,7 @@ using static Questline.Engine.Messages.Requests;
 
 namespace Questline.Tests.Engine.Parsers;
 
-public class ParserTests
+public class When_parsing_valid_input
 {
     private readonly Parser _parser = new();
 
@@ -39,7 +39,7 @@ public class ParserTests
     {
         var result = _parser.Parse("LOOK");
 
-        var command = result.Request.ShouldBeOfType<GetRoomDetailsQuery>();
+        result.Request.ShouldBeOfType<GetRoomDetailsQuery>();
     }
 
     [Fact]
@@ -57,24 +57,5 @@ public class ParserTests
 
         var command = result.Request.ShouldBeOfType<TakeItemCommand>();
         command.ItemName.ShouldBe("lamp");
-    }
-
-    [Fact]
-    public void Empty_input_returns_parse_error()
-    {
-        var result = _parser.Parse("");
-
-        result.IsSuccess.ShouldBeFalse();
-        result.Error.ShouldNotBeNull();
-        result.Error.Message.ShouldBe("Please enter a command.");
-    }
-
-    [Fact]
-    public void Unknown_verb_returns_error()
-    {
-        var result = _parser.Parse("error");
-
-        result.IsSuccess.ShouldBeFalse();
-        result.Error!.Message.ShouldBe("I don't understand 'error'.");
     }
 }

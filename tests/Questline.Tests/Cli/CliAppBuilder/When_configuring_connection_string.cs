@@ -2,37 +2,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Questline.Cli;
-using Questline.Engine.Content;
-using Questline.Framework.FileSystem;
 
 namespace Questline.Tests.Cli;
 
-public class CliAppBuilderTests
+public class When_configuring_connection_string
 {
-    [Fact]
-    public void Game_mode_does_not_register_content_seeder()
-    {
-        var builder = new CliAppBuilder()
-            .WithRunMode(RunMode.Game)
-            .ConfigureServices();
-
-        var provider = builder.BuildServiceProvider();
-
-        provider.GetService<IContentSeeder>().ShouldBeNull();
-    }
-
-    [Fact]
-    public void Game_mode_does_not_register_json_file_loader()
-    {
-        var builder = new CliAppBuilder()
-            .WithRunMode(RunMode.Game)
-            .ConfigureServices();
-
-        var provider = builder.BuildServiceProvider();
-
-        provider.GetService<JsonFileLoader>().ShouldBeNull();
-    }
-
     [Fact]
     public void Uses_connection_string_from_configuration()
     {

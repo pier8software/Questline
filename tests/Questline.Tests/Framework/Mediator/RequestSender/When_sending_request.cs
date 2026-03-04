@@ -9,7 +9,7 @@ using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Framework.Mediator;
 
-public class RequestSenderTests
+public class When_sending_request
 {
     [Fact]
     public async Task Registered_verb_executes_its_handler()

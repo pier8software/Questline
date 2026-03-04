@@ -13,12 +13,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Questline.Tests.Engine.Core;
 
-public class GameEngineStartMenuTests
+public class When_on_start_menu
 {
     private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
 
-    private static (GameEngine engine, FakePlaythroughRepository playthroughRepo, FakeGameSession session) CreateEngine(
-        FakePlaythroughRepository? playthroughRepo = null)
+    private static GameEngine CreateEngine(FakePlaythroughRepository? playthroughRepo = null)
     {
         var rooms = new Dictionary<string, Room>
         {
@@ -51,9 +50,15 @@ public class GameEngineStartMenuTests
         var stateMachine = new CharacterCreationStateMachine(dice);
         var dispatcher   = new RequestSender(serviceProvider);
         var parser       = new Parser();
-        var engine       = new GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepo, session, stateMachine);
 
-        return (engine, playthroughRepo, session);
+        return new GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepo, session, stateMachine);
+    }
+
+    private static async Task<GameEngine> LoginAndReachStartMenu(GameEngine engine)
+    {
+        await engine.ProcessInput(null);
+        await engine.ProcessInput("login alice");
+        return engine;
     }
 
     private static PlaythroughBuilder ThorinPlaythrough() =>
@@ -65,40 +70,10 @@ public class GameEngineStartMenuTests
             .WithCharacterName("Thorin")
             .WithLocation("entrance");
 
-    private static async Task<GameEngine> LoginAndReachStartMenu(GameEngine engine)
-    {
-        await engine.ProcessInput(null);         // Started -> Login
-        await engine.ProcessInput("login alice"); // Login -> StartMenu
-        return engine;
-    }
-
     [Fact]
-    public async Task Login_transitions_to_StartMenu()
+    public async Task Selecting_1_transitions_to_NewAdventure()
     {
-        var (engine, _, _) = CreateEngine();
-
-        await engine.ProcessInput(null);          // Started -> Login
-        var response = await engine.ProcessInput("login alice");
-
-        engine.Phase.ShouldBe(GamePhase.StartMenu);
-        response.ShouldBeOfType<Responses.StartMenuResponse>();
-    }
-
-    [Fact]
-    public async Task Login_stores_username_on_session()
-    {
-        var (engine, _, session) = CreateEngine();
-
-        await engine.ProcessInput(null);
-        await engine.ProcessInput("login alice");
-
-        session.Username.ShouldBe("alice");
-    }
-
-    [Fact]
-    public async Task StartMenu_selecting_1_transitions_to_NewAdventure()
-    {
-        var (engine, _, _) = CreateEngine();
+        var engine = CreateEngine();
         await LoginAndReachStartMenu(engine);
 
         var response = await engine.ProcessInput("1");
@@ -108,11 +83,11 @@ public class GameEngineStartMenuTests
     }
 
     [Fact]
-    public async Task StartMenu_selecting_2_with_saves_transitions_to_LoadGame()
+    public async Task Selecting_2_with_saves_transitions_to_LoadGame()
     {
         var playthrough = ThorinPlaythrough().Build();
         var repo = new FakePlaythroughRepository(playthrough);
-        var (engine, _, _) = CreateEngine(repo);
+        var engine = CreateEngine(repo);
         await LoginAndReachStartMenu(engine);
 
         var response = await engine.ProcessInput("2");
@@ -124,9 +99,9 @@ public class GameEngineStartMenuTests
     }
 
     [Fact]
-    public async Task StartMenu_selecting_2_with_no_saves_stays_on_StartMenu()
+    public async Task Selecting_2_with_no_saves_stays_on_StartMenu()
     {
-        var (engine, _, _) = CreateEngine();
+        var engine = CreateEngine();
         await LoginAndReachStartMenu(engine);
 
         var response = await engine.ProcessInput("2");
@@ -136,46 +111,14 @@ public class GameEngineStartMenuTests
     }
 
     [Fact]
-    public async Task StartMenu_invalid_input_returns_error_and_stays()
+    public async Task Invalid_input_returns_error_and_stays()
     {
-        var (engine, _, _) = CreateEngine();
+        var engine = CreateEngine();
         await LoginAndReachStartMenu(engine);
 
         var response = await engine.ProcessInput("3");
 
         engine.Phase.ShouldBe(GamePhase.StartMenu);
-        response.ShouldBeOfType<ErrorResponse>();
-    }
-
-    [Fact]
-    public async Task LoadGame_selecting_valid_playthrough_transitions_to_Playing()
-    {
-        var playthrough = ThorinPlaythrough().Build();
-        var repo = new FakePlaythroughRepository(playthrough);
-        var (engine, _, session) = CreateEngine(repo);
-        await LoginAndReachStartMenu(engine);
-        await engine.ProcessInput("2"); // -> LoadGame
-
-        var response = await engine.ProcessInput("1");
-
-        engine.Phase.ShouldBe(GamePhase.Playing);
-        session.PlaythroughId.ShouldBe("pt-1");
-        var adventureStarted = response.ShouldBeOfType<Responses.AdventureStartedResponse>();
-        adventureStarted.RoomName.ShouldBe("Dungeon Entrance");
-    }
-
-    [Fact]
-    public async Task LoadGame_invalid_selection_returns_error_and_stays()
-    {
-        var playthrough = ThorinPlaythrough().Build();
-        var repo = new FakePlaythroughRepository(playthrough);
-        var (engine, _, _) = CreateEngine(repo);
-        await LoginAndReachStartMenu(engine);
-        await engine.ProcessInput("2"); // -> LoadGame
-
-        var response = await engine.ProcessInput("99");
-
-        engine.Phase.ShouldBe(GamePhase.LoadGame);
         response.ShouldBeOfType<ErrorResponse>();
     }
 }

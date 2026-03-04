@@ -112,13 +112,26 @@ For **distinct scenarios** that need different setup, create a **separate file**
 folder. Each file is its own class with its own constructor. For **small variations** of the same
 scenario, inline them in the test method.
 
+This convention applies to **all** test folders, not just handlers:
+
 ```
-tests/Questline.Tests/Engine/Handlers/
-    MovePlayerCommandHandler/
-        When_exits_are_open.cs
-        When_exit_has_a_locked_barrier.cs
-    TakeItemCommandHandler/
-        When_item_is_in_room.cs
+tests/Questline.Tests/
+    Engine/
+        Handlers/
+            MovePlayerCommandHandler/
+                When_exits_are_open.cs
+                When_exit_has_a_locked_barrier.cs
+            TakeItemCommandHandler/
+                When_item_is_in_room.cs
+        Parsers/
+            Parser/
+                When_parsing_valid_input.cs
+                When_input_is_empty.cs
+    Domain/
+        Characters/
+            CharacterNameValidator/
+                When_name_is_valid.cs
+                When_name_is_invalid.cs
 ```
 
 ```csharp
