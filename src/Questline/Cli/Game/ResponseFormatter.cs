@@ -53,7 +53,7 @@ public class ResponseFormatter
     {
         var idx   = 1;
         var saves = string.Join("\n", response.Playthroughs.Select(p =>
-            $"\t{idx++}. {p.CharacterName} - {p.AdventureId} ({p.Location})"));
+            $"\t{idx++}. {p.CharacterName} - {p.AdventureName} ({p.Location})"));
         return $"Select a saved game:\n{saves}";
     }
 
