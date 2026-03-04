@@ -60,7 +60,7 @@ context: |
     - [x] 0.3 Content Loading: JSON adventure files, loader, validation, 5-room dungeon
     - [x] 0.4 Puzzles: use command, barriers, examine, room features
     - [x] 0.5 Character Creation: name entry, default Human Fighter, stats command
-    - [ ] 0.6 Save/Load: persist and restore game state
+    - [x] 0.6 Save/Load: persist and restore game state
     - [ ] 0.7 Polish: help system, error handling, victory detection, command shortcuts
 
     Future phases: Solo Adventure (combat, XP), Party Play (networking), MUD Platform.
