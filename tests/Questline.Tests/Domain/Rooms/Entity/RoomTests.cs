@@ -31,8 +31,8 @@ public class RoomTests
             Description = "A long hallway.",
             Exits       = new Dictionary<Direction, Exit>
             {
-                [Direction.North] = new("throne-room"),
-                [Direction.South] = new("entrance")
+                [Direction.North] = new Exit { Destination = "throne-room" },
+                [Direction.South] = new Exit { Destination = "entrance" }
             }
         };
 
@@ -53,7 +53,7 @@ public class RoomTests
             UnlockMessage  = "The rusty key turns in the lock..."
         };
 
-        var exit = new Exit("beyond", barrier);
+        var exit = new Exit { Destination = "beyond", Barrier = barrier };
 
         exit.Barrier.ShouldNotBeNull();
         exit.Barrier!.Id.ShouldBe("iron-door");

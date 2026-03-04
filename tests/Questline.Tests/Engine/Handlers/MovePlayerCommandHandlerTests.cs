@@ -78,11 +78,9 @@ public class MovePlayerCommandHandlerTests
     [Fact]
     public async Task Player_location_is_not_updated_if_exit_is_blocked()
     {
-        var barrier = Barriers.IronDoor.Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.StartRoom
-                .WithExit(Direction.North, new Exit("end", barrier)))
+                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("end")))
             .WithRoom(Rooms.EndRoom)
             .Build("start");
 
@@ -99,12 +97,10 @@ public class MovePlayerCommandHandlerTests
     [Fact]
     public async Task Player_location_is_updated_when_barrier_is_unlocked()
     {
-        var barrier = Barriers.IronDoor.Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.StartRoom
-                .WithExit(Direction.North, new Exit("end", barrier)))
-            .WithRoom(Rooms.EndRoom.WithExit(Direction.South, "start"))
+                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("end")))
+            .WithRoom(Rooms.EndRoom.WithExit(Direction.South, Exits.Default.WithDestination("start")))
             .WithUnlockedBarrier("iron-door")
             .Build("start");
 

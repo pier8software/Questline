@@ -11,11 +11,9 @@ public class ExamineCommandHandlerTests
     [Fact]
     public async Task Examine_inventory_item_shows_description()
     {
-        var key = Items.RustyKey.Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber)
-            .WithInventoryItem(key)
+            .WithInventoryItem(Items.RustyKey)
             .Build("chamber");
 
         var handler = new ExamineCommandHandler(
@@ -30,10 +28,8 @@ public class ExamineCommandHandlerTests
     [Fact]
     public async Task Examine_room_item_shows_description()
     {
-        var torch = Items.Torch.Build();
-
         var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber.WithItem(torch))
+            .WithRoom(Rooms.Chamber.WithItem(Items.Torch))
             .Build("chamber");
 
         var handler = new ExamineCommandHandler(
@@ -48,10 +44,8 @@ public class ExamineCommandHandlerTests
     [Fact]
     public async Task Examine_room_feature_by_keyword_shows_description()
     {
-        var feature = Features.StrangeSymbols.Build();
-
         var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber.WithFeature(feature))
+            .WithRoom(Rooms.Chamber.WithFeature(Features.StrangeSymbols))
             .Build("chamber");
 
         var handler = new ExamineCommandHandler(
@@ -66,10 +60,8 @@ public class ExamineCommandHandlerTests
     [Fact]
     public async Task Examine_room_feature_by_name_shows_description()
     {
-        var feature = Features.StrangeSymbols.Build();
-
         var fixture = new GameBuilder()
-            .WithRoom(Rooms.Chamber.WithFeature(feature))
+            .WithRoom(Rooms.Chamber.WithFeature(Features.StrangeSymbols))
             .Build("chamber");
 
         var handler = new ExamineCommandHandler(

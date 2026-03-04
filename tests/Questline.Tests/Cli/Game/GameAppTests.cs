@@ -12,6 +12,7 @@ using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers;
 using Questline.Tests.TestHelpers.Builders;
+using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Cli.Game;
 
@@ -31,20 +32,20 @@ public class GameAppTests
                 .WithId("entrance")
                 .WithName("Dungeon Entrance")
                 .WithDescription("A dark entrance to the dungeon.")
-                .WithExit(Direction.North, "hallway")
+                .WithExit(Direction.North, Exits.Default.WithDestination("hallway"))
                 .Build(),
             ["hallway"] = new RoomBuilder()
                 .WithId("hallway")
                 .WithName("Torch-Lit Hallway")
                 .WithDescription("A hallway lined with flickering torches.")
-                .WithExit(Direction.South, "entrance")
-                .WithExit(Direction.North, "chamber")
+                .WithExit(Direction.South, Exits.Default.WithDestination("entrance"))
+                .WithExit(Direction.North, Exits.Default.WithDestination("chamber"))
                 .Build(),
             ["chamber"] = new RoomBuilder()
                 .WithId("chamber")
                 .WithName("Great Chamber")
                 .WithDescription("A vast chamber with vaulted ceilings.")
-                .WithExit(Direction.South, "hallway")
+                .WithExit(Direction.South, Exits.Default.WithDestination("hallway"))
                 .Build()
         };
 
@@ -159,7 +160,7 @@ public class GameAppTests
     [Fact]
     public async Task Null_input_exits_loop()
     {
-        var (loop, console) = CreateCliApp();
+        var (loop, _) = CreateCliApp();
         // No input queued, ReadLine returns null at login prompt
 
         await loop.RunAsync();

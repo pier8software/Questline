@@ -24,7 +24,7 @@ public class RoomMapper : IPersistenceMapper<Room, RoomDocument>
                     UnlockMessage  = exitDoc.Barrier.UnlockMessage
                 }
                 : null;
-            exits[direction] = new Exit(exitDoc.Destination, barrier);
+            exits[direction] = new Exit { Destination = exitDoc.Destination, Barrier = barrier };
         }
 
         var items = document.Items.Select(i => new Item

@@ -1,5 +1,6 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
+using Questline.Tests.TestHelpers.Builders.Templates;
 using TestStack.Dossier;
 
 namespace Questline.Tests.TestHelpers.Builders;
@@ -20,7 +21,7 @@ public class RoomBuilder : TestDataBuilder<Room, RoomBuilder>
         Set(x => x.Description, description);
 
     public RoomBuilder WithExit(Direction direction, string destinationId) =>
-        WithExit(direction, new Exit(destinationId));
+        WithExit(direction, Exits.Default.WithDestination(destinationId));
 
     public RoomBuilder WithExit(Direction direction, Exit exit)
     {

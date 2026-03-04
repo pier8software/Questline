@@ -1,3 +1,4 @@
+using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
@@ -10,12 +11,10 @@ public class GetPlayerInventoryQueryHandlerTests
     [Fact]
     public async Task Lists_carried_items()
     {
-        var lamp = Items.BrassLamp.Build();
-        var key  = Items.RustyKey.Build();
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Cellar)
-            .WithInventoryItem(lamp)
-            .WithInventoryItem(key)
+            .WithInventoryItem(Items.BrassLamp)
+            .WithInventoryItem(Items.RustyKey)
             .Build("cellar");
 
         var handler = new GetPlayerInventoryQueryHandler(
@@ -47,9 +46,8 @@ public class GetPlayerInventoryQueryHandlerTests
     [Fact]
     public async Task Get_then_drop_round_trips_item_through_inventory()
     {
-        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
-            .WithRoom(Rooms.Cellar.WithItem(lamp))
+            .WithRoom(Rooms.Cellar.WithItem(Items.BrassLamp.Build()))
             .Build("cellar");
 
         var takeHandler = new TakeItemHandler(
@@ -58,12 +56,12 @@ public class GetPlayerInventoryQueryHandlerTests
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
         await takeHandler.Handle(new Requests.TakeItemCommand("brass lamp"));
-        fixture.Playthrough.Inventory.ShouldContain(lamp);
+        fixture.Playthrough.Inventory.ShouldContain(Items.BrassLamp.Build());
 
         await dropHandler.Handle(new Requests.DropItemCommand("brass lamp"));
         fixture.Playthrough.Inventory.ShouldBeEmpty();
         var recordedItems = fixture.Playthrough.GetRecordedRoomItems("cellar");
         recordedItems.ShouldNotBeNull();
-        recordedItems!.ShouldContain(i => i.Name == "brass lamp");
+        recordedItems.ShouldContain(i => i.Name == "brass lamp");
     }
 }

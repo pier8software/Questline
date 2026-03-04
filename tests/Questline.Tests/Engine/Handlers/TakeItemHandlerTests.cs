@@ -1,3 +1,4 @@
+using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
@@ -11,9 +12,8 @@ public class TakeItemHandlerTests
     [Fact]
     public async Task Returns_successful_take_response()
     {
-        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
-            .WithRoom(Rooms.Cellar.WithItem(lamp))
+            .WithRoom(Rooms.Cellar.WithItem(Items.BrassLamp))
             .Build("cellar");
 
         var handler = new TakeItemHandler(
@@ -28,9 +28,8 @@ public class TakeItemHandlerTests
     [Fact]
     public async Task Item_moves_from_room_to_inventory()
     {
-        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
-            .WithRoom(Rooms.Cellar.WithItem(lamp))
+            .WithRoom(Rooms.Cellar.WithItem(Items.BrassLamp.Build()))
             .Build("cellar");
 
         var handler = new TakeItemHandler(
@@ -38,10 +37,10 @@ public class TakeItemHandlerTests
 
         _ = await handler.Handle(new Requests.TakeItemCommand("brass lamp"));
 
-        fixture.Playthrough.Inventory.ShouldContain(lamp);
+        fixture.Playthrough.Inventory.ShouldContain(Items.BrassLamp.Build());
         var recordedItems = fixture.Playthrough.GetRecordedRoomItems("cellar");
         recordedItems.ShouldNotBeNull();
-        recordedItems!.ShouldNotContain(i => i.Name == "brass lamp");
+        recordedItems.ShouldNotContain(i => i.Name == "brass lamp");
     }
 
     [Fact]
@@ -63,9 +62,8 @@ public class TakeItemHandlerTests
     [Fact]
     public async Task Matching_is_case_insensitive()
     {
-        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
-            .WithRoom(Rooms.Cellar.WithItem(lamp))
+            .WithRoom(Rooms.Cellar.WithItem(Items.BrassLamp))
             .Build("cellar");
 
         var handler = new TakeItemHandler(

@@ -10,10 +10,9 @@ public class DropItemCommandHandlerTests
     [Fact]
     public async Task Returns_successful_drop_response()
     {
-        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Cellar)
-            .WithInventoryItem(lamp)
+            .WithInventoryItem(Items.BrassLamp)
             .Build("cellar");
 
         var handler = new DropItemCommandHandler(
@@ -28,10 +27,9 @@ public class DropItemCommandHandlerTests
     [Fact]
     public async Task Item_moves_from_inventory_to_room()
     {
-        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Cellar)
-            .WithInventoryItem(lamp)
+            .WithInventoryItem(Items.BrassLamp)
             .Build("cellar");
 
         var handler = new DropItemCommandHandler(

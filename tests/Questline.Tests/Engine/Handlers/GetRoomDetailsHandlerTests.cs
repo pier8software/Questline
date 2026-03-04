@@ -11,10 +11,9 @@ public class GetRoomDetailsHandlerTests
     [Fact]
     public async Task Returns_response_with_room_details()
     {
-        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Hallway
-                .WithItem(lamp)
+                .WithItem(Items.BrassLamp)
                 .WithExit(Direction.North, "throne-room")
                 .WithExit(Direction.South, "entrance"))
             .WithRoom(Rooms.ThroneRoom)
@@ -53,11 +52,9 @@ public class GetRoomDetailsHandlerTests
     [Fact]
     public async Task Response_includes_locked_barrier_description()
     {
-        var barrier = Barriers.IronDoor.Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, new Exit("beyond", barrier)))
+                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
             .WithRoom(Rooms.BeyondRoom)
             .Build("chamber");
 
@@ -73,11 +70,9 @@ public class GetRoomDetailsHandlerTests
     [Fact]
     public async Task Response_omits_barrier_line_when_unlocked()
     {
-        var barrier = Barriers.IronDoor.Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, new Exit("beyond", barrier)))
+                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
             .WithRoom(Rooms.BeyondRoom)
             .WithUnlockedBarrier("iron-door")
             .Build("chamber");

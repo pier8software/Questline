@@ -12,14 +12,11 @@ public class UseItemCommandHandlerTests
     [Fact]
     public async Task Correct_item_on_barrier_unlocks_it()
     {
-        var barrier = Barriers.IronDoor.Build();
-        var key     = Items.RustyKey.WithDescription("An old iron key.").Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, new Exit("beyond", barrier)))
+                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
             .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(key)
+            .WithInventoryItem(Items.RustyKey)
             .Build("chamber");
 
         var handler = new UseItemCommandHandler(
@@ -35,14 +32,11 @@ public class UseItemCommandHandlerTests
     [Fact]
     public async Task Wrong_item_returns_error_and_barrier_stays_locked()
     {
-        var barrier = Barriers.IronDoor.Build();
-        var torch   = Items.Torch.WithDescription("A flickering torch.").Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, new Exit("beyond", barrier)))
+                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
             .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(torch)
+            .WithInventoryItem(Items.Torch)
             .Build("chamber");
 
         var handler = new UseItemCommandHandler(
@@ -58,11 +52,9 @@ public class UseItemCommandHandlerTests
     [Fact]
     public async Task Item_not_in_inventory_returns_error()
     {
-        var barrier = Barriers.IronDoor.Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, new Exit("beyond", barrier)))
+                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
             .WithRoom(Rooms.BeyondRoom)
             .Build("chamber");
 
@@ -78,14 +70,11 @@ public class UseItemCommandHandlerTests
     [Fact]
     public async Task Contextual_use_unlocks_matching_barrier_in_room()
     {
-        var barrier = Barriers.IronDoor.Build();
-        var key     = Items.RustyKey.WithDescription("An old iron key.").Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, new Exit("beyond", barrier)))
+                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
             .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(key)
+            .WithInventoryItem(Items.RustyKey)
             .Build("chamber");
 
         var handler = new UseItemCommandHandler(
@@ -101,12 +90,10 @@ public class UseItemCommandHandlerTests
     [Fact]
     public async Task Target_not_found_returns_error()
     {
-        var key = Items.RustyKey.WithDescription("An old iron key.").Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber.WithExit(Direction.North, "beyond"))
             .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(key)
+            .WithInventoryItem(Items.RustyKey)
             .Build("chamber");
 
         var handler = new UseItemCommandHandler(
@@ -121,14 +108,11 @@ public class UseItemCommandHandlerTests
     [Fact]
     public async Task Already_unlocked_barrier_returns_informative_message()
     {
-        var barrier = Barriers.IronDoor.Build();
-        var key     = Items.RustyKey.WithDescription("An old iron key.").Build();
-
         var fixture = new GameBuilder()
             .WithRoom(Rooms.Chamber
-                .WithExit(Direction.North, new Exit("beyond", barrier)))
+                .WithExit(Direction.North, Exits.WithBarrier.WithDestination("beyond")))
             .WithRoom(Rooms.BeyondRoom)
-            .WithInventoryItem(key)
+            .WithInventoryItem(Items.RustyKey)
             .WithUnlockedBarrier("iron-door")
             .Build("chamber");
 

@@ -1,30 +1,26 @@
 using Questline.Domain.Rooms.Entity;
+using TestStack.Dossier;
 using Barrier = Questline.Domain.Rooms.Entity.Barrier;
 
 namespace Questline.Tests.TestHelpers.Builders;
 
-public class ExitBuilder
+public class ExitBuilder : TestDataBuilder<Exit, ExitBuilder>
 {
-    private string   _destination = "default-destination";
-    private Barrier? _barrier;
+    public ExitBuilder WithDestination(string destination) =>
+        Set(x => x.Destination, destination);
 
-    public ExitBuilder WithDestination(string destination)
+    public ExitBuilder WithBarrier(Barrier barrier) =>
+        Set(x => x.Barrier, barrier);
+
+    public ExitBuilder WithBarrier(BarrierBuilder barrierBuilder) =>
+        Set(x => x.Barrier, barrierBuilder);
+
+    protected override Exit BuildObject()
     {
-        _destination = destination;
-        return this;
+        return new Exit
+        {
+            Destination = Get(x => x.Destination),
+            Barrier     = Get(x => x.Barrier)
+        };
     }
-
-    public ExitBuilder WithBarrier(Barrier barrier)
-    {
-        _barrier = barrier;
-        return this;
-    }
-
-    public ExitBuilder WithBarrier(BarrierBuilder barrierBuilder)
-    {
-        _barrier = barrierBuilder.Build();
-        return this;
-    }
-
-    public Exit Build() => new(_destination, _barrier);
 }
