@@ -76,13 +76,16 @@ Follow **Arrange–Act–Assert**. Use a class **constructor** to set up shared 
 under test once. Do not repeat construction inside every test method.
 
 ```csharp
-public class TakeItemHandlerTests
+// tests/Questline.Tests/Engine/Handlers/TakeItemCommandHandler/When_item_is_in_room.cs
+namespace Questline.Tests.Engine.Handlers;
+
+public class When_item_is_in_room
 {
     private readonly TakeItemHandler _handler;
     private readonly GameFixture _fixture;
     private readonly Item _lamp;
 
-    public TakeItemHandlerTests()
+    public When_item_is_in_room()
     {
         _lamp = Templates.Items.Lamp;
         _fixture = new ScenarioBuilder
@@ -105,38 +108,41 @@ public class TakeItemHandlerTests
 }
 ```
 
-For **distinct scenarios** that need different setup, use a **public nested class** with its own
-constructor. For **small variations**, inline them in the test method.
+For **distinct scenarios** that need different setup, create a **separate file** in the subject
+folder. Each file is its own class with its own constructor. For **small variations** of the same
+scenario, inline them in the test method.
+
+```
+tests/Questline.Tests/Engine/Handlers/
+    MovePlayerCommandHandler/
+        When_exits_are_open.cs
+        When_exit_has_a_locked_barrier.cs
+    TakeItemCommandHandler/
+        When_item_is_in_room.cs
+```
 
 ```csharp
-public class MovePlayerCommandHandlerTests
+// tests/Questline.Tests/Engine/Handlers/MovePlayerCommandHandler/When_exit_has_a_locked_barrier.cs
+namespace Questline.Tests.Engine.Handlers;
+
+public class When_exit_has_a_locked_barrier
 {
-    // common setup (open rooms) in the outer constructor ...
+    private readonly MovePlayerCommandHandler _handler;
+    private readonly GameFixture _fixture;
 
-    public class When_exit_has_a_locked_barrier
+    public When_exit_has_a_locked_barrier()
     {
-        private readonly MovePlayerCommandHandler _handler;
-        private readonly GameFixture _fixture;
+        _fixture = ScenarioBuilder
+            .WithRoom(Templates.Rooms.StandardRoom.WithExit(Direction.North, Templates.Exits.EndWithLockedDoor))
+            .WithRoom(Templates.Rooms.EndRoom.WithExit(Direction.South, Templates.Exits.Start))
+            .StartingRoom(Templates.Rooms.StandardRoom)
+            .Build();
 
-        public When_exit_has_a_locked_barrier()
-        {
-            _fixture = ScenarioBuilder
-                .WithRoom(Tempates.Rooms.StandardRoom).WithExit(Direction.North, Templates.Exits.EndWithLockedDoor)
-                .WithRoom(Templates.Rooms.EndRoom.WithExit(Direction.South, Templates.Exits.Start))
-                .StartingRoom(Tempates.Rooms.StandardRoom)
-                .Build();
-
-            _handler = new MovePlayerCommandHandler(...);
-        }
-                    r => r.WithExit(Direction.North, new Exit("end", Barriers.IronDoor())))
-                .WithRoom("end", "End Room", "The end room.")
-                .Build("start");
-            _handler = new MovePlayerCommandHandler(...);
-        }
-
-        [Fact]
-        public async Task Locked_exit_blocks_player_and_returns_barrier_message() { ... }
+        _handler = new MovePlayerCommandHandler(...);
     }
+
+    [Fact]
+    public async Task Locked_exit_blocks_player_and_returns_barrier_message() { ... }
 }
 ```
 
@@ -149,17 +155,33 @@ _fixture.Playthrough.Location.ShouldBe("end");
 
 ## Naming
 
-Format: `<Subject>Tests` class, `<Behaviour_as_fact>` method. Plain English, underscores between
-words. Start with the outcome — never with `Should`, `Test`, or `Verify`.
+**Folders:** `<Subject>/` — named after the class under test (e.g. `MovePlayerCommandHandler/`).
+
+**Files & classes:** `When_<scenario>` — describes the setup/context being tested. Plain English,
+underscores between words.
+
+**Methods:** `<Behaviour_as_fact>` — states the expected outcome. Start with the outcome — never
+with `Should`, `Test`, or `Verify`.
+
+```
+TakeItemCommandHandler/
+    When_item_is_in_room.cs          → class When_item_is_in_room
+    When_item_is_not_in_room.cs      → class When_item_is_not_in_room
+```
 
 ```csharp
-public class TakeItemHandlerTests
+// When_item_is_in_room.cs
+public class When_item_is_in_room
 {
     [Fact] public async Task Brass_lamp_is_taken_and_added_to_inventory() { }
 
-    [Fact] public async Task Item_not_in_room_returns_error() { }
-
     [Fact] public async Task Item_name_matching_is_case_insensitive() { }
+}
+
+// When_item_is_not_in_room.cs
+public class When_item_is_not_in_room
+{
+    [Fact] public async Task Returns_error_message() { }
 }
 ```
 
