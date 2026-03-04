@@ -1,9 +1,8 @@
-using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
+using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -12,11 +11,10 @@ public class ExamineCommandHandlerTests
     [Fact]
     public async Task Examine_inventory_item_shows_description()
     {
-        var key = new Item
-            { Id = "rusty-key", Name = "rusty key", Description = "An old iron key, its teeth worn by time." };
+        var key = Items.RustyKey.Build();
 
         var fixture = new GameBuilder()
-            .WithRoom("chamber", "Chamber", "A dark chamber.")
+            .WithRoom(Rooms.Chamber)
             .WithInventoryItem(key)
             .Build("chamber");
 
@@ -32,10 +30,10 @@ public class ExamineCommandHandlerTests
     [Fact]
     public async Task Examine_room_item_shows_description()
     {
-        var torch = new Item { Id = "torch", Name = "torch", Description = "A flickering wooden torch." };
+        var torch = Items.Torch.Build();
 
         var fixture = new GameBuilder()
-            .WithRoom("chamber", "Chamber", "A dark chamber.", r => r.WithItem(torch))
+            .WithRoom(Rooms.Chamber.WithItem(torch))
             .Build("chamber");
 
         var handler = new ExamineCommandHandler(
@@ -50,16 +48,10 @@ public class ExamineCommandHandlerTests
     [Fact]
     public async Task Examine_room_feature_by_keyword_shows_description()
     {
-        var feature = new Feature
-        {
-            Id          = "strange-symbols",
-            Name        = "strange symbols",
-            Keywords    = ["symbols", "carvings"],
-            Description = "Ancient runes etched into the stone walls."
-        };
+        var feature = Features.StrangeSymbols.Build();
 
         var fixture = new GameBuilder()
-            .WithRoom("chamber", "Chamber", "A dark chamber.", r => r.WithFeature(feature))
+            .WithRoom(Rooms.Chamber.WithFeature(feature))
             .Build("chamber");
 
         var handler = new ExamineCommandHandler(
@@ -74,16 +66,10 @@ public class ExamineCommandHandlerTests
     [Fact]
     public async Task Examine_room_feature_by_name_shows_description()
     {
-        var feature = new Feature
-        {
-            Id          = "strange-symbols",
-            Name        = "strange symbols",
-            Keywords    = ["symbols", "carvings"],
-            Description = "Ancient runes etched into the stone walls."
-        };
+        var feature = Features.StrangeSymbols.Build();
 
         var fixture = new GameBuilder()
-            .WithRoom("chamber", "Chamber", "A dark chamber.", r => r.WithFeature(feature))
+            .WithRoom(Rooms.Chamber.WithFeature(feature))
             .Build("chamber");
 
         var handler = new ExamineCommandHandler(
@@ -99,7 +85,7 @@ public class ExamineCommandHandlerTests
     public async Task Examine_unknown_target_returns_error()
     {
         var fixture = new GameBuilder()
-            .WithRoom("chamber", "Chamber", "A dark chamber.")
+            .WithRoom(Rooms.Chamber)
             .Build("chamber");
 
         var handler = new ExamineCommandHandler(

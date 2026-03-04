@@ -1,7 +1,3 @@
-using Questline.Domain.Adventures.Entity;
-using Questline.Domain.Characters.Entity;
-using Questline.Domain.Playthroughs.Data;
-using Questline.Domain.Playthroughs.Entity;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
 using Questline.Engine.Core;
@@ -12,18 +8,13 @@ using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers;
 using Questline.Tests.TestHelpers.Builders;
+using Questline.Tests.TestHelpers.Builders.Templates;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Questline.Tests.Engine.Core;
 
 public class GameEngineStartMenuTests
 {
-    private static readonly HitPoints DefaultHitPoints = new(8, 8);
-
-    private static readonly AbilityScores DefaultAbilityScores = new(
-        new AbilityScore(10), new AbilityScore(10), new AbilityScore(10),
-        new AbilityScore(10), new AbilityScore(10), new AbilityScore(10));
-
     private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
 
     private static (GameEngine engine, FakePlaythroughRepository playthroughRepo, FakeGameSession session) CreateEngine(
@@ -31,18 +22,17 @@ public class GameEngineStartMenuTests
     {
         var rooms = new Dictionary<string, Room>
         {
-            ["entrance"] = new RoomBuilder("entrance", "Dungeon Entrance", "A dark entrance.")
+            ["entrance"] = Rooms.DungeonEntrance
                 .WithExit(Direction.North, "hallway")
                 .Build()
         };
 
-        var adventure = new Adventure
-        {
-            Id             = "the-goblins-lair",
-            Name           = "The Goblins' Lair",
-            Description    = "A test adventure",
-            StartingRoomId = "entrance"
-        };
+        var adventure = new AdventureBuilder()
+            .WithId("the-goblins-lair")
+            .WithName("The Goblins' Lair")
+            .WithDescription("A test adventure")
+            .WithStartingRoomId("entrance")
+            .Build();
 
         var adventureRepository = new FakeAdventureRepository(adventure);
         var roomRepository      = new FakeRoomRepository(rooms);
@@ -65,6 +55,15 @@ public class GameEngineStartMenuTests
 
         return (engine, playthroughRepo, session);
     }
+
+    private static PlaythroughBuilder ThorinPlaythrough() =>
+        new PlaythroughBuilder()
+            .WithId("pt-1")
+            .WithUsername("alice")
+            .WithAdventureId("the-goblins-lair")
+            .WithStartingRoomId("entrance")
+            .WithCharacterName("Thorin")
+            .WithLocation("entrance");
 
     private static async Task<GameEngine> LoginAndReachStartMenu(GameEngine engine)
     {
@@ -111,19 +110,7 @@ public class GameEngineStartMenuTests
     [Fact]
     public async Task StartMenu_selecting_2_with_saves_transitions_to_LoadGame()
     {
-        var playthrough = new Playthrough
-        {
-            Id             = "pt-1",
-            Username       = "alice",
-            AdventureId    = "the-goblins-lair",
-            StartingRoomId = "entrance",
-            CharacterName  = "Thorin",
-            Race           = Race.Human,
-            Class          = CharacterClass.Fighter,
-            AbilityScores  = DefaultAbilityScores,
-            HitPoints      = DefaultHitPoints,
-            Location       = "entrance"
-        };
+        var playthrough = ThorinPlaythrough().Build();
         var repo = new FakePlaythroughRepository(playthrough);
         var (engine, _, _) = CreateEngine(repo);
         await LoginAndReachStartMenu(engine);
@@ -163,19 +150,7 @@ public class GameEngineStartMenuTests
     [Fact]
     public async Task LoadGame_selecting_valid_playthrough_transitions_to_Playing()
     {
-        var playthrough = new Playthrough
-        {
-            Id             = "pt-1",
-            Username       = "alice",
-            AdventureId    = "the-goblins-lair",
-            StartingRoomId = "entrance",
-            CharacterName  = "Thorin",
-            Race           = Race.Human,
-            Class          = CharacterClass.Fighter,
-            AbilityScores  = DefaultAbilityScores,
-            HitPoints      = DefaultHitPoints,
-            Location       = "entrance"
-        };
+        var playthrough = ThorinPlaythrough().Build();
         var repo = new FakePlaythroughRepository(playthrough);
         var (engine, _, session) = CreateEngine(repo);
         await LoginAndReachStartMenu(engine);
@@ -192,19 +167,7 @@ public class GameEngineStartMenuTests
     [Fact]
     public async Task LoadGame_invalid_selection_returns_error_and_stays()
     {
-        var playthrough = new Playthrough
-        {
-            Id             = "pt-1",
-            Username       = "alice",
-            AdventureId    = "the-goblins-lair",
-            StartingRoomId = "entrance",
-            CharacterName  = "Thorin",
-            Race           = Race.Human,
-            Class          = CharacterClass.Fighter,
-            AbilityScores  = DefaultAbilityScores,
-            HitPoints      = DefaultHitPoints,
-            Location       = "entrance"
-        };
+        var playthrough = ThorinPlaythrough().Build();
         var repo = new FakePlaythroughRepository(playthrough);
         var (engine, _, _) = CreateEngine(repo);
         await LoginAndReachStartMenu(engine);

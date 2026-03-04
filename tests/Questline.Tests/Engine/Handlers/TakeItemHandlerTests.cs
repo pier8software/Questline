@@ -1,8 +1,8 @@
-using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
+using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -11,9 +11,9 @@ public class TakeItemHandlerTests
     [Fact]
     public async Task Returns_successful_take_response()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
-            .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
+            .WithRoom(Rooms.Cellar.WithItem(lamp))
             .Build("cellar");
 
         var handler = new TakeItemHandler(
@@ -28,9 +28,9 @@ public class TakeItemHandlerTests
     [Fact]
     public async Task Item_moves_from_room_to_inventory()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
-            .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
+            .WithRoom(Rooms.Cellar.WithItem(lamp))
             .Build("cellar");
 
         var handler = new TakeItemHandler(
@@ -48,7 +48,7 @@ public class TakeItemHandlerTests
     public async Task Item_not_in_room_returns_error_message()
     {
         var fixture = new GameBuilder()
-            .WithRoom("cellar", "Cellar", "A damp cellar.")
+            .WithRoom(Rooms.Cellar)
             .Build("cellar");
 
         var handler = new TakeItemHandler(
@@ -63,9 +63,9 @@ public class TakeItemHandlerTests
     [Fact]
     public async Task Matching_is_case_insensitive()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
-            .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
+            .WithRoom(Rooms.Cellar.WithItem(lamp))
             .Build("cellar");
 
         var handler = new TakeItemHandler(

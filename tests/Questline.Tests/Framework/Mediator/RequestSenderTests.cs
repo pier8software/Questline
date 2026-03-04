@@ -5,6 +5,7 @@ using Questline.Engine.Messages;
 using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
+using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Framework.Mediator;
 
@@ -14,7 +15,7 @@ public class RequestSenderTests
     public async Task Registered_verb_executes_its_handler()
     {
         var fixture = new GameBuilder()
-            .WithRoom("start", "Start", "A starting room.")
+            .WithRoom(Rooms.StartRoom)
             .Build("start");
 
         var serviceProvider = new ServiceCollection()

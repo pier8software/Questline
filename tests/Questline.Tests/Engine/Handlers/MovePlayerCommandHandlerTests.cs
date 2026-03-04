@@ -3,7 +3,7 @@ using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
-using Barrier = Questline.Domain.Rooms.Entity.Barrier;
+using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -13,8 +13,8 @@ public class MovePlayerCommandHandlerTests
     public async Task Returns_next_room_details_in_response()
     {
         var fixture = new GameBuilder()
-            .WithRoom("start", "Start",    "Starting room.", r => r.WithExit(Direction.North, "end"))
-            .WithRoom("end",   "End Room", "The end room.",  r => r.WithExit(Direction.South, "start"))
+            .WithRoom(Rooms.StartRoom.WithExit(Direction.North, "end"))
+            .WithRoom(Rooms.EndRoom.WithExit(Direction.South, "start"))
             .Build("start");
 
         var handler = new MovePlayerCommandHandler(
@@ -31,8 +31,8 @@ public class MovePlayerCommandHandlerTests
     public async Task Invalid_direction_returns_error_message()
     {
         var fixture = new GameBuilder()
-            .WithRoom("start", "Start",    "Starting room.", r => r.WithExit(Direction.North, "end"))
-            .WithRoom("end",   "End Room", "The end room.",  r => r.WithExit(Direction.South, "start"))
+            .WithRoom(Rooms.StartRoom.WithExit(Direction.North, "end"))
+            .WithRoom(Rooms.EndRoom.WithExit(Direction.South, "start"))
             .Build("start");
 
         var handler = new MovePlayerCommandHandler(
@@ -48,8 +48,8 @@ public class MovePlayerCommandHandlerTests
     public async Task Player_location_is_updated_after_moving()
     {
         var fixture = new GameBuilder()
-            .WithRoom("start", "Start",    "Starting room.", r => r.WithExit(Direction.North, "end"))
-            .WithRoom("end",   "End Room", "The end room.",  r => r.WithExit(Direction.South, "start"))
+            .WithRoom(Rooms.StartRoom.WithExit(Direction.North, "end"))
+            .WithRoom(Rooms.EndRoom.WithExit(Direction.South, "start"))
             .Build("start");
 
         var handler = new MovePlayerCommandHandler(
@@ -64,7 +64,7 @@ public class MovePlayerCommandHandlerTests
     public async Task Player_location_is_not_updated_if_direction_is_invalid()
     {
         var fixture = new GameBuilder()
-            .WithRoom("sealed", "Sealed Room", "No way north.")
+            .WithRoom(Rooms.SealedRoom)
             .Build("sealed");
 
         var handler = new MovePlayerCommandHandler(
@@ -78,20 +78,12 @@ public class MovePlayerCommandHandlerTests
     [Fact]
     public async Task Player_location_is_not_updated_if_exit_is_blocked()
     {
-        var barrier = new Barrier
-        {
-            Id             = "iron-door",
-            Name           = "iron door",
-            Description    = "A heavy iron door.",
-            BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId   = "rusty-key",
-            UnlockMessage  = "The rusty key turns in the lock..."
-        };
+        var barrier = Barriers.IronDoor.Build();
 
         var fixture = new GameBuilder()
-            .WithRoom("start", "Start", "Starting room.",
-                r => r.WithExit(Direction.North, new Exit("end", barrier)))
-            .WithRoom("end", "End Room", "The end room.")
+            .WithRoom(Rooms.StartRoom
+                .WithExit(Direction.North, new Exit("end", barrier)))
+            .WithRoom(Rooms.EndRoom)
             .Build("start");
 
         var handler = new MovePlayerCommandHandler(
@@ -107,20 +99,12 @@ public class MovePlayerCommandHandlerTests
     [Fact]
     public async Task Player_location_is_updated_when_barrier_is_unlocked()
     {
-        var barrier = new Barrier
-        {
-            Id             = "iron-door",
-            Name           = "iron door",
-            Description    = "A heavy iron door.",
-            BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId   = "rusty-key",
-            UnlockMessage  = "The rusty key turns in the lock..."
-        };
+        var barrier = Barriers.IronDoor.Build();
 
         var fixture = new GameBuilder()
-            .WithRoom("start", "Start", "Starting room.",
-                r => r.WithExit(Direction.North, new Exit("end", barrier)))
-            .WithRoom("end", "End Room", "The end room.", r => r.WithExit(Direction.South, "start"))
+            .WithRoom(Rooms.StartRoom
+                .WithExit(Direction.North, new Exit("end", barrier)))
+            .WithRoom(Rooms.EndRoom.WithExit(Direction.South, "start"))
             .WithUnlockedBarrier("iron-door")
             .Build("start");
 

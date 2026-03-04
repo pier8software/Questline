@@ -1,7 +1,7 @@
-using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
+using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -10,10 +10,10 @@ public class GetPlayerInventoryQueryHandlerTests
     [Fact]
     public async Task Lists_carried_items()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
-        var key  = new Item { Id = "key", Name  = "rusty key", Description  = "A rusty iron key." };
+        var lamp = Items.BrassLamp.Build();
+        var key  = Items.RustyKey.Build();
         var fixture = new GameBuilder()
-            .WithRoom("cellar", "Cellar", "A damp cellar.")
+            .WithRoom(Rooms.Cellar)
             .WithInventoryItem(lamp)
             .WithInventoryItem(key)
             .Build("cellar");
@@ -32,7 +32,7 @@ public class GetPlayerInventoryQueryHandlerTests
     public async Task Empty_inventory_returns_empty_items_list()
     {
         var fixture = new GameBuilder()
-            .WithRoom("cellar", "Cellar", "A damp cellar.")
+            .WithRoom(Rooms.Cellar)
             .Build("cellar");
 
         var handler = new GetPlayerInventoryQueryHandler(
@@ -47,9 +47,9 @@ public class GetPlayerInventoryQueryHandlerTests
     [Fact]
     public async Task Get_then_drop_round_trips_item_through_inventory()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
-            .WithRoom("cellar", "Cellar", "A damp cellar.", r => r.WithItem(lamp))
+            .WithRoom(Rooms.Cellar.WithItem(lamp))
             .Build("cellar");
 
         var takeHandler = new TakeItemHandler(

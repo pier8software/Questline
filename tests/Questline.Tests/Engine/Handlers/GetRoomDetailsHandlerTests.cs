@@ -1,9 +1,8 @@
 using Questline.Domain.Rooms.Entity;
-using Questline.Domain.Shared.Entity;
 using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using Barrier = Questline.Domain.Rooms.Entity.Barrier;
+using Questline.Tests.TestHelpers.Builders.Templates;
 
 namespace Questline.Tests.Engine.Handlers;
 
@@ -12,16 +11,14 @@ public class GetRoomDetailsHandlerTests
     [Fact]
     public async Task Returns_response_with_room_details()
     {
-        var lamp = new Item { Id = "lamp", Name = "brass lamp", Description = "A shiny brass lamp." };
+        var lamp = Items.BrassLamp.Build();
         var fixture = new GameBuilder()
-            .WithRoom("hallway", "Hallway", "A long hallway.", r =>
-            {
-                r.WithItem(lamp);
-                r.WithExit(Direction.North, "throne-room");
-                r.WithExit(Direction.South, "entrance");
-            })
-            .WithRoom("throne-room", "Throne Room", "Grand throne room.")
-            .WithRoom("entrance",    "Entrance",    "The entrance.")
+            .WithRoom(Rooms.Hallway
+                .WithItem(lamp)
+                .WithExit(Direction.North, "throne-room")
+                .WithExit(Direction.South, "entrance"))
+            .WithRoom(Rooms.ThroneRoom)
+            .WithRoom(Rooms.Entrance)
             .Build("hallway");
 
         var handler = new GetRoomDetailsHandler(
@@ -41,7 +38,7 @@ public class GetRoomDetailsHandlerTests
     public async Task Response_omits_items_when_room_is_empty()
     {
         var fixture = new GameBuilder()
-            .WithRoom("cellar", "Cellar", "A damp cellar.")
+            .WithRoom(Rooms.Cellar)
             .Build("cellar");
 
         var handler = new GetRoomDetailsHandler(
@@ -56,20 +53,12 @@ public class GetRoomDetailsHandlerTests
     [Fact]
     public async Task Response_includes_locked_barrier_description()
     {
-        var barrier = new Barrier
-        {
-            Id             = "iron-door",
-            Name           = "iron door",
-            Description    = "A heavy iron door blocks the way North.",
-            BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId   = "rusty-key",
-            UnlockMessage  = "The rusty key turns in the lock..."
-        };
+        var barrier = Barriers.IronDoor.Build();
 
         var fixture = new GameBuilder()
-            .WithRoom("chamber", "Chamber", "A dark chamber.",
-                r => r.WithExit(Direction.North, new Exit("beyond", barrier)))
-            .WithRoom("beyond", "Beyond", "Beyond the door.")
+            .WithRoom(Rooms.Chamber
+                .WithExit(Direction.North, new Exit("beyond", barrier)))
+            .WithRoom(Rooms.BeyondRoom)
             .Build("chamber");
 
         var handler = new GetRoomDetailsHandler(
@@ -84,20 +73,12 @@ public class GetRoomDetailsHandlerTests
     [Fact]
     public async Task Response_omits_barrier_line_when_unlocked()
     {
-        var barrier = new Barrier
-        {
-            Id             = "iron-door",
-            Name           = "iron door",
-            Description    = "A heavy iron door blocks the way North.",
-            BlockedMessage = "The iron door is locked tight.",
-            UnlockItemId   = "rusty-key",
-            UnlockMessage  = "The rusty key turns in the lock..."
-        };
+        var barrier = Barriers.IronDoor.Build();
 
         var fixture = new GameBuilder()
-            .WithRoom("chamber", "Chamber", "A dark chamber.",
-                r => r.WithExit(Direction.North, new Exit("beyond", barrier)))
-            .WithRoom("beyond", "Beyond", "Beyond the door.")
+            .WithRoom(Rooms.Chamber
+                .WithExit(Direction.North, new Exit("beyond", barrier)))
+            .WithRoom(Rooms.BeyondRoom)
             .WithUnlockedBarrier("iron-door")
             .Build("chamber");
 

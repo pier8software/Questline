@@ -1,16 +1,26 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Domain.Shared.Entity;
+using TestStack.Dossier;
 
 namespace Questline.Tests.TestHelpers.Builders;
 
-public class RoomBuilder(string id, string name, string description)
+public class RoomBuilder : TestDataBuilder<Room, RoomBuilder>
 {
     private readonly Dictionary<Direction, Exit> _exits    = new();
-    private readonly List<Feature>               _features = new();
-    private readonly List<Item>                  _items    = new();
+    private readonly List<Feature>               _features = [];
+    private readonly List<Item>                  _items    = [];
 
-    public RoomBuilder WithExit(Direction direction, string destinationId)
-        => WithExit(direction, new Exit(destinationId));
+    public RoomBuilder WithId(string id) =>
+        Set(x => x.Id, id);
+
+    public RoomBuilder WithName(string name) =>
+        Set(x => x.Name, name);
+
+    public RoomBuilder WithDescription(string description) =>
+        Set(x => x.Description, description);
+
+    public RoomBuilder WithExit(Direction direction, string destinationId) =>
+        WithExit(direction, new Exit(destinationId));
 
     public RoomBuilder WithExit(Direction direction, Exit exit)
     {
@@ -30,13 +40,13 @@ public class RoomBuilder(string id, string name, string description)
         return this;
     }
 
-    public Room Build()
+    protected override Room BuildObject()
     {
         return new Room
         {
-            Id          = id,
-            Name        = name,
-            Description = description,
+            Id          = Get(x => x.Id),
+            Name        = Get(x => x.Name),
+            Description = Get(x => x.Description),
             Exits       = _exits,
             Items       = _items,
             Features    = _features

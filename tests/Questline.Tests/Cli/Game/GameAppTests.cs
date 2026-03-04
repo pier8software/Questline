@@ -27,14 +27,23 @@ public class GameAppTests
     {
         var rooms = new Dictionary<string, Room>
         {
-            ["entrance"] = new RoomBuilder("entrance", "Dungeon Entrance", "A dark entrance to the dungeon.")
+            ["entrance"] = new RoomBuilder()
+                .WithId("entrance")
+                .WithName("Dungeon Entrance")
+                .WithDescription("A dark entrance to the dungeon.")
                 .WithExit(Direction.North, "hallway")
                 .Build(),
-            ["hallway"] = new RoomBuilder("hallway", "Torch-Lit Hallway", "A hallway lined with flickering torches.")
+            ["hallway"] = new RoomBuilder()
+                .WithId("hallway")
+                .WithName("Torch-Lit Hallway")
+                .WithDescription("A hallway lined with flickering torches.")
                 .WithExit(Direction.South, "entrance")
                 .WithExit(Direction.North, "chamber")
                 .Build(),
-            ["chamber"] = new RoomBuilder("chamber", "Great Chamber", "A vast chamber with vaulted ceilings.")
+            ["chamber"] = new RoomBuilder()
+                .WithId("chamber")
+                .WithName("Great Chamber")
+                .WithDescription("A vast chamber with vaulted ceilings.")
                 .WithExit(Direction.South, "hallway")
                 .Build()
         };
