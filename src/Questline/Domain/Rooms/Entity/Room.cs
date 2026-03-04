@@ -16,7 +16,11 @@ public class Room : DomainEntity
     public IReadOnlyList<Feature> Features { get; init; } = [];
 }
 
-public record Exit(string Destination, Barrier? Barrier = null);
+public class Exit
+{
+    public required string   Destination { get; init; }
+    public          Barrier? Barrier     { get; init; }
+}
 
 public enum Direction
 {

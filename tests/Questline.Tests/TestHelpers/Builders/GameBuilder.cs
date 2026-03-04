@@ -28,11 +28,10 @@ public class GameBuilder
     private          List<Item>?      _inventoryItems;
     private          HashSet<string>? _unlockedBarriers;
 
-    public GameBuilder WithRoom(string id, string name, string description, Action<RoomBuilder>? configure = null)
+    public GameBuilder WithRoom(RoomBuilder builder)
     {
-        var builder = new RoomBuilder(id, name, description);
-        configure?.Invoke(builder);
-        _rooms[id] = builder.Build();
+        var room = builder.Build();
+        _rooms[room.Id] = room;
         return this;
     }
 
