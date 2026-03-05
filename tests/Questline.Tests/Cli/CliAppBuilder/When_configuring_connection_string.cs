@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Questline.Cli;
 
-namespace Questline.Tests.Cli;
+namespace Questline.Tests.Cli.CliAppBuilder;
 
 public class When_configuring_connection_string
 {
@@ -17,7 +17,7 @@ public class When_configuring_connection_string
             })
             .Build();
 
-        var builder = new CliAppBuilder()
+        var builder = new Questline.Cli.CliAppBuilder()
             .WithConfiguration(config)
             .WithRunMode(RunMode.DeployContent)
             .ConfigureServices();
@@ -34,7 +34,7 @@ public class When_configuring_connection_string
     {
         var config = new ConfigurationBuilder().Build();
 
-        var builder = new CliAppBuilder()
+        var builder = new Questline.Cli.CliAppBuilder()
             .WithConfiguration(config)
             .WithRunMode(RunMode.DeployContent)
             .ConfigureServices();

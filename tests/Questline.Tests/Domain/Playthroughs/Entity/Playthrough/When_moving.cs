@@ -1,11 +1,10 @@
-using Questline.Domain.Playthroughs.Entity;
 using Questline.Tests.TestHelpers.Builders;
 
-namespace Questline.Tests.Domain.Playthroughs.Entity;
+namespace Questline.Tests.Domain.Playthroughs.Entity.Playthrough;
 
 public class When_moving
 {
-    private readonly Playthrough _playthrough;
+    private readonly Questline.Domain.Playthroughs.Entity.Playthrough _playthrough;
 
     public When_moving()
     {

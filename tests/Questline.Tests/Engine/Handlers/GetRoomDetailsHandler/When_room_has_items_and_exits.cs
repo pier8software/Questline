@@ -1,14 +1,13 @@
 using Questline.Domain.Rooms.Entity;
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.GetRoomDetailsHandler;
 
 public class When_room_has_items_and_exits
 {
-    private readonly GetRoomDetailsHandler _handler;
+    private readonly Questline.Engine.Handlers.GetRoomDetailsHandler _handler;
 
     public When_room_has_items_and_exits()
     {
@@ -21,7 +20,7 @@ public class When_room_has_items_and_exits
             .WithRoom(Rooms.Entrance)
             .Build("hallway");
 
-        _handler = new GetRoomDetailsHandler(
+        _handler = new Questline.Engine.Handlers.GetRoomDetailsHandler(
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
     }
 

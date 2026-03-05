@@ -1,4 +1,4 @@
-namespace Questline.Tests.TestHelpers.Builders;
+namespace Questline.Tests.TestHelpers.Builders.Templates;
 
 public static partial class Templates
 {

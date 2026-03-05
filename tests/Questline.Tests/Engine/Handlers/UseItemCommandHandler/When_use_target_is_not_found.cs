@@ -1,15 +1,14 @@
 using Questline.Domain.Rooms.Entity;
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.UseItemCommandHandler;
 
 public class When_use_target_is_not_found
 {
-    private readonly UseItemCommandHandler _handler;
+    private readonly Questline.Engine.Handlers.UseItemCommandHandler _handler;
 
     public When_use_target_is_not_found()
     {
@@ -19,7 +18,7 @@ public class When_use_target_is_not_found
             .WithInventoryItem(Items.RustyKey)
             .Build("chamber");
 
-        _handler = new UseItemCommandHandler(
+        _handler = new Questline.Engine.Handlers.UseItemCommandHandler(
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
     }
 

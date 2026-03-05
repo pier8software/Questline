@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Questline.Cli;
 using Questline.Cli.Game;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
@@ -11,9 +10,9 @@ using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Cli.Game;
+namespace Questline.Tests.Cli.Game.GameApp;
 
 public class When_playing_game
 {
@@ -23,7 +22,7 @@ public class When_playing_game
     // Login, start menu (New Game), select adventure, then character creation: select class (Fighter), select race (Human), continue (HP roll), enter name
     private static readonly string[] SetupInputs = ["login Player1", "1", "1", "1", "1", "", "Hero"];
 
-    private static (GameApp app, FakeConsole console) CreateCliApp()
+    private static (Questline.Cli.Game.GameApp app, FakeConsole console) CreateCliApp()
     {
         var rooms = new Dictionary<string, Room>
         {
@@ -81,7 +80,7 @@ public class When_playing_game
         var gameEngine = new GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepository, gameSession, stateMachine);
         var formatter  = new ResponseFormatter();
 
-        var app = new GameApp(console, formatter, gameEngine);
+        var app = new Questline.Cli.Game.GameApp(console, formatter, gameEngine);
 
         return (app, console);
     }

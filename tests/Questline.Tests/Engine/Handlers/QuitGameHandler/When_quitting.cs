@@ -1,11 +1,10 @@
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.QuitGameHandler;
 
 public class When_quitting
 {
-    private readonly QuitGameHandler _handler = new();
+    private readonly Questline.Engine.Handlers.QuitGameHandler _handler = new();
 
     [Fact]
     public async Task Returns_quit_response()

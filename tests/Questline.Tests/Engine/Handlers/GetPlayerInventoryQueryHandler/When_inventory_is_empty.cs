@@ -1,13 +1,12 @@
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.GetPlayerInventoryQueryHandler;
 
 public class When_inventory_is_empty
 {
-    private readonly GetPlayerInventoryQueryHandler _handler;
+    private readonly Questline.Engine.Handlers.GetPlayerInventoryQueryHandler _handler;
 
     public When_inventory_is_empty()
     {
@@ -15,7 +14,7 @@ public class When_inventory_is_empty
             .WithRoom(Rooms.Cellar)
             .Build("cellar");
 
-        _handler = new GetPlayerInventoryQueryHandler(
+        _handler = new Questline.Engine.Handlers.GetPlayerInventoryQueryHandler(
             fixture.Session, fixture.PlaythroughRepository);
     }
 

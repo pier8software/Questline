@@ -1,16 +1,15 @@
 using Questline.Domain.Rooms.Entity;
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.MovePlayerCommandHandler;
 
 public class When_exit_has_a_locked_barrier
 {
-    private readonly MovePlayerCommandHandler _handler;
-    private readonly GameFixture _fixture;
+    private readonly Questline.Engine.Handlers.MovePlayerCommandHandler _handler;
+    private readonly GameFixture                                        _fixture;
 
     public When_exit_has_a_locked_barrier()
     {
@@ -20,7 +19,7 @@ public class When_exit_has_a_locked_barrier
             .WithRoom(Rooms.EndRoom)
             .Build("start");
 
-        _handler = new MovePlayerCommandHandler(
+        _handler = new Questline.Engine.Handlers.MovePlayerCommandHandler(
             _fixture.Session, _fixture.PlaythroughRepository, _fixture.RoomRepository);
     }
 

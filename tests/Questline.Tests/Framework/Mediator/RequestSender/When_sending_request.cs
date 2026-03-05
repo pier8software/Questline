@@ -5,9 +5,9 @@ using Questline.Engine.Messages;
 using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Framework.Mediator;
+namespace Questline.Tests.Framework.Mediator.RequestSender;
 
 public class When_sending_request
 {
@@ -25,7 +25,7 @@ public class When_sending_request
             .AddSingleton<IRequestHandler<Requests.GetRoomDetailsQuery>, GetRoomDetailsHandler>()
             .BuildServiceProvider();
 
-        var dispatcher = new RequestSender(serviceProvider);
+        var dispatcher = new Questline.Framework.Mediator.RequestSender(serviceProvider);
 
         var result = await dispatcher.Send(new Requests.GetRoomDetailsQuery());
 

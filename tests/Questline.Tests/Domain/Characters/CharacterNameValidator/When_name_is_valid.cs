@@ -1,6 +1,4 @@
-using Questline.Domain.Characters;
-
-namespace Questline.Tests.Domain.Characters;
+namespace Questline.Tests.Domain.Characters.CharacterNameValidator;
 
 public class When_name_is_valid
 {
@@ -10,5 +8,5 @@ public class When_name_is_valid
     [InlineData("Bo")]
     [InlineData("Abcdefghijklmnopqrstuvwx")]
     public void Valid_name_returns_success(string name) =>
-        CharacterNameValidator.HaveValidLength(name).ShouldBeTrue();
+        Questline.Domain.Characters.CharacterNameValidator.HaveValidLength(name).ShouldBeTrue();
 }

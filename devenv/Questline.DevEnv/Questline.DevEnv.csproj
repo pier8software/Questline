@@ -12,4 +12,8 @@
       <PackageReference Include="Aspire.Hosting.MongoDB" Version="13.1.2" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Using Include="Aspire.Hosting" />
+    </ItemGroup>
+
 </Project>

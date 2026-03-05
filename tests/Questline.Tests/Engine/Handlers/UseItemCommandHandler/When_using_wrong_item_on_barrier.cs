@@ -1,16 +1,15 @@
 using Questline.Domain.Rooms.Entity;
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.UseItemCommandHandler;
 
 public class When_using_wrong_item_on_barrier
 {
-    private readonly UseItemCommandHandler _handler;
-    private readonly GameFixture _fixture;
+    private readonly Questline.Engine.Handlers.UseItemCommandHandler _handler;
+    private readonly GameFixture                                     _fixture;
 
     public When_using_wrong_item_on_barrier()
     {
@@ -21,7 +20,7 @@ public class When_using_wrong_item_on_barrier
             .WithInventoryItem(Items.Torch)
             .Build("chamber");
 
-        _handler = new UseItemCommandHandler(
+        _handler = new Questline.Engine.Handlers.UseItemCommandHandler(
             _fixture.Session, _fixture.PlaythroughRepository, _fixture.RoomRepository);
     }
 

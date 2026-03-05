@@ -1,6 +1,6 @@
 using Questline.Domain.Characters.Entity;
 
-namespace Questline.Tests.Domain.Characters.Entity;
+namespace Questline.Tests.Domain.Characters.Entity.Character;
 
 public class When_converting_to_summary
 {
@@ -13,7 +13,7 @@ public class When_converting_to_summary
     [Fact]
     public void ToSummary_returns_character_summary()
     {
-        var character = Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
+        var character = Questline.Domain.Characters.Entity.Character.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
             DefaultHitPoints, DefaultAbilityScores);
 
         var summary = character.ToSummary();

@@ -1,13 +1,12 @@
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.GetRoomDetailsHandler;
 
 public class When_room_is_empty
 {
-    private readonly GetRoomDetailsHandler _handler;
+    private readonly Questline.Engine.Handlers.GetRoomDetailsHandler _handler;
 
     public When_room_is_empty()
     {
@@ -15,7 +14,7 @@ public class When_room_is_empty
             .WithRoom(Rooms.Cellar)
             .Build("cellar");
 
-        _handler = new GetRoomDetailsHandler(
+        _handler = new Questline.Engine.Handlers.GetRoomDetailsHandler(
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
     }
 

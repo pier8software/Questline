@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
 using Questline.Engine.Core;
@@ -8,16 +9,15 @@ using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
-using Microsoft.Extensions.DependencyInjection;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Core;
+namespace Questline.Tests.Engine.Core.GameEngine;
 
 public class When_loading_game
 {
     private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
 
-    private static (GameEngine engine, FakeGameSession session) CreateEngine(FakePlaythroughRepository playthroughRepo)
+    private static (Questline.Engine.Core.GameEngine engine, FakeGameSession session) CreateEngine(FakePlaythroughRepository playthroughRepo)
     {
         var rooms = new Dictionary<string, Room>
         {
@@ -49,7 +49,7 @@ public class When_loading_game
         var stateMachine = new CharacterCreationStateMachine(dice);
         var dispatcher   = new RequestSender(serviceProvider);
         var parser       = new Parser();
-        var engine       = new GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepo, session, stateMachine);
+        var engine       = new Questline.Engine.Core.GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepo, session, stateMachine);
 
         return (engine, session);
     }
@@ -63,7 +63,7 @@ public class When_loading_game
             .WithCharacterName("Thorin")
             .WithLocation("entrance");
 
-    private static async Task<GameEngine> LoginAndReachLoadGame(GameEngine engine)
+    private static async Task<Questline.Engine.Core.GameEngine> LoginAndReachLoadGame(Questline.Engine.Core.GameEngine engine)
     {
         await engine.ProcessInput(null);
         await engine.ProcessInput("login alice");

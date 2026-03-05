@@ -3,7 +3,7 @@ using Questline.Cli;
 using Questline.Engine.Content;
 using Questline.Framework.FileSystem;
 
-namespace Questline.Tests.Cli;
+namespace Questline.Tests.Cli.CliAppBuilder;
 
 public class When_running_in_game_mode
 {
@@ -11,7 +11,7 @@ public class When_running_in_game_mode
 
     public When_running_in_game_mode()
     {
-        var builder = new CliAppBuilder()
+        var builder = new Questline.Cli.CliAppBuilder()
             .WithRunMode(RunMode.Game)
             .ConfigureServices();
 

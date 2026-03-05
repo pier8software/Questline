@@ -1,15 +1,14 @@
-using Questline.Engine.Characters;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers;
 
-namespace Questline.Tests.Engine.Characters;
+namespace Questline.Tests.Engine.Characters.CharacterCreationStateMachine;
 
 public class When_completing_creation
 {
     // 3d6 x 6 ability scores = 18 rolls, then 1d8 for HP = 19 rolls total
     private static readonly int[] DefaultRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
 
-    private static CharacterCreationStateMachine CreateStateMachine(params int[] diceRolls) =>
+    private static Questline.Engine.Characters.CharacterCreationStateMachine CreateStateMachine(params int[] diceRolls) =>
         new(new FakeDice(diceRolls));
 
     [Fact]

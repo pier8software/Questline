@@ -1,15 +1,14 @@
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.GetPlayerInventoryQueryHandler;
 
 public class When_taking_and_dropping_items
 {
-    private readonly TakeItemHandler _takeHandler;
-    private readonly DropItemCommandHandler _dropHandler;
-    private readonly GameFixture _fixture;
+    private readonly Questline.Engine.Handlers.TakeItemHandler        _takeHandler;
+    private readonly Questline.Engine.Handlers.DropItemCommandHandler _dropHandler;
+    private readonly GameFixture                                      _fixture;
 
     public When_taking_and_dropping_items()
     {
@@ -17,9 +16,9 @@ public class When_taking_and_dropping_items
             .WithRoom(Rooms.Cellar.WithItem(Items.BrassLamp))
             .Build("cellar");
 
-        _takeHandler = new TakeItemHandler(
+        _takeHandler = new Questline.Engine.Handlers.TakeItemHandler(
             _fixture.Session, _fixture.PlaythroughRepository, _fixture.RoomRepository);
-        _dropHandler = new DropItemCommandHandler(
+        _dropHandler = new Questline.Engine.Handlers.DropItemCommandHandler(
             _fixture.Session, _fixture.PlaythroughRepository, _fixture.RoomRepository);
     }
 

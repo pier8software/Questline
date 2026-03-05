@@ -1,14 +1,13 @@
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.DropItemCommandHandler;
 
 public class When_item_is_in_inventory
 {
-    private readonly DropItemCommandHandler _handler;
-    private readonly GameFixture _fixture;
+    private readonly Questline.Engine.Handlers.DropItemCommandHandler _handler;
+    private readonly GameFixture                                      _fixture;
 
     public When_item_is_in_inventory()
     {
@@ -17,7 +16,7 @@ public class When_item_is_in_inventory
             .WithInventoryItem(Items.BrassLamp)
             .Build("cellar");
 
-        _handler = new DropItemCommandHandler(
+        _handler = new Questline.Engine.Handlers.DropItemCommandHandler(
             _fixture.Session, _fixture.PlaythroughRepository, _fixture.RoomRepository);
     }
 

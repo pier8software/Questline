@@ -1,7 +1,6 @@
-using Questline.Cli.DeployContent;
 using Questline.Tests.TestHelpers;
 
-namespace Questline.Tests.Cli.DeployContent;
+namespace Questline.Tests.Cli.DeployContent.ContentDeploymentApp;
 
 public class When_deploying_content
 {
@@ -12,7 +11,7 @@ public class When_deploying_content
     {
         _seeder = new FakeContentSeeder();
         _console = new FakeConsole();
-        var app = new ContentDeploymentApp(_seeder, _console);
+        var app = new Questline.Cli.DeployContent.ContentDeploymentApp(_seeder, _console);
 
         app.RunAsync().GetAwaiter().GetResult();
     }

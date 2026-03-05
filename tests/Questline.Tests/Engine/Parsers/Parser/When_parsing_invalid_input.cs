@@ -1,10 +1,8 @@
-using Questline.Engine.Parsers;
-
-namespace Questline.Tests.Engine.Parsers;
+namespace Questline.Tests.Engine.Parsers.Parser;
 
 public class When_parsing_invalid_input
 {
-    private readonly Parser _parser = new();
+    private readonly Questline.Engine.Parsers.Parser _parser = new();
 
     [Fact]
     public void Empty_input_returns_parse_error()

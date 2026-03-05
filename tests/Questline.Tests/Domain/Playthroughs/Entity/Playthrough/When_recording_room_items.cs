@@ -1,12 +1,11 @@
-using Questline.Domain.Playthroughs.Entity;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Domain.Playthroughs.Entity;
+namespace Questline.Tests.Domain.Playthroughs.Entity.Playthrough;
 
 public class When_recording_room_items
 {
-    private readonly Playthrough _playthrough;
+    private readonly Questline.Domain.Playthroughs.Entity.Playthrough _playthrough;
 
     public When_recording_room_items()
     {

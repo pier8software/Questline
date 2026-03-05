@@ -1,11 +1,10 @@
-using Questline.Engine.Parsers;
 using static Questline.Engine.Messages.Requests;
 
-namespace Questline.Tests.Engine.Parsers;
+namespace Questline.Tests.Engine.Parsers.Parser;
 
 public class When_parsing_valid_input
 {
-    private readonly Parser _parser = new();
+    private readonly Questline.Engine.Parsers.Parser _parser = new();
 
     [Theory]
     [InlineData("drop",       typeof(DropItemCommand))]

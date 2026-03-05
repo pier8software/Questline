@@ -1,11 +1,10 @@
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.VersionQueryHandler;
 
 public class When_querying_version
 {
-    private readonly VersionQueryHandler _handler = new();
+    private readonly Questline.Engine.Handlers.VersionQueryHandler _handler = new();
 
     [Fact]
     public async Task Returns_version_response_with_current_version()

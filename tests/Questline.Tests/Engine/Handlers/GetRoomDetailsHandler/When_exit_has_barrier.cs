@@ -1,10 +1,9 @@
 using Questline.Domain.Rooms.Entity;
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.GetRoomDetailsHandler;
 
 public class When_exit_has_barrier
 {
@@ -17,7 +16,7 @@ public class When_exit_has_barrier
             .WithRoom(Rooms.BeyondRoom)
             .Build("chamber");
 
-        var handler = new GetRoomDetailsHandler(
+        var handler = new Questline.Engine.Handlers.GetRoomDetailsHandler(
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
         var result = await handler.Handle(new Requests.GetRoomDetailsQuery());
@@ -36,7 +35,7 @@ public class When_exit_has_barrier
             .WithUnlockedBarrier("iron-door")
             .Build("chamber");
 
-        var handler = new GetRoomDetailsHandler(
+        var handler = new Questline.Engine.Handlers.GetRoomDetailsHandler(
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
         var result = await handler.Handle(new Requests.GetRoomDetailsQuery());

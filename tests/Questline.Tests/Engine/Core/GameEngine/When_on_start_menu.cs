@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Characters;
 using Questline.Engine.Core;
@@ -8,16 +9,15 @@ using Questline.Engine.Repositories;
 using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
-using Microsoft.Extensions.DependencyInjection;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Core;
+namespace Questline.Tests.Engine.Core.GameEngine;
 
 public class When_on_start_menu
 {
     private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
 
-    private static GameEngine CreateEngine(FakePlaythroughRepository? playthroughRepo = null)
+    private static Questline.Engine.Core.GameEngine CreateEngine(FakePlaythroughRepository? playthroughRepo = null)
     {
         var rooms = new Dictionary<string, Room>
         {
@@ -51,10 +51,10 @@ public class When_on_start_menu
         var dispatcher   = new RequestSender(serviceProvider);
         var parser       = new Parser();
 
-        return new GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepo, session, stateMachine);
+        return new Questline.Engine.Core.GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepo, session, stateMachine);
     }
 
-    private static async Task<GameEngine> LoginAndReachStartMenu(GameEngine engine)
+    private static async Task<Questline.Engine.Core.GameEngine> LoginAndReachStartMenu(Questline.Engine.Core.GameEngine engine)
     {
         await engine.ProcessInput(null);
         await engine.ProcessInput("login alice");

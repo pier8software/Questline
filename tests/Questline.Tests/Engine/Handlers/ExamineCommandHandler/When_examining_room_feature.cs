@@ -1,13 +1,12 @@
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.ExamineCommandHandler;
 
 public class When_examining_room_feature
 {
-    private readonly ExamineCommandHandler _handler;
+    private readonly Questline.Engine.Handlers.ExamineCommandHandler _handler;
 
     public When_examining_room_feature()
     {
@@ -15,7 +14,7 @@ public class When_examining_room_feature
             .WithRoom(Rooms.Chamber.WithFeature(Features.StrangeSymbols))
             .Build("chamber");
 
-        _handler = new ExamineCommandHandler(
+        _handler = new Questline.Engine.Handlers.ExamineCommandHandler(
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
     }
 

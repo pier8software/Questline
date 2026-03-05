@@ -1,13 +1,12 @@
-using Questline.Engine.Handlers;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers.Builders;
-using static Questline.Tests.TestHelpers.Builders.Templates;
+using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
-namespace Questline.Tests.Engine.Handlers;
+namespace Questline.Tests.Engine.Handlers.GetPlayerInventoryQueryHandler;
 
 public class When_player_has_items
 {
-    private readonly GetPlayerInventoryQueryHandler _handler;
+    private readonly Questline.Engine.Handlers.GetPlayerInventoryQueryHandler _handler;
 
     public When_player_has_items()
     {
@@ -17,7 +16,7 @@ public class When_player_has_items
             .WithInventoryItem(Items.RustyKey)
             .Build("cellar");
 
-        _handler = new GetPlayerInventoryQueryHandler(
+        _handler = new Questline.Engine.Handlers.GetPlayerInventoryQueryHandler(
             fixture.Session, fixture.PlaythroughRepository);
     }
 

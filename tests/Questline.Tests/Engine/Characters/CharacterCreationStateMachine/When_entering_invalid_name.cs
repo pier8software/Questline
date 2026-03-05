@@ -1,8 +1,7 @@
-using Questline.Engine.Characters;
 using Questline.Engine.Messages;
 using Questline.Tests.TestHelpers;
 
-namespace Questline.Tests.Engine.Characters;
+namespace Questline.Tests.Engine.Characters.CharacterCreationStateMachine;
 
 public class When_entering_invalid_name
 {
@@ -11,7 +10,7 @@ public class When_entering_invalid_name
     [Fact]
     public void Invalid_name_returns_validation_error()
     {
-        var sm = new CharacterCreationStateMachine(new FakeDice(DefaultRolls));
+        var sm = new Questline.Engine.Characters.CharacterCreationStateMachine(new FakeDice(DefaultRolls));
         sm.ProcessInput(null);
         sm.ProcessInput("1");
         sm.ProcessInput("1");
