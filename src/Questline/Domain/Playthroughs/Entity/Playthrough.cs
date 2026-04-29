@@ -31,10 +31,6 @@ public class Playthrough : DomainEntity
         init => _roomItems = new Dictionary<string, List<Item>>(value);
     }
 
-    /// <summary>Leader-shorthand for the current single-character APIs.
-    /// Removed when handlers are routed by actor in a later task.</summary>
-    public IReadOnlyList<Item> Inventory => Party.Members[0].Inventory;
-
     public static Playthrough Create(
         string username,
         string adventureId,
@@ -57,19 +53,6 @@ public class Playthrough : DomainEntity
     public void IncrementTurns() => Turns++;
 
     internal void RestoreTurns(int turns) => Turns = turns;
-
-    /// <summary>Leader-shorthand — delegates to first party member.
-    /// Removed when per-actor inventory routing lands in D10.</summary>
-    public void AddInventoryItem(Item item) => Party.Members[0].AddInventoryItem(item);
-
-    /// <summary>Leader-shorthand — delegates to first party member.
-    /// Removed when per-actor inventory routing lands in D10.</summary>
-    public void RemoveInventoryItem(Item item) => Party.Members[0].RemoveInventoryItem(item);
-
-    /// <summary>Leader-shorthand — delegates to first party member.
-    /// Removed when per-actor inventory routing lands in D10.</summary>
-    public Item? FindInventoryItemByName(string name) =>
-        Party.Members[0].FindInventoryItemByName(name);
 
     public bool IsBarrierUnlocked(string barrierId) => _unlockedBarriers.Contains(barrierId);
 
