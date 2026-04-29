@@ -33,10 +33,7 @@ public class PlaythroughBuilder
     public PlaythroughBuilder WithInventoryItem(Questline.Domain.Shared.Entity.Item item)
     {
         EnsureLeader();
-        // Inventory items go on the leader character — rebuild leader with item already added.
-        var leader = _members.Count > 0 ? _members[0] : CharacterBuilder.New().Build();
-        leader.AddInventoryItem(item);
-        _members = [leader, .._members.Skip(1)];
+        _members[0].AddInventoryItem(item);
         return this;
     }
 
