@@ -42,4 +42,7 @@ public record AbilityScores(
     AbilityScore Constitution,
     AbilityScore Charisma);
 
-public record AbilityScore(int Score);
+public record AbilityScore(int Score)
+{
+    public int Modifier => (int)Math.Floor((Score - 10) / 2.0);
+}
