@@ -10,7 +10,7 @@ public class DropItemCommandHandler(
     IPlaythroughRepository playthroughRepository,
     IRoomRepository        roomRepository) : IRequestHandler<Requests.DropItemCommand>
 {
-    public async Task<IResponse> Handle(Requests.DropItemCommand command)
+    public async Task<IResponse> Handle(Actor actor, Requests.DropItemCommand command)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
         var item        = playthrough.FindInventoryItemByName(command.ItemName);

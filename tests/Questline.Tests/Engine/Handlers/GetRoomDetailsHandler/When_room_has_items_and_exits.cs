@@ -1,5 +1,6 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -27,7 +28,7 @@ public class When_room_has_items_and_exits
     [Fact]
     public async Task Returns_response_with_room_details()
     {
-        var result = await _handler.Handle(new Requests.GetRoomDetailsQuery());
+        var result = await _handler.Handle(new PartyActor(), new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.RoomName.ShouldBe("Hallway");

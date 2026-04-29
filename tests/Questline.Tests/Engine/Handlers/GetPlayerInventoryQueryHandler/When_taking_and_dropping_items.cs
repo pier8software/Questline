@@ -1,4 +1,5 @@
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -25,10 +26,10 @@ public class When_taking_and_dropping_items
     [Fact]
     public async Task Get_then_drop_round_trips_item_through_inventory()
     {
-        await _takeHandler.Handle(new Requests.TakeItemCommand("brass lamp"));
+        await _takeHandler.Handle(new PartyActor(), new Requests.TakeItemCommand("brass lamp"));
         _fixture.Playthrough.Inventory.ShouldContain(i => i.Name == "brass lamp");
 
-        await _dropHandler.Handle(new Requests.DropItemCommand("brass lamp"));
+        await _dropHandler.Handle(new PartyActor(), new Requests.DropItemCommand("brass lamp"));
         _fixture.Playthrough.Inventory.ShouldBeEmpty();
         var recordedItems = _fixture.Playthrough.GetRecordedRoomItems("cellar");
         recordedItems.ShouldNotBeNull();

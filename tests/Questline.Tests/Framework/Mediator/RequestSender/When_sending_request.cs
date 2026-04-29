@@ -27,7 +27,7 @@ public class When_sending_request
 
         var dispatcher = new Questline.Framework.Mediator.RequestSender(serviceProvider);
 
-        var result = await dispatcher.Send(new Requests.GetRoomDetailsQuery());
+        var result = await dispatcher.Send(new NoActor(), new Requests.GetRoomDetailsQuery());
 
         result.ShouldBeOfType<Responses.RoomDetailsResponse>();
     }

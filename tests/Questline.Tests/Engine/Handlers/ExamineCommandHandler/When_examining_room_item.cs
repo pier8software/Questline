@@ -1,4 +1,5 @@
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -21,7 +22,7 @@ public class When_examining_room_item
     [Fact]
     public async Task Shows_item_description()
     {
-        var result = await _handler.Handle(new Requests.ExamineCommand("torch"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.ExamineCommand("torch"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("A flickering wooden torch.");

@@ -1,5 +1,6 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -23,7 +24,7 @@ public class When_room_has_no_exits
     [Fact]
     public async Task Player_location_is_not_updated()
     {
-        _ = await _handler.Handle(new Requests.MovePlayerCommand(Direction.North));
+        _ = await _handler.Handle(new PartyActor(), new Requests.MovePlayerCommand(Direction.North));
 
         _fixture.Playthrough.Location.ShouldBe("sealed");
     }

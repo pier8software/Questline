@@ -1,4 +1,5 @@
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -21,7 +22,7 @@ public class When_examining_room_feature
     [Fact]
     public async Task Keyword_shows_description()
     {
-        var result = await _handler.Handle(new Requests.ExamineCommand("symbols"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.ExamineCommand("symbols"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");
@@ -30,7 +31,7 @@ public class When_examining_room_feature
     [Fact]
     public async Task Full_name_shows_description()
     {
-        var result = await _handler.Handle(new Requests.ExamineCommand("strange symbols"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.ExamineCommand("strange symbols"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("Ancient runes etched into the stone walls.");

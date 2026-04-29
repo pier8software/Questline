@@ -1,4 +1,5 @@
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -23,7 +24,7 @@ public class When_item_is_in_inventory
     [Fact]
     public async Task Returns_successful_drop_response()
     {
-        var result = await _handler.Handle(new Requests.DropItemCommand("brass lamp"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.DropItemCommand("brass lamp"));
 
         var dropResult = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
         dropResult.ItemName.ShouldBe("brass lamp");
@@ -32,7 +33,7 @@ public class When_item_is_in_inventory
     [Fact]
     public async Task Item_moves_from_inventory_to_room()
     {
-        _ = await _handler.Handle(new Requests.DropItemCommand("brass lamp"));
+        _ = await _handler.Handle(new PartyActor(), new Requests.DropItemCommand("brass lamp"));
 
         _fixture.Playthrough.Inventory.ShouldBeEmpty();
         var recordedItems = _fixture.Playthrough.GetRecordedRoomItems("cellar");

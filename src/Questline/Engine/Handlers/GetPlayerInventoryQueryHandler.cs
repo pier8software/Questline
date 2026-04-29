@@ -9,7 +9,7 @@ public class GetPlayerInventoryQueryHandler(
     IGameSession           session,
     IPlaythroughRepository playthroughRepository) : IRequestHandler<Requests.GetPlayerInventoryQuery>
 {
-    public async Task<IResponse> Handle(Requests.GetPlayerInventoryQuery command)
+    public async Task<IResponse> Handle(Actor actor, Requests.GetPlayerInventoryQuery command)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
 

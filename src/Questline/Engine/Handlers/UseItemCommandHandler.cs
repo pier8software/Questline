@@ -11,7 +11,7 @@ public class UseItemCommandHandler(
     IPlaythroughRepository playthroughRepository,
     IRoomRepository        roomRepository) : IRequestHandler<Requests.UseItemCommand>
 {
-    public async Task<IResponse> Handle(Requests.UseItemCommand command)
+    public async Task<IResponse> Handle(Actor actor, Requests.UseItemCommand command)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
         var item        = playthrough.FindInventoryItemByName(command.ItemName);

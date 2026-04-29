@@ -27,7 +27,7 @@ public class When_barrier_is_already_unlocked
     [Fact]
     public async Task Returns_informative_message()
     {
-        var result = await _handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.UseItemCommand("rusty key", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("The iron door is already unlocked.");

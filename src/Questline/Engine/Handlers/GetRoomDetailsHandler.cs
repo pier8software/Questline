@@ -12,7 +12,7 @@ public class GetRoomDetailsHandler(
     IPlaythroughRepository playthroughRepository,
     IRoomRepository        roomRepository) : IRequestHandler<Requests.GetRoomDetailsQuery>
 {
-    public async Task<IResponse> Handle(Requests.GetRoomDetailsQuery request)
+    public async Task<IResponse> Handle(Actor actor, Requests.GetRoomDetailsQuery request)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
         var room        = await roomRepository.GetById(playthrough.Location);

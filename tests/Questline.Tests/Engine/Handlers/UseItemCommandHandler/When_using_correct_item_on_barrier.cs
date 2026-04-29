@@ -1,5 +1,6 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -26,7 +27,7 @@ public class When_using_correct_item_on_barrier
     [Fact]
     public async Task Barrier_is_unlocked_with_message()
     {
-        var result = await _handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.UseItemCommand("rusty key", "iron door"));
 
         var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
         useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");
@@ -36,7 +37,7 @@ public class When_using_correct_item_on_barrier
     [Fact]
     public async Task Contextual_use_unlocks_matching_barrier_in_room()
     {
-        var result = await _handler.Handle(new Requests.UseItemCommand("rusty key", null));
+        var result = await _handler.Handle(new PartyActor(), new Requests.UseItemCommand("rusty key", null));
 
         var useResult = result.ShouldBeOfType<Responses.UseItemResponse>();
         useResult.ResultMessage.ShouldBe("The rusty key turns in the lock and the iron door swings open.");

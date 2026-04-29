@@ -74,7 +74,7 @@ public class GameEngine(
             return parseResult.Error!;
         }
 
-        var response = await dispatcher.Send(parseResult.Request!);
+        var response = await dispatcher.Send(new PartyActor(), parseResult.Request!);
 
         if (response is Responses.GameQuitedResponse)
         {
@@ -124,7 +124,7 @@ public class GameEngine(
             return parseResult.Error!;
         }
 
-        var response         = await dispatcher.Send(parseResult.Request!);
+        var response         = await dispatcher.Send(new NoActor(), parseResult.Request!);
         var loggedInResponse = response as Responses.LoggedInResponse;
 
         gameSession.SetUsername(loggedInResponse!.Player.Username);

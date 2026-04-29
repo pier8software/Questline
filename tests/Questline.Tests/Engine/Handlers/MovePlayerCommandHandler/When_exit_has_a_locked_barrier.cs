@@ -26,7 +26,7 @@ public class When_exit_has_a_locked_barrier
     [Fact]
     public async Task Blocked_exit_returns_barrier_message()
     {
-        var result = await _handler.Handle(new Requests.MovePlayerCommand(Direction.North));
+        var result = await _handler.Handle(new PartyActor(), new Requests.MovePlayerCommand(Direction.North));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("The iron door is locked tight.");

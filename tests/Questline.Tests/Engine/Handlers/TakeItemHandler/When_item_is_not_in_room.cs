@@ -22,7 +22,7 @@ public class When_item_is_not_in_room
     [Fact]
     public async Task Returns_error_message()
     {
-        var result = await _handler.Handle(new Requests.TakeItemCommand("lamp"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.TakeItemCommand("lamp"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldContain("There is no 'lamp' here.");

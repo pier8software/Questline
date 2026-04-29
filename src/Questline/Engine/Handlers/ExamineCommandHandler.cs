@@ -10,7 +10,7 @@ public class ExamineCommandHandler(
     IPlaythroughRepository playthroughRepository,
     IRoomRepository        roomRepository) : IRequestHandler<Requests.ExamineCommand>
 {
-    public async Task<IResponse> Handle(Requests.ExamineCommand command)
+    public async Task<IResponse> Handle(Actor actor, Requests.ExamineCommand command)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
 

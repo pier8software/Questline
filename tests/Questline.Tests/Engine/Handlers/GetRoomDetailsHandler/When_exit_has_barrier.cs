@@ -1,5 +1,6 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -19,7 +20,7 @@ public class When_exit_has_barrier
         var handler = new Questline.Engine.Handlers.GetRoomDetailsHandler(
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(new Requests.GetRoomDetailsQuery());
+        var result = await handler.Handle(new PartyActor(), new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.LockedBarriers.ShouldContain("A heavy iron door blocks the way North.");
@@ -38,7 +39,7 @@ public class When_exit_has_barrier
         var handler = new Questline.Engine.Handlers.GetRoomDetailsHandler(
             fixture.Session, fixture.PlaythroughRepository, fixture.RoomRepository);
 
-        var result = await handler.Handle(new Requests.GetRoomDetailsQuery());
+        var result = await handler.Handle(new PartyActor(), new Requests.GetRoomDetailsQuery());
 
         var lookResult = result.ShouldBeOfType<Responses.RoomDetailsResponse>();
         lookResult.LockedBarriers.ShouldBeEmpty();

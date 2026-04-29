@@ -6,7 +6,7 @@ namespace Questline.Engine.Handlers;
 
 public class VersionQueryHandler : IRequestHandler<Requests.VersionQuery>
 {
-    public Task<IResponse> Handle(Requests.VersionQuery request)
+    public Task<IResponse> Handle(Actor actor, Requests.VersionQuery request)
     {
         var version = Assembly.GetEntryAssembly()?
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?

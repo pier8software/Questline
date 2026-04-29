@@ -1,5 +1,6 @@
 using Questline.Domain.Rooms.Entity;
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -26,7 +27,7 @@ public class When_barrier_is_unlocked
     [Fact]
     public async Task Player_moves_through_unlocked_barrier()
     {
-        var result = await _handler.Handle(new Requests.MovePlayerCommand(Direction.North));
+        var result = await _handler.Handle(new PartyActor(), new Requests.MovePlayerCommand(Direction.North));
 
         var moveResult = result.ShouldBeOfType<Responses.PlayerMovedResponse>();
         moveResult.RoomName.ShouldBe("End Room");

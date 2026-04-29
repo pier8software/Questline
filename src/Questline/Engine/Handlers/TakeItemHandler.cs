@@ -10,7 +10,7 @@ public class TakeItemHandler(
     IPlaythroughRepository playthroughRepository,
     IRoomRepository        roomRepository) : IRequestHandler<Requests.TakeItemCommand>
 {
-    public async Task<IResponse> Handle(Requests.TakeItemCommand request)
+    public async Task<IResponse> Handle(Actor actor, Requests.TakeItemCommand request)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
         var room        = await roomRepository.GetById(playthrough.Location);
