@@ -25,8 +25,8 @@ public class When_item_is_not_in_inventory
     {
         var result = await _handler.Handle(new PartyActor(), new Requests.DropItemCommand("lamp"));
 
-        var dropResult = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
-        dropResult.ItemName.ShouldContain("You are not carrying 'lamp'.");
+        var errorResult = result.ShouldBeOfType<ErrorResponse>();
+        errorResult.ErrorMessage.ShouldContain("You are not carrying 'lamp'.");
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class When_item_is_not_in_inventory
     {
         var result = await _handler.Handle(new PartyActor(), new Requests.DropItemCommand("BRASS LAMP"));
 
-        var dropResult = result.ShouldBeOfType<Responses.ItemDroppedResponse>();
-        dropResult.ItemName.ShouldContain("BRASS LAMP");
+        var errorResult = result.ShouldBeOfType<ErrorResponse>();
+        errorResult.ErrorMessage.ShouldContain("BRASS LAMP");
     }
 }

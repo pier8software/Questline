@@ -62,11 +62,36 @@ public static class Responses
         IReadOnlyList<string> Items,
         IReadOnlyList<string> LockedBarriers) : IResponse;
 
-    public record ItemTakenResponse(string ItemName) : IResponse;
+    public record ItemTakenResponse(string ItemName, string? CharacterName = null) : IResponse
+    {
+        public string Message => CharacterName is null
+            ? $"You pick up the {ItemName}."
+            : $"{CharacterName} picks up the {ItemName}.";
+    }
 
-    public record ItemDroppedResponse(string ItemName) : IResponse;
+    public record ItemDroppedResponse(string ItemName, string? CharacterName = null) : IResponse
+    {
+        public string Message => CharacterName is null
+            ? $"You drop the {ItemName}."
+            : $"{CharacterName} drops the {ItemName}.";
+    }
 
-    public record PlayerInventoryResponse(IReadOnlyList<string> Items) : IResponse;
+    public record InventoryResponse(
+        IReadOnlyList<(string CharacterName, IReadOnlyList<string> ItemNames)> PartyInventory) : IResponse
+    {
+        public string Message
+        {
+            get
+            {
+                var lines = PartyInventory.Select(p =>
+                {
+                    var items = p.ItemNames.Count == 0 ? "(empty)" : string.Join(", ", p.ItemNames);
+                    return $"{p.CharacterName}: {items}";
+                });
+                return string.Join(Environment.NewLine, lines);
+            }
+        }
+    }
 
     public record ExamineResponse(string Description) : IResponse;
 

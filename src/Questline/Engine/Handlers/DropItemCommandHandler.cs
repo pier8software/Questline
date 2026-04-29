@@ -13,14 +13,16 @@ public class DropItemCommandHandler(
     public async Task<IResponse> Handle(Actor actor, Requests.DropItemCommand command)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
-        var item        = playthrough.FindInventoryItemByName(command.ItemName);
+
+        var actingCharacter = ActingCharacterResolver.Resolve(actor, playthrough.Party);
+        var item            = actingCharacter.FindInventoryItemByName(command.ItemName);
 
         if (item is null)
         {
-            return new Responses.ItemDroppedResponse($"You are not carrying '{command.ItemName}'.");
+            return new ErrorResponse($"You are not carrying '{command.ItemName}'.");
         }
 
-        playthrough.RemoveInventoryItem(item);
+        actingCharacter.RemoveInventoryItem(item);
 
         var room      = await roomRepository.GetById(playthrough.Location);
         var roomItems = playthrough.GetRecordedRoomItems(room.Id) ?? room.Items.ToList();
@@ -28,6 +30,7 @@ public class DropItemCommandHandler(
         playthrough.RecordRoomItems(room.Id, roomItems);
         await playthroughRepository.Save(playthrough);
 
-        return new Responses.ItemDroppedResponse(item.Name);
+        var characterName = actor is CharacterActor ? actingCharacter.Name : null;
+        return new Responses.ItemDroppedResponse(item.Name, characterName);
     }
 }

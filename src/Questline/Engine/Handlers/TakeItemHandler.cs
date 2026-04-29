@@ -15,8 +15,11 @@ public class TakeItemHandler(
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
         var room        = await roomRepository.GetById(playthrough.Location);
 
+        var actingCharacter = ActingCharacterResolver.Resolve(actor, playthrough.Party);
+
         var roomItems = playthrough.GetRecordedRoomItems(room.Id) ?? room.Items.ToList();
-        var item      = roomItems.FirstOrDefault(i => i.Name.Equals(request.ItemName, StringComparison.OrdinalIgnoreCase));
+        var item      = roomItems.FirstOrDefault(i =>
+            i.Name.Equals(request.ItemName, StringComparison.OrdinalIgnoreCase));
 
         if (item is null)
         {
@@ -25,9 +28,10 @@ public class TakeItemHandler(
 
         roomItems.Remove(item);
         playthrough.RecordRoomItems(room.Id, roomItems);
-        playthrough.AddInventoryItem(item);
+        actingCharacter.AddInventoryItem(item);
         await playthroughRepository.Save(playthrough);
 
-        return new Responses.ItemTakenResponse(item.Name);
+        var characterName = actor is CharacterActor ? actingCharacter.Name : null;
+        return new Responses.ItemTakenResponse(item.Name, characterName);
     }
 }

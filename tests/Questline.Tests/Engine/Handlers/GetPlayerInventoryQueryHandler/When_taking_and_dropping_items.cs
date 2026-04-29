@@ -27,10 +27,10 @@ public class When_taking_and_dropping_items
     public async Task Get_then_drop_round_trips_item_through_inventory()
     {
         await _takeHandler.Handle(new PartyActor(), new Requests.TakeItemCommand("brass lamp"));
-        _fixture.Playthrough.Inventory.ShouldContain(i => i.Name == "brass lamp");
+        _fixture.Playthrough.Party.Members[0].Inventory.ShouldContain(i => i.Name == "brass lamp");
 
         await _dropHandler.Handle(new PartyActor(), new Requests.DropItemCommand("brass lamp"));
-        _fixture.Playthrough.Inventory.ShouldBeEmpty();
+        _fixture.Playthrough.Party.Members[0].Inventory.ShouldBeEmpty();
         var recordedItems = _fixture.Playthrough.GetRecordedRoomItems("cellar");
         recordedItems.ShouldNotBeNull();
         recordedItems.ShouldContain(i => i.Name == "brass lamp");

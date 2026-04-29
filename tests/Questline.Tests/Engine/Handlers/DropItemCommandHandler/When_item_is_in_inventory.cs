@@ -35,7 +35,7 @@ public class When_item_is_in_inventory
     {
         _ = await _handler.Handle(new PartyActor(), new Requests.DropItemCommand("brass lamp"));
 
-        _fixture.Playthrough.Inventory.ShouldBeEmpty();
+        _fixture.Playthrough.Party.Members[0].Inventory.ShouldBeEmpty();
         var recordedItems = _fixture.Playthrough.GetRecordedRoomItems("cellar");
         recordedItems.ShouldNotBeNull();
         recordedItems!.ShouldContain(i => i.Name == "brass lamp");

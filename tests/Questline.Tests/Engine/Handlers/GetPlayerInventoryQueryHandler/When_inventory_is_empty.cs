@@ -24,7 +24,7 @@ public class When_inventory_is_empty
     {
         var result = await _handler.Handle(new PartyActor(), new Requests.GetPlayerInventoryQuery());
 
-        var inventoryResult = result.ShouldBeOfType<Responses.PlayerInventoryResponse>();
-        inventoryResult.Items.ShouldBeEmpty();
+        var inventoryResult = result.ShouldBeOfType<Responses.InventoryResponse>();
+        inventoryResult.PartyInventory.SelectMany(p => p.ItemNames).ShouldBeEmpty();
     }
 }

@@ -23,11 +23,9 @@ public class ResponseFormatter
             FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
         Responses.RoomDetailsResponse r =>
             FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
-        Responses.ItemTakenResponse r   => $"You pick up the {r.ItemName}.",
-        Responses.ItemDroppedResponse r => $"You drop the {r.ItemName}.",
-        Responses.PlayerInventoryResponse r => r.Items.Count == 0
-            ? "You are not carrying anything."
-            : $"You are carrying: {string.Join(", ", r.Items)}",
+        Responses.ItemTakenResponse r   => r.Message,
+        Responses.ItemDroppedResponse r => r.Message,
+        Responses.InventoryResponse r   => r.Message,
         Responses.ExamineResponse r  => r.Description,
         Responses.UseItemResponse r  => r.ResultMessage,
         Responses.VersionResponse r  => $"Questline v{r.Version}",
