@@ -69,14 +69,14 @@ public class GameEngine(
 
     private async Task<IResponse> HandleGamePlay(string? input)
     {
-        var parseResult = parser.Parse(input);
+        var playthrough = await playthroughRepository.GetById(gameSession.PlaythroughId!);
+        var parseResult = parser.Parse(input, playthrough.Party);
         if (!parseResult.IsSuccess)
         {
             return parseResult.Error!;
         }
 
-        // Placeholder: parser-driven actor detection lands when actor-prefix parsing is added.
-        var response = await dispatcher.Send(new PartyActor(), parseResult.Request!);
+        var response = await dispatcher.Send(parseResult.Actor!, parseResult.Request!);
 
         if (response is Responses.GameQuitedResponse)
         {
