@@ -4,7 +4,7 @@ namespace Questline.Tests.Domain.Characters.Entity.Character;
 
 public class When_converting_to_summary
 {
-    private static readonly HitPoints DefaultHitPoints = new(8, 8);
+    private static readonly Questline.Domain.Characters.Entity.HitPoints DefaultHitPoints = new(max: 8, current: 8);
 
     private static readonly AbilityScores DefaultAbilityScores = new(
         new AbilityScore(10), new AbilityScore(10), new AbilityScore(10),

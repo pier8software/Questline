@@ -21,7 +21,7 @@ public static class HitPointsCalculator
     {
         return @class switch
         {
-            CharacterClass.Fighter => new HitPoints(8, dice.Roll(1, 8).Sum()),
+            CharacterClass.Fighter => new HitPoints(max: 8, current: dice.Roll(1, 8).Sum()),
             _                      => throw new ArgumentException($"Unknown class: {@class}")
         };
     }

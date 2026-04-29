@@ -41,8 +41,8 @@ public class Character : DomainEntity
             Class.ToString(),
             Level,
             Experience,
-            HitPoints.MaxHitPoints,
-            HitPoints.CurrentHitPoints,
+            HitPoints.Max,
+            HitPoints.Current,
             new AbilityScoresSummary(
                 AbilityScores.Strength.Score,
                 AbilityScores.Intelligence.Score,

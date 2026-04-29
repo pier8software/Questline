@@ -27,8 +27,8 @@ public class PlaythroughMapper : IPersistenceMapper<Playthrough, PlaythroughDocu
             new AbilityScore(document.AbilityScores.Constitution),
             new AbilityScore(document.AbilityScores.Charisma)),
         HitPoints = new HitPoints(
-            document.HitPoints.MaxHitPoints,
-            document.HitPoints.CurrentHitPoints),
+            max:     document.HitPoints.MaxHitPoints,
+            current: document.HitPoints.CurrentHitPoints),
         Location = document.Location,
         Inventory = document.Inventory.Select(i => new Item
         {
@@ -69,8 +69,8 @@ public class PlaythroughMapper : IPersistenceMapper<Playthrough, PlaythroughDocu
         },
         HitPoints = new HitPointsDocument
         {
-            MaxHitPoints     = entity.HitPoints.MaxHitPoints,
-            CurrentHitPoints = entity.HitPoints.CurrentHitPoints
+            MaxHitPoints     = entity.HitPoints.Max,
+            CurrentHitPoints = entity.HitPoints.Current
         },
         Location         = entity.Location,
         Inventory        = entity.Inventory.Select(ToItemDocument).ToList(),
