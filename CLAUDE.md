@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Questline text adventure game engine evolving toward a cooperative MUD platform.
+Questline is a parser-driven text adventure engine evolving toward a digital OSR (Old School Renaissance) party-based RPG with optional co-op support. See [`docs/roadmap.md`](docs/roadmap.md) for the current direction and phase plan.
 
 ## Repository Overview
 
@@ -15,8 +15,8 @@ This is a monorepo containing multiple projects and folders.
 | `src/Questline/`           | the core application code containing the game engine                        |
 | `tests/Questline.Tests/`   | the tests for the application code                                          |
 | `devenv/Questline.DevEnv/` | project to orchestrate a local development environment for external systems |
-| `openspec/`                | OpenSpec configuration, specs, and change tracking                          |
 | `content/adventures/`      | JSON adventure content                                                      |
+| `docs/`                    | documentation, roadmap, design specs, and project history                   |
 
 ## `src/Questline/`: Application Code
 
@@ -60,11 +60,14 @@ aspire run
 
 See @docs/devenv.md for more information.
 
-## `openspec/`: OpenSpec
+## `docs/`: Documentation and Design
 
-This project uses OpenSpec to follow a Spec-Driven Development methodology. This folder contains configuration,
-generated `specs/**/SPEC.md` files for features and detailed plans for the feature in the `changes/` folder. Specs are
-updated via OpenSpec change workflow, not edited directly.
+- `docs/roadmap.md` — project direction and phased plan
+- `docs/architecture.md` — architecture overview
+- `docs/devenv.md` — local development environment
+- `docs/adding_a_new_request.md` — walkthrough for adding a new request
+- `docs/superpowers/specs/` — design documents produced via the Superpowers brainstorming workflow
+- `docs/history/` — historical project records (e.g. archived OpenSpec changes from earlier workflow)
 
 ## Development Commands
 
@@ -89,6 +92,25 @@ updated via OpenSpec change workflow, not edited directly.
 - **Primary constructors** - Use on classes (handlers, builders, attributes) not just records
 - **`static abstract` interface members** - `IRequest.CreateRequest` enforces a static factory contract
 - **Allman brace style** - Opening Brace on the NEXT line
+
+### Test Conventions
+
+- Tests live under `tests/Questline.Tests/` mirroring source layout.
+- The subject under test gets its own folder (e.g. `Engine/Parsers/Parser/`).
+- One scenario per file: `When_<scenario>.cs` containing `public class When_<scenario>`.
+- Test methods use plain-English fact-based names (`Input_is_parsed_correctly`, `Barrier_blocks_movement_when_locked`).
+- xUnit + Shouldly. Tests are written before the production code where possible.
+
+### New Command Checklist
+
+When adding a new game command:
+
+1. Create the request record with `[Verbs("verb", "alias")]` in `Engine/Messages/Requests.cs`.
+2. Create the response record with factory methods in `Engine/Messages/Responses.cs`.
+3. Create the handler implementing `IRequestHandler<T>` in `Engine/Handlers/`.
+4. Register the handler in `Engine/ServiceCollectionExtensions.RegisterCommandHandlers()`.
+5. Write tests in `tests/Questline.Tests/Engine/Handlers/<HandlerName>/` using `GameBuilder`/`RoomBuilder`.
+6. Update `CHANGELOG.md` and bump `<Version>` in `Directory.Build.props` if shipping a release.
 
 ## Additional Resources
 
