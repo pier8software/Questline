@@ -59,6 +59,7 @@ public class Character : DomainEntity
             Name,
             Race.ToString(),
             Class?.ToString() ?? "Level 0",
+            Occupation,
             Level,
             Experience,
             HitPoints.Max,

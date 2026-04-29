@@ -40,6 +40,38 @@ public static class Responses
 
     public record CharacterCreationCompleteResponse(CharacterSummary Summary) : IResponse;
 
+    public record PartyRolledResponse(IReadOnlyList<CharacterSummary> Members) : IResponse
+    {
+        public string Message
+        {
+            get
+            {
+                var lines = Members.Select((m, i) =>
+                    $"{i + 1}. {m.Name} ({m.Race}, {m.Occupation}) — " +
+                    $"HP {m.CurrentHitPoints}/{m.MaxHitPoints}, " +
+                    $"Str {m.AbilityScores.Strength}/Dex {m.AbilityScores.Dexterity}/" +
+                    $"Con {m.AbilityScores.Constitution}/Int {m.AbilityScores.Intelligence}/" +
+                    $"Wis {m.AbilityScores.Wisdom}/Cha {m.AbilityScores.Charisma}");
+
+                return "Your party of hopefuls:" + Environment.NewLine
+                    + string.Join(Environment.NewLine, lines) + Environment.NewLine
+                    + Environment.NewLine
+                    + "Type 'accept' to begin, 'reroll' to start over, or "
+                    + "'rename <slot> <name>' to rename a character.";
+            }
+        }
+    }
+
+    public record PartyAcceptedResponse : IResponse
+    {
+        public string Message => "The party sets out…";
+    }
+
+    public record PartyCreationErrorResponse(string Reason) : IResponse
+    {
+        public string Message => Reason;
+    }
+
     public record AdventureStartedResponse(
         CharacterSummary      Character,
         string                RoomName,
