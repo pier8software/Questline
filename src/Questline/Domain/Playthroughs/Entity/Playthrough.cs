@@ -1,5 +1,7 @@
 using Questline.Domain.Characters.Data;
 using Questline.Domain.Characters.Entity;
+using Questline.Domain.Parties.Entity;
+using Questline.Domain.Playthroughs.Data;
 using Questline.Domain.Shared.Entity;
 using Questline.Framework.Domain;
 
@@ -7,27 +9,15 @@ namespace Questline.Domain.Playthroughs.Entity;
 
 public class Playthrough : DomainEntity
 {
-    private readonly List<Item>                      _inventory        = [];
-    private readonly HashSet<string>                 _unlockedBarriers = [];
-    private readonly Dictionary<string, List<Item>>  _roomItems        = new();
+    private readonly HashSet<string>                _unlockedBarriers = [];
+    private readonly Dictionary<string, List<Item>> _roomItems        = new();
 
-    public required string         Username       { get; init; }
-    public required string         AdventureId    { get; init; }
-    public required string         StartingRoomId { get; init; }
-    public required string         CharacterName  { get; init; }
-    public required Race           Race           { get; init; }
-    public required CharacterClass Class          { get; init; }
-    public required AbilityScores  AbilityScores  { get; init; }
-    public required HitPoints      HitPoints      { get; init; }
-    public          int            Level          { get; init; } = 1;
-    public          int            Experience     { get; init; }
-    public required string         Location       { get; set; }
-
-    public IReadOnlyList<Item> Inventory
-    {
-        get => _inventory;
-        init => _inventory = [..value];
-    }
+    public required string Username       { get; init; }
+    public required string AdventureId    { get; init; }
+    public required string StartingRoomId { get; init; }
+    public required Party  Party          { get; init; }
+    public required string Location       { get; set; }
+    public          int    Turns          { get; private set; }
 
     public IReadOnlyCollection<string> UnlockedBarriers
     {
@@ -41,11 +31,15 @@ public class Playthrough : DomainEntity
         init => _roomItems = new Dictionary<string, List<Item>>(value);
     }
 
+    /// <summary>Leader-shorthand for the current single-character APIs.
+    /// Removed when handlers are routed by actor in a later task.</summary>
+    public IReadOnlyList<Item> Inventory => Party.Members[0].Inventory;
+
     public static Playthrough Create(
-        string    username,
-        string    adventureId,
-        string    startingRoomId,
-        Character character)
+        string username,
+        string adventureId,
+        string startingRoomId,
+        Party  party)
     {
         return new Playthrough
         {
@@ -53,25 +47,29 @@ public class Playthrough : DomainEntity
             Username       = username,
             AdventureId    = adventureId,
             StartingRoomId = startingRoomId,
-            CharacterName  = character.Name,
-            Race           = character.Race,
-            Class          = character.Class ?? CharacterClass.Fighter,
-            Level          = character.Level,
-            Experience     = character.Experience,
-            AbilityScores  = character.AbilityScores,
-            HitPoints      = character.HitPoints,
+            Party          = party,
             Location       = startingRoomId
         };
     }
 
     public void MoveTo(string locationId) => Location = locationId;
 
-    public void AddInventoryItem(Item item) => _inventory.Add(item);
+    public void IncrementTurns() => Turns++;
 
-    public void RemoveInventoryItem(Item item) => _inventory.Remove(item);
+    internal void RestoreTurns(int turns) => Turns = turns;
 
+    /// <summary>Leader-shorthand — delegates to first party member.
+    /// Removed when per-actor inventory routing lands in D10.</summary>
+    public void AddInventoryItem(Item item) => Party.Members[0].AddInventoryItem(item);
+
+    /// <summary>Leader-shorthand — delegates to first party member.
+    /// Removed when per-actor inventory routing lands in D10.</summary>
+    public void RemoveInventoryItem(Item item) => Party.Members[0].RemoveInventoryItem(item);
+
+    /// <summary>Leader-shorthand — delegates to first party member.
+    /// Removed when per-actor inventory routing lands in D10.</summary>
     public Item? FindInventoryItemByName(string name) =>
-        _inventory.FirstOrDefault(i => i.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        Party.Members[0].FindInventoryItemByName(name);
 
     public bool IsBarrierUnlocked(string barrierId) => _unlockedBarriers.Contains(barrierId);
 
@@ -83,20 +81,6 @@ public class Playthrough : DomainEntity
     public void RecordRoomItems(string roomId, List<Item> items) =>
         _roomItems[roomId] = items;
 
-    public CharacterSummary ToCharacterSummary() =>
-        new(
-            CharacterName,
-            Race.ToString(),
-            Class.ToString(),
-            Level,
-            Experience,
-            HitPoints.Max,
-            HitPoints.Current,
-            new AbilityScoresSummary(
-                AbilityScores.Strength.Score,
-                AbilityScores.Intelligence.Score,
-                AbilityScores.Wisdom.Score,
-                AbilityScores.Dexterity.Score,
-                AbilityScores.Constitution.Score,
-                AbilityScores.Charisma.Score));
+    public PartySummary ToPartySummary() =>
+        new(Party.Members.Select(c => c.ToSummary()).ToList(), Turns);
 }

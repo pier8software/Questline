@@ -1,3 +1,4 @@
+using Questline.Domain.Parties.Entity;
 using Questline.Domain.Playthroughs.Data;
 using Questline.Domain.Playthroughs.Entity;
 using Questline.Domain.Rooms.Entity;
@@ -92,7 +93,8 @@ public class GameEngine(
         if (stateMachine.CompletedCharacter is { } character)
         {
             var adventure   = await adventureRepository.GetById(_selectedAdventureId);
-            var playthrough = Playthrough.Create(gameSession.Username!, _selectedAdventureId, adventure.StartingRoomId, character);
+            var party       = new Party(id: Guid.NewGuid().ToString(), members: [character]);
+            var playthrough = Playthrough.Create(gameSession.Username!, _selectedAdventureId, adventure.StartingRoomId, party);
 
             await playthroughRepository.Save(playthrough);
             gameSession.SetPlaythroughId(playthrough.Id);
@@ -188,7 +190,7 @@ public class GameEngine(
         var lockedBarriers = GetLockedBarrierDescriptions(startingRoom.Exits, playthrough);
 
         return new Responses.AdventureStartedResponse(
-            playthrough.ToCharacterSummary(),
+            playthrough.Party.Members[0].ToSummary(),
             startingRoom.Name,
             startingRoom.Description,
             exits,

@@ -34,7 +34,7 @@ public class PlaythroughRepository(
         return documents
             .Select(d => new PlaythroughSummary(
                 d.Id,
-                d.CharacterName,
+                d.Party?.Members.FirstOrDefault()?.Name ?? "",
                 nameById.GetValueOrDefault(d.AdventureId, d.AdventureId),
                 d.Location))
             .ToList();

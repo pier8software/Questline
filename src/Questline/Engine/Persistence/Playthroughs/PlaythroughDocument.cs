@@ -5,20 +5,33 @@ namespace Questline.Engine.Persistence.Playthroughs;
 
 public class PlaythroughDocument : Document
 {
-    public string                               Username          { get; set; } = null!;
-    public string                               AdventureId       { get; set; } = null!;
-    public string                               StartingRoomId    { get; set; } = null!;
-    public string                               CharacterName     { get; set; } = null!;
-    public string                               Race              { get; set; } = null!;
-    public string                               Class             { get; set; } = null!;
-    public int                                  Level             { get; set; }
-    public int                                  Experience        { get; set; }
-    public AbilityScoresDocument                AbilityScores     { get; set; } = null!;
-    public HitPointsDocument                    HitPoints         { get; set; } = null!;
-    public string                               Location          { get; set; } = null!;
-    public List<ItemDocument>                   Inventory         { get; set; } = [];
-    public List<string>                         UnlockedBarriers  { get; set; } = [];
-    public Dictionary<string, List<ItemDocument>> RoomItems       { get; set; } = new();
+    public string                                 Username         { get; set; } = null!;
+    public string                                 AdventureId      { get; set; } = null!;
+    public string                                 StartingRoomId   { get; set; } = null!;
+    public string                                 Location         { get; set; } = null!;
+    public int                                    Turns            { get; set; }
+    public PartyDocument                          Party            { get; set; } = null!;
+    public List<string>                           UnlockedBarriers { get; set; } = [];
+    public Dictionary<string, List<ItemDocument>> RoomItems        { get; set; } = new();
+}
+
+public class PartyDocument
+{
+    public List<CharacterDocument> Members { get; set; } = [];
+}
+
+public class CharacterDocument
+{
+    public string                Id            { get; set; } = null!;
+    public string                Name          { get; set; } = null!;
+    public string                Race          { get; set; } = null!;
+    public string?               Class         { get; set; }
+    public int                   Level         { get; set; }
+    public int                   Experience    { get; set; }
+    public string                Occupation    { get; set; } = "";
+    public AbilityScoresDocument AbilityScores { get; set; } = null!;
+    public HitPointsDocument     HitPoints     { get; set; } = null!;
+    public List<ItemDocument>    Inventory     { get; set; } = [];
 }
 
 public class AbilityScoresDocument
