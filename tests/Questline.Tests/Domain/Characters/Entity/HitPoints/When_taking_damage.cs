@@ -41,4 +41,12 @@ public class When_taking_damage
 
         hp.IsAlive.ShouldBeFalse();
     }
+
+    [Fact]
+    public void Throws_when_damage_amount_is_negative()
+    {
+        var hp = new Questline.Domain.Characters.Entity.HitPoints(max: 8, current: 8);
+
+        Should.Throw<ArgumentOutOfRangeException>(() => hp.Damage(-1));
+    }
 }

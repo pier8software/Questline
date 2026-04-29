@@ -24,4 +24,12 @@ public class When_healing
 
         hp.Current.ShouldBe(8);
     }
+
+    [Fact]
+    public void Throws_when_heal_amount_is_negative()
+    {
+        var hp = new Questline.Domain.Characters.Entity.HitPoints(max: 8, current: 4);
+
+        Should.Throw<ArgumentOutOfRangeException>(() => hp.Heal(-1));
+    }
 }
