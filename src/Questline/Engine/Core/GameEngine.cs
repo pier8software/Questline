@@ -78,6 +78,9 @@ public class GameEngine(
 
         var response = await dispatcher.Send(parseResult.Actor!, parseResult.Request!);
 
+        playthrough.IncrementTurns();
+        await playthroughRepository.Save(playthrough);
+
         if (response is Responses.GameQuitedResponse)
         {
             _phase = GamePhase.Ended;

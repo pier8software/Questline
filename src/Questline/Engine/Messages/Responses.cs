@@ -98,4 +98,23 @@ public static class Responses
     public record UseItemResponse(string ResultMessage) : IResponse;
 
     public record VersionResponse(string Version) : IResponse;
+
+    public record StatsResponse(PartySummary Party) : IResponse
+    {
+        public string Message
+        {
+            get
+            {
+                var lines = Party.Members.Select(m =>
+                    $"{m.Name} ({m.Race}, {m.Class}) — HP {m.CurrentHitPoints}/{m.MaxHitPoints}, " +
+                    $"Str {m.AbilityScores.Strength} Dex {m.AbilityScores.Dexterity} " +
+                    $"Con {m.AbilityScores.Constitution} Int {m.AbilityScores.Intelligence} " +
+                    $"Wis {m.AbilityScores.Wisdom} Cha {m.AbilityScores.Charisma}");
+
+                return string.Join(Environment.NewLine, lines)
+                    + Environment.NewLine
+                    + $"Turns: {Party.Turns}";
+            }
+        }
+    }
 }

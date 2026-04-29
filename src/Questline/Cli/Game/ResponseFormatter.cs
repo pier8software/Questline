@@ -29,6 +29,7 @@ public class ResponseFormatter
         Responses.ExamineResponse r  => r.Description,
         Responses.UseItemResponse r  => r.ResultMessage,
         Responses.VersionResponse r  => $"Questline v{r.Version}",
+        Responses.StatsResponse r    => r.Message,
         Responses.GameQuitedResponse => "Goodbye!",
         ErrorResponse r              => r.ErrorMessage,
         _                            => response.ToString() ?? ""

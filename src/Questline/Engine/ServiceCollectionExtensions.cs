@@ -52,6 +52,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRequestHandler<UseItemCommand>, UseItemCommandHandler>();
         services.AddSingleton<IRequestHandler<ExamineCommand>, ExamineCommandHandler>();
         services.AddSingleton<IRequestHandler<VersionQuery>, VersionQueryHandler>();
+        services.AddSingleton<IRequestHandler<StatsQuery>, StatsQueryHandler>();
 
         services.AddSingleton<RequestSender>();
     }

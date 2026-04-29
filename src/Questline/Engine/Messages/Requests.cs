@@ -74,4 +74,10 @@ public static class Requests
             return new UseItemCommand(itemName, targetName);
         }
     }
+
+    [Verbs("stats", "status")]
+    public record StatsQuery : IRequest
+    {
+        public static IRequest CreateRequest(string[] args) => new StatsQuery();
+    }
 }
