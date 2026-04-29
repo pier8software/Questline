@@ -15,7 +15,21 @@ namespace Questline.Tests.Engine.Core.GameEngine;
 
 public class When_logging_in
 {
-    private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
+    private static int[] DefaultDiceRolls => BuildDiceRolls();
+
+    private static int[] BuildDiceRolls()
+    {
+        var rolls = new List<int>();
+        for (var i = 0; i < 4; i++)
+        {
+            rolls.Add(1);
+            for (var s = 0; s < 18; s++) rolls.Add(3);
+            rolls.Add(2);
+            rolls.Add(1);
+            rolls.Add(i + 1);
+        }
+        return rolls.ToArray();
+    }
 
     private static (Questline.Engine.Core.GameEngine engine, FakeGameSession session) CreateEngine()
     {
@@ -47,7 +61,7 @@ public class When_logging_in
             .BuildServiceProvider();
 
         var dice         = new FakeDice(DefaultDiceRolls);
-        var stateMachine = new CharacterCreationStateMachine(dice);
+        var stateMachine = new PartyCreationStateMachine(dice);
         var dispatcher   = new RequestSender(serviceProvider);
         var parser       = new Parser();
         var engine       = new Questline.Engine.Core.GameEngine(parser, dispatcher, adventureRepository, roomRepository, playthroughRepo, session, stateMachine);

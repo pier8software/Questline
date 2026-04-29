@@ -7,14 +7,6 @@ namespace Questline.Engine.Messages;
 
 public static class Responses
 {
-    public enum CharacterCreationStep
-    {
-        SelectClass,
-        SelectRace,
-        RollHitPoints,
-        EnterName
-    }
-
     public record GameStartedResponse : IResponse;
 
     public record GameQuitedResponse : IResponse;
@@ -30,15 +22,6 @@ public static class Responses
     public record NewGameResponse(Resources.AdventureSummary[] Adventures) : IResponse;
 
     public record NewAdventureSelectedResponse : IResponse;
-
-    public record CharacterCreationOption(string Value, string Label);
-
-    public record CharacterCreationResponse(
-        CharacterCreationStep                   Step,
-        string                                  Prompt,
-        IReadOnlyList<CharacterCreationOption>? Options = null) : IResponse;
-
-    public record CharacterCreationCompleteResponse(CharacterSummary Summary) : IResponse;
 
     public record PartyRolledResponse(IReadOnlyList<CharacterSummary> Members) : IResponse
     {

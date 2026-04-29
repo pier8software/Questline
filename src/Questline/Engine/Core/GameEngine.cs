@@ -17,19 +17,19 @@ public enum GamePhase
     StartMenu,
     NewAdventure,
     LoadGame,
-    CharacterCreation,
+    PartyCreation,
     Playing,
     Ended
 }
 
 public class GameEngine(
-    Parser                        parser,
-    RequestSender                 dispatcher,
-    IAdventureRepository          adventureRepository,
-    IRoomRepository               roomRepository,
-    IPlaythroughRepository        playthroughRepository,
-    IGameSession                  gameSession,
-    CharacterCreationStateMachine stateMachine)
+    Parser                     parser,
+    RequestSender              dispatcher,
+    IAdventureRepository       adventureRepository,
+    IRoomRepository            roomRepository,
+    IPlaythroughRepository     playthroughRepository,
+    IGameSession               gameSession,
+    PartyCreationStateMachine  stateMachine)
 {
     private GamePhase                                        _phase               = GamePhase.Started;
     private string                                           _selectedAdventureId = null!;
@@ -56,8 +56,8 @@ public class GameEngine(
                 return await HandleNewAdventure(input);
             case GamePhase.LoadGame:
                 return await HandleLoadGame(input);
-            case GamePhase.CharacterCreation:
-                return await HandleCharacterCreation(input);
+            case GamePhase.PartyCreation:
+                return await HandlePartyCreation(input);
             case GamePhase.Playing:
                 return await HandleGamePlay(input);
             case GamePhase.Ended:
@@ -89,15 +89,18 @@ public class GameEngine(
         return response;
     }
 
-    private async Task<IResponse> HandleCharacterCreation(string? input)
+    private async Task<IResponse> HandlePartyCreation(string? input)
     {
         var response = stateMachine.ProcessInput(input);
 
-        if (stateMachine.CompletedCharacter is { } character)
+        if (stateMachine.CompletedParty is { } party)
         {
             var adventure   = await adventureRepository.GetById(_selectedAdventureId);
-            var party       = new Party(id: Guid.NewGuid().ToString(), members: [character]);
-            var playthrough = Playthrough.Create(gameSession.Username!, _selectedAdventureId, adventure.StartingRoomId, party);
+            var playthrough = Playthrough.Create(
+                gameSession.Username!,
+                _selectedAdventureId,
+                adventure.StartingRoomId,
+                party);
 
             await playthroughRepository.Save(playthrough);
             gameSession.SetPlaythroughId(playthrough.Id);
@@ -117,9 +120,9 @@ public class GameEngine(
         }
 
         _selectedAdventureId = adventureId;
-        _phase               = GamePhase.CharacterCreation;
+        _phase               = GamePhase.PartyCreation;
 
-        return Task.FromResult(new Responses.NewAdventureSelectedResponse() as IResponse);
+        return Task.FromResult(stateMachine.Start() as IResponse);
     }
 
     private async Task<IResponse> HandleLogin(string? input)

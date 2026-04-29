@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<Parser>();
         services.AddSingleton<IDice, Dice>();
-        services.AddSingleton<CharacterCreationStateMachine>();
+        services.AddSingleton<PartyCreationStateMachine>();
         services.AddSingleton<GameEngine>();
 
         services.AddSingleton<IGameSession, GameSession>();
