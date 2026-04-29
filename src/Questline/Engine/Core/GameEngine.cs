@@ -74,6 +74,7 @@ public class GameEngine(
             return parseResult.Error!;
         }
 
+        // Placeholder: parser-driven actor detection lands when actor-prefix parsing is added.
         var response = await dispatcher.Send(new PartyActor(), parseResult.Request!);
 
         if (response is Responses.GameQuitedResponse)

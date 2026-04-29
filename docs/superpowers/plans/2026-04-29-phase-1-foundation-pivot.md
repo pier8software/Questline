@@ -354,9 +354,11 @@ to:
 ```csharp
 public record AbilityScore(int Score)
 {
-    public int Modifier => (Score - 10) / 2;
+    public int Modifier => (int)Math.Floor((Score - 10) / 2.0);
 }
 ```
+
+**Note on the formula:** Plain C# integer division `(Score - 10) / 2` truncates toward zero, which gives wrong values for odd scores below 10 (e.g. Score 9 → `-1/2` = `0` in C#, but D&D requires `-1`). Use `Math.Floor` over `(Score - 10) / 2.0` to get true floor division. The test table in Step 2.1 is the authoritative source of truth — if the implementation passes those nine inline rows, the formula is correct.
 
 - [ ] **Step 2.4: Run test; expect pass**
 
