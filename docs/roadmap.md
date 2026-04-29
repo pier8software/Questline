@@ -23,20 +23,20 @@ This roadmap supersedes the earlier "MUD platform" framing and the Phase 0.7 pol
 
 ## Pivot Phases
 
-### Phase 1 — Foundation pivot *(in design)*
+### Phase 1 — Foundation pivot *(complete — branch `feature/phase-1-foundation-pivot`)*
 
 Replace single-character `Playthrough` with a `Party` of four level-0 characters.
 
-- `Party` as a first-class domain entity.
-- Action attribution: parser distinguishes party-level commands from per-PC commands.
-- Live stats: HP mutates, ability score modifiers are queryable.
-- Generic dice/check primitive (`d20 + mod vs DC`) with an `IDice` abstraction.
-- Turn counter ticking once per accepted command.
-- Funnel-style party creation: roll four random level-0 characters with random race, ability scores, and HP.
+- [x] `Party` as a first-class domain entity.
+- [x] Action attribution: parser distinguishes party-level commands from per-PC commands.
+- [x] Live stats: HP mutates, ability score modifiers are queryable.
+- [x] Generic dice/check primitive (`d20 + mod vs DC`) with an `IDice` abstraction.
+- [x] Turn counter ticking once per accepted command (surfaced via the `stats` / `status` command).
+- [x] Funnel-style party creation: roll four random level-0 characters with random race, ability scores, and HP.
 
-*No combat, spells, equipment, or class selection yet.*
+*No combat, spells, equipment, or class selection yet — those are Phase 2+.*
 
-### Phase 2 — Combat core
+### Phase 2 — Combat core *(next)*
 
 Encounter entity, initiative, attack and AC rolls, damage, saves applied to PCs, monster entities, parser additions for `attack`, `cast`, and per-PC combat actions. Death becomes real; the funnel becomes a real funnel.
 
