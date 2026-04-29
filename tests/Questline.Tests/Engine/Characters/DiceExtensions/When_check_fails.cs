@@ -18,4 +18,17 @@ public class When_check_fails
         result.DC.ShouldBe(12);
         result.Success.ShouldBeFalse();
     }
+
+    [Fact]
+    public void Returns_failure_when_roll_plus_modifier_is_one_below_dc()
+    {
+        var dice = new FakeDice(11);
+
+        var result = dice.Check(modifier: 0, dc: 12);
+
+        result.Roll.ShouldBe(11);
+        result.Modifier.ShouldBe(0);
+        result.DC.ShouldBe(12);
+        result.Success.ShouldBeFalse();
+    }
 }
