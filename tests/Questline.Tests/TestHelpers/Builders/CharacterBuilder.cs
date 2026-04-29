@@ -24,5 +24,5 @@ public class CharacterBuilder
     public CharacterBuilder WithHitPoints(int max, int current) { _hitPoints = new HitPoints(max, current); return this; }
 
     public Character Build() =>
-        Character.Create(_id, _name, _race, _class, _hitPoints, _abilityScores);
+        Character.Create(_id, _name, _race, _class, _hitPoints, _abilityScores, _occupation);
 }

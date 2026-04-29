@@ -136,10 +136,12 @@ public class CharacterCreationStateMachine
         _completedCharacter = Character.Create(
             Guid.NewGuid().ToString(),
             _context.Name,
-            _context.Race,
+            _context.Race ?? Race.Human,
             _context.Class,
             _context.HitPoints,
-            _context.AbilityScores);
+            _context.AbilityScores,
+            occupation: "",
+            level: 1);
 
 
         _context.State = CharacterCreationState.Complete;

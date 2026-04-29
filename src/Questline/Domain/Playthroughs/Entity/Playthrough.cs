@@ -55,7 +55,7 @@ public class Playthrough : DomainEntity
             StartingRoomId = startingRoomId,
             CharacterName  = character.Name,
             Race           = character.Race,
-            Class          = character.Class,
+            Class          = character.Class ?? CharacterClass.Fighter,
             Level          = character.Level,
             Experience     = character.Experience,
             AbilityScores  = character.AbilityScores,

@@ -18,7 +18,7 @@ public class When_converting_to_summary
     public void ToSummary_returns_character_summary()
     {
         var character = DomainCharacter.Create("test-id", "TestHero", Race.Human, CharacterClass.Fighter,
-            DefaultHitPoints, DefaultAbilityScores);
+            DefaultHitPoints, DefaultAbilityScores, level: 1);
 
         var summary = character.ToSummary();
 
