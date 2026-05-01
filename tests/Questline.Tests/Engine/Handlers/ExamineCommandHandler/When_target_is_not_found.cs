@@ -22,7 +22,7 @@ public class When_target_is_not_found
     [Fact]
     public async Task Returns_error_message()
     {
-        var result = await _handler.Handle(new Requests.ExamineCommand("mysterious orb"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.ExamineCommand("mysterious orb"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("You don't see 'mysterious orb' here.");

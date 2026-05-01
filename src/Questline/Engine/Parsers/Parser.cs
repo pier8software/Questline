@@ -1,19 +1,30 @@
 using System.Reflection;
+using Questline.Domain.Parties.Entity;
 using Questline.Framework.Mediator;
 
 namespace Questline.Engine.Parsers;
 
 public class Parser
 {
-    private readonly Dictionary<string, Func<string[], ParseResult>> _verbToParsers =
-        new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, (Func<string[], ParseResult> Build, bool RequiresActor)> _verbToParsers;
 
-    public Parser()
+    public Parser() : this(BuildDefaultVerbDictionary())
     {
+    }
+
+    public Parser(Dictionary<string, (Func<string[], ParseResult> Build, bool RequiresActor)> verbToParsers)
+    {
+        _verbToParsers = verbToParsers;
+    }
+
+    private static Dictionary<string, (Func<string[], ParseResult> Build, bool RequiresActor)> BuildDefaultVerbDictionary()
+    {
+        var verbs = new Dictionary<string, (Func<string[], ParseResult> Build, bool RequiresActor)>(
+            StringComparer.OrdinalIgnoreCase);
+
         var requestTypes = Assembly.GetExecutingAssembly()
             .GetTypes()
             .Where(t => typeof(IRequest).IsAssignableFrom(t) && t is { IsInterface: false, IsAbstract: false });
-
 
         foreach (var type in requestTypes)
         {
@@ -22,6 +33,8 @@ public class Parser
             {
                 continue;
             }
+
+            var requiresActor = type.GetCustomAttribute<RequiresActorAttribute>() != null;
 
             var createMethod = type.GetMethod(
                 "CreateRequest",
@@ -34,7 +47,7 @@ public class Parser
             }
 
             var localMethod = createMethod;
-            Func<string[], ParseResult> parser = args =>
+            Func<string[], ParseResult> build = args =>
             {
                 try
                 {
@@ -44,7 +57,6 @@ public class Parser
                 }
                 catch (TargetInvocationException ex)
                 {
-                    // Unwrap the actual exception
                     var innerException = ex.InnerException ?? ex;
                     return ParseResult.Failure(new ParseError($"Invalid arguments: {innerException.Message}"));
                 }
@@ -56,12 +68,16 @@ public class Parser
 
             foreach (var verb in attr.Verbs)
             {
-                _verbToParsers[verb] = parser;
+                verbs[verb] = (build, requiresActor);
             }
         }
+
+        return verbs;
     }
 
-    public ParseResult Parse(string? input)
+    public ParseResult Parse(string? input) => Parse(input, party: null);
+
+    public ParseResult Parse(string? input, Party? party)
     {
         if (string.IsNullOrEmpty(input))
         {
@@ -76,11 +92,40 @@ public class Parser
             return ParseResult.Failure(new ParseError("Please enter a command."));
         }
 
-        if (_verbToParsers.TryGetValue(tokens[0], out var parser))
+        Actor actor = new PartyActor();
+        var startIndex = 0;
+
+        if (party is not null)
         {
-            return parser(tokens[1..]);
+            var match = party.FindByName(tokens[0]);
+            if (match is not null)
+            {
+                actor      = new CharacterActor(match);
+                startIndex = 1;
+            }
         }
 
-        return ParseResult.Failure(new ParseError($"I don't understand '{tokens[0]}'."));
+        if (startIndex >= tokens.Length)
+        {
+            return ParseResult.Failure(new ParseError("Who should do what?"));
+        }
+
+        if (_verbToParsers.TryGetValue(tokens[startIndex], out var entry))
+        {
+            var result = entry.Build(tokens[(startIndex + 1)..]);
+            if (!result.IsSuccess)
+            {
+                return result;
+            }
+
+            if (entry.RequiresActor && actor is not CharacterActor)
+            {
+                return ParseResult.Failure(new ParseError("Which character should do that?"));
+            }
+
+            return ParseResult.Success(result.Request!, actor);
+        }
+
+        return ParseResult.Failure(new ParseError($"I don't understand '{tokens[startIndex]}'."));
     }
 }

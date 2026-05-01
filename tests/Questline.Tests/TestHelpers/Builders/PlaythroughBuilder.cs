@@ -1,96 +1,72 @@
 using Questline.Domain.Characters.Entity;
+using Questline.Domain.Parties.Entity;
 using Questline.Domain.Playthroughs.Entity;
-using Questline.Domain.Shared.Entity;
-using TestStack.Dossier;
 
 namespace Questline.Tests.TestHelpers.Builders;
 
-public class PlaythroughBuilder : TestDataBuilder<Playthrough, PlaythroughBuilder>
+public class PlaythroughBuilder
 {
-    private static readonly HitPoints DefaultHitPoints = new(8, 8);
+    private string          _id             = "test-playthrough";
+    private string          _username       = "test-user";
+    private string          _adventureId    = "test-adventure";
+    private string          _startingRoomId = "start";
+    private string          _location       = "start";
+    private List<Character> _members        = [];
 
-    private static readonly AbilityScores DefaultAbilityScores = new(
-        new AbilityScore(10), new AbilityScore(10), new AbilityScore(10),
-        new AbilityScore(10), new AbilityScore(10), new AbilityScore(10));
+    public static PlaythroughBuilder New() => new();
 
-    private List<Item>?      _inventoryItems;
-    private HashSet<string>? _unlockedBarriers;
+    public PlaythroughBuilder WithId(string id)             { _id = id; return this; }
+    public PlaythroughBuilder WithUsername(string u)         { _username = u; return this; }
+    public PlaythroughBuilder WithAdventureId(string id)    { _adventureId = id; return this; }
+    public PlaythroughBuilder WithStartingRoomId(string id) { _startingRoomId = id; _location = id; return this; }
+    public PlaythroughBuilder WithLocation(string id)        { _location = id; return this; }
+    public PlaythroughBuilder WithCharacter(Character c)     { _members.Add(c); return this; }
 
-    public PlaythroughBuilder()
+    /// <summary>Convenience overload — sets the leader's name via CharacterBuilder.
+    /// Preserves API used in existing tests that called WithCharacterName.</summary>
+    public PlaythroughBuilder WithCharacterName(string name)
     {
-        Set(x => x.Id, "test-playthrough");
-        Set(x => x.Username, "test-user");
-        Set(x => x.AdventureId, "test-adventure");
-        Set(x => x.StartingRoomId, "start");
-        Set(x => x.CharacterName, "TestHero");
-        Set(x => x.Race, Race.Human);
-        Set(x => x.Class, CharacterClass.Fighter);
-        Set(x => x.AbilityScores, DefaultAbilityScores);
-        Set(x => x.HitPoints, DefaultHitPoints);
-        Set(x => x.Location, "start");
+        _members = [CharacterBuilder.New().WithName(name).Build()];
+        return this;
     }
 
-    public PlaythroughBuilder WithId(string id) =>
-        Set(x => x.Id, id);
-
-    public PlaythroughBuilder WithUsername(string username) =>
-        Set(x => x.Username, username);
-
-    public PlaythroughBuilder WithAdventureId(string adventureId) =>
-        Set(x => x.AdventureId, adventureId);
-
-    public PlaythroughBuilder WithStartingRoomId(string startingRoomId) =>
-        Set(x => x.StartingRoomId, startingRoomId);
-
-    public PlaythroughBuilder WithCharacterName(string characterName) =>
-        Set(x => x.CharacterName, characterName);
-
-    public PlaythroughBuilder WithRace(Race race) =>
-        Set(x => x.Race, race);
-
-    public PlaythroughBuilder WithClass(CharacterClass @class) =>
-        Set(x => x.Class, @class);
-
-    public PlaythroughBuilder WithAbilityScores(AbilityScores abilityScores) =>
-        Set(x => x.AbilityScores, abilityScores);
-
-    public PlaythroughBuilder WithHitPoints(HitPoints hitPoints) =>
-        Set(x => x.HitPoints, hitPoints);
-
-    public PlaythroughBuilder WithLocation(string location) =>
-        Set(x => x.Location, location);
-
-    public PlaythroughBuilder WithInventoryItem(Item item)
+    public PlaythroughBuilder WithInventoryItem(Questline.Domain.Shared.Entity.Item item)
     {
-        _inventoryItems ??= [];
-        _inventoryItems.Add(item);
+        EnsureLeader();
+        _members[0].AddInventoryItem(item);
         return this;
     }
 
     public PlaythroughBuilder WithUnlockedBarrier(string barrierId)
     {
-        _unlockedBarriers ??= [];
+        // UnlockedBarriers are set post-build via init.
+        // We collect them and apply in Build().
         _unlockedBarriers.Add(barrierId);
         return this;
     }
 
-    protected override Playthrough BuildObject()
+    private readonly HashSet<string> _unlockedBarriers = [];
+
+    private void EnsureLeader()
     {
-        var location = Get(x => x.Location);
+        if (_members.Count == 0)
+            _members.Add(CharacterBuilder.New().Build());
+    }
+
+    public Playthrough Build()
+    {
+        var members = _members.Count > 0 ? _members : [CharacterBuilder.New().Build()];
+        var party   = new Party(id: Guid.NewGuid().ToString(), members: members);
+
         return new Playthrough
         {
-            Id               = Get(x => x.Id),
-            Username         = Get(x => x.Username),
-            AdventureId      = Get(x => x.AdventureId),
-            StartingRoomId   = Get(x => x.StartingRoomId),
-            CharacterName    = Get(x => x.CharacterName),
-            Race             = Get(x => x.Race),
-            Class            = Get(x => x.Class),
-            AbilityScores    = Get(x => x.AbilityScores),
-            HitPoints        = Get(x => x.HitPoints),
-            Location         = location,
-            Inventory        = _inventoryItems   ?? [],
-            UnlockedBarriers = _unlockedBarriers ?? []
+            Id               = _id,
+            Username         = _username,
+            AdventureId      = _adventureId,
+            StartingRoomId   = _startingRoomId,
+            Location         = _location,
+            Party            = party,
+            UnlockedBarriers = _unlockedBarriers
         };
     }
 }

@@ -25,7 +25,7 @@ public class When_exit_is_open
     [Fact]
     public async Task Returns_next_room_details_in_response()
     {
-        var result = await _handler.Handle(new Requests.MovePlayerCommand(Direction.North));
+        var result = await _handler.Handle(new PartyActor(), new Requests.MovePlayerCommand(Direction.North));
 
         var moveResult = result.ShouldBeOfType<Responses.PlayerMovedResponse>();
         moveResult.RoomName.ShouldBe("End Room");
@@ -35,7 +35,7 @@ public class When_exit_is_open
     [Fact]
     public async Task Invalid_direction_returns_error_message()
     {
-        var result = await _handler.Handle(new Requests.MovePlayerCommand(Direction.East));
+        var result = await _handler.Handle(new PartyActor(), new Requests.MovePlayerCommand(Direction.East));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("There is no exit to the East.");
@@ -44,7 +44,7 @@ public class When_exit_is_open
     [Fact]
     public async Task Player_location_is_updated_after_moving()
     {
-        _ = await _handler.Handle(new Requests.MovePlayerCommand(Direction.North));
+        _ = await _handler.Handle(new PartyActor(), new Requests.MovePlayerCommand(Direction.North));
 
         _fixture.Playthrough.Location.ShouldBe("end");
     }

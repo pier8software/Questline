@@ -7,14 +7,6 @@ namespace Questline.Engine.Messages;
 
 public static class Responses
 {
-    public enum CharacterCreationStep
-    {
-        SelectClass,
-        SelectRace,
-        RollHitPoints,
-        EnterName
-    }
-
     public record GameStartedResponse : IResponse;
 
     public record GameQuitedResponse : IResponse;
@@ -31,14 +23,37 @@ public static class Responses
 
     public record NewAdventureSelectedResponse : IResponse;
 
-    public record CharacterCreationOption(string Value, string Label);
+    public record PartyRolledResponse(IReadOnlyList<CharacterSummary> Members) : IResponse
+    {
+        public string Message
+        {
+            get
+            {
+                var lines = Members.Select((m, i) =>
+                    $"{i + 1}. {m.Name} ({m.Race}, {m.Occupation}) — " +
+                    $"HP {m.CurrentHitPoints}/{m.MaxHitPoints}, " +
+                    $"Str {m.AbilityScores.Strength}/Dex {m.AbilityScores.Dexterity}/" +
+                    $"Con {m.AbilityScores.Constitution}/Int {m.AbilityScores.Intelligence}/" +
+                    $"Wis {m.AbilityScores.Wisdom}/Cha {m.AbilityScores.Charisma}");
 
-    public record CharacterCreationResponse(
-        CharacterCreationStep                   Step,
-        string                                  Prompt,
-        IReadOnlyList<CharacterCreationOption>? Options = null) : IResponse;
+                return "Your party of hopefuls:" + Environment.NewLine
+                    + string.Join(Environment.NewLine, lines) + Environment.NewLine
+                    + Environment.NewLine
+                    + "Type 'accept' to begin, 'reroll' to start over, or "
+                    + "'rename <slot> <name>' to rename a character.";
+            }
+        }
+    }
 
-    public record CharacterCreationCompleteResponse(CharacterSummary Summary) : IResponse;
+    public record PartyAcceptedResponse : IResponse
+    {
+        public string Message => "The party sets out…";
+    }
+
+    public record PartyCreationErrorResponse(string Reason) : IResponse
+    {
+        public string Message => Reason;
+    }
 
     public record AdventureStartedResponse(
         CharacterSummary      Character,
@@ -62,15 +77,59 @@ public static class Responses
         IReadOnlyList<string> Items,
         IReadOnlyList<string> LockedBarriers) : IResponse;
 
-    public record ItemTakenResponse(string ItemName) : IResponse;
+    public record ItemTakenResponse(string ItemName, string? CharacterName = null) : IResponse
+    {
+        public string Message => CharacterName is null
+            ? $"You pick up the {ItemName}."
+            : $"{CharacterName} picks up the {ItemName}.";
+    }
 
-    public record ItemDroppedResponse(string ItemName) : IResponse;
+    public record ItemDroppedResponse(string ItemName, string? CharacterName = null) : IResponse
+    {
+        public string Message => CharacterName is null
+            ? $"You drop the {ItemName}."
+            : $"{CharacterName} drops the {ItemName}.";
+    }
 
-    public record PlayerInventoryResponse(IReadOnlyList<string> Items) : IResponse;
+    public record InventoryResponse(
+        IReadOnlyList<(string CharacterName, IReadOnlyList<string> ItemNames)> PartyInventory) : IResponse
+    {
+        public string Message
+        {
+            get
+            {
+                var lines = PartyInventory.Select(p =>
+                {
+                    var items = p.ItemNames.Count == 0 ? "(empty)" : string.Join(", ", p.ItemNames);
+                    return $"{p.CharacterName}: {items}";
+                });
+                return string.Join(Environment.NewLine, lines);
+            }
+        }
+    }
 
     public record ExamineResponse(string Description) : IResponse;
 
     public record UseItemResponse(string ResultMessage) : IResponse;
 
     public record VersionResponse(string Version) : IResponse;
+
+    public record StatsResponse(PartySummary Party) : IResponse
+    {
+        public string Message
+        {
+            get
+            {
+                var lines = Party.Members.Select(m =>
+                    $"{m.Name} ({m.Race}, {m.Class}) — HP {m.CurrentHitPoints}/{m.MaxHitPoints}, " +
+                    $"Str {m.AbilityScores.Strength} Dex {m.AbilityScores.Dexterity} " +
+                    $"Con {m.AbilityScores.Constitution} Int {m.AbilityScores.Intelligence} " +
+                    $"Wis {m.AbilityScores.Wisdom} Cha {m.AbilityScores.Charisma}");
+
+                return string.Join(Environment.NewLine, lines)
+                    + Environment.NewLine
+                    + $"Turns: {Party.Turns}";
+            }
+        }
+    }
 }

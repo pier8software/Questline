@@ -4,10 +4,11 @@ public record CharacterSummary(
     string Name,
     string Race,
     string Class,
-    int Level,
-    int Experience,
-    int MaxHitPoints,
-    int CurrentHitPoints,
+    string Occupation,
+    int    Level,
+    int    Experience,
+    int    MaxHitPoints,
+    int    CurrentHitPoints,
     AbilityScoresSummary AbilityScores);
 
 public record AbilityScoresSummary(

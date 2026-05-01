@@ -25,7 +25,7 @@ public class When_use_target_is_not_found
     [Fact]
     public async Task Returns_error_message()
     {
-        var result = await _handler.Handle(new Requests.UseItemCommand("rusty key", "iron door"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.UseItemCommand("rusty key", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("You don't see 'iron door' here.");

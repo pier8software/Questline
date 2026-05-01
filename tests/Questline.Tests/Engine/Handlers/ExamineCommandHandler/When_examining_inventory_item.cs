@@ -1,4 +1,5 @@
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -22,7 +23,7 @@ public class When_examining_inventory_item
     [Fact]
     public async Task Shows_item_description()
     {
-        var result = await _handler.Handle(new Requests.ExamineCommand("rusty key"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.ExamineCommand("rusty key"));
 
         var examineResult = result.ShouldBeOfType<Responses.ExamineResponse>();
         examineResult.Description.ShouldBe("An old iron key, its teeth worn by time.");

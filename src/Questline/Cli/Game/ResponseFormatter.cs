@@ -1,4 +1,3 @@
-using Questline.Domain.Characters.Data;
 using Questline.Domain.Playthroughs.Data;
 using Questline.Engine.Messages;
 using Questline.Framework.Mediator;
@@ -16,21 +15,21 @@ public class ResponseFormatter
         Responses.SavedPlaythroughsResponse r         => FormatSavedPlaythroughs(r),
         Responses.NoSavedGamesResponse                => "No saved games found.",
         Responses.NewAdventureSelectedResponse        => FormatAdventureSelected(),
-        Responses.CharacterCreationResponse r         => FormatCharacterCreation(r),
-        Responses.CharacterCreationCompleteResponse r => FormatCharacterCreationComplete(r),
+        Responses.PartyRolledResponse r               => r.Message,
+        Responses.PartyAcceptedResponse r             => r.Message,
+        Responses.PartyCreationErrorResponse r        => r.Message,
         Responses.AdventureStartedResponse r          => FormatAdventureStarted(r),
         Responses.PlayerMovedResponse r =>
             FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
         Responses.RoomDetailsResponse r =>
             FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers),
-        Responses.ItemTakenResponse r   => $"You pick up the {r.ItemName}.",
-        Responses.ItemDroppedResponse r => $"You drop the {r.ItemName}.",
-        Responses.PlayerInventoryResponse r => r.Items.Count == 0
-            ? "You are not carrying anything."
-            : $"You are carrying: {string.Join(", ", r.Items)}",
+        Responses.ItemTakenResponse r   => r.Message,
+        Responses.ItemDroppedResponse r => r.Message,
+        Responses.InventoryResponse r   => r.Message,
         Responses.ExamineResponse r  => r.Description,
         Responses.UseItemResponse r  => r.ResultMessage,
         Responses.VersionResponse r  => $"Questline v{r.Version}",
+        Responses.StatsResponse r    => r.Message,
         Responses.GameQuitedResponse => "Goodbye!",
         ErrorResponse r              => r.ErrorMessage,
         _                            => response.ToString() ?? ""
@@ -64,47 +63,13 @@ public class ResponseFormatter
         return $"Welcome back {response.Player.Name}!\nSelect an adventure to begin your journey:\n{adventures}";
     }
 
-    private string FormatAdventureSelected() =>
-        string.Join("\n", "Lets create a character!", "Select your character's class:", "\t1. Fighter");
-
-    private static string FormatCharacterCreation(Responses.CharacterCreationResponse r)
-    {
-        if (r.Options is { Count: > 0 })
-        {
-            var options = string.Join("\n", r.Options.Select(o => $"\t{o.Value}. {o.Label}"));
-            return $"{r.Prompt}\n{options}";
-        }
-
-        return r.Prompt;
-    }
-
-    private static string FormatCharacterCreationComplete(Responses.CharacterCreationCompleteResponse r) =>
-        $"You have created your character.\n{FormatCharacterSummary(r.Summary)}";
+    private static string FormatAdventureSelected() =>
+        "Select your party and get ready for adventure!";
 
     private static string FormatAdventureStarted(Responses.AdventureStartedResponse r)
     {
         var roomView = FormatRoomView(r.RoomName, r.Description, r.Exits, r.Items, r.LockedBarriers);
         return $"Welcome {r.Character.Name}! Your adventure begins...\n{roomView}";
-    }
-
-    private static string FormatCharacterSummary(CharacterSummary c)
-    {
-        return $"""
-                Name: {c.Name}
-                Race: {c.Race}
-                Class: {c.Class}
-                Level: {c.Level}
-                HP: {c.CurrentHitPoints}/{c.MaxHitPoints}
-                XP: {c.Experience}
-
-                Ability Scores:
-                  STR: {c.AbilityScores.Strength}
-                  INT: {c.AbilityScores.Intelligence}
-                  WIS: {c.AbilityScores.Wisdom}
-                  DEX: {c.AbilityScores.Dexterity}
-                  CON: {c.AbilityScores.Constitution}
-                  CHA: {c.AbilityScores.Charisma}
-                """;
     }
 
     private static string FormatRoomView(

@@ -1,3 +1,4 @@
+using Questline.Domain.Parties.Entity;
 using Questline.Domain.Playthroughs.Data;
 using Questline.Domain.Playthroughs.Entity;
 using Questline.Domain.Rooms.Entity;
@@ -16,19 +17,19 @@ public enum GamePhase
     StartMenu,
     NewAdventure,
     LoadGame,
-    CharacterCreation,
+    PartyCreation,
     Playing,
     Ended
 }
 
 public class GameEngine(
-    Parser                        parser,
-    RequestSender                 dispatcher,
-    IAdventureRepository          adventureRepository,
-    IRoomRepository               roomRepository,
-    IPlaythroughRepository        playthroughRepository,
-    IGameSession                  gameSession,
-    CharacterCreationStateMachine stateMachine)
+    Parser                     parser,
+    RequestSender              dispatcher,
+    IAdventureRepository       adventureRepository,
+    IRoomRepository            roomRepository,
+    IPlaythroughRepository     playthroughRepository,
+    IGameSession               gameSession,
+    PartyCreationStateMachine  stateMachine)
 {
     private GamePhase                                        _phase               = GamePhase.Started;
     private string                                           _selectedAdventureId = null!;
@@ -55,8 +56,8 @@ public class GameEngine(
                 return await HandleNewAdventure(input);
             case GamePhase.LoadGame:
                 return await HandleLoadGame(input);
-            case GamePhase.CharacterCreation:
-                return await HandleCharacterCreation(input);
+            case GamePhase.PartyCreation:
+                return await HandlePartyCreation(input);
             case GamePhase.Playing:
                 return await HandleGamePlay(input);
             case GamePhase.Ended:
@@ -68,13 +69,17 @@ public class GameEngine(
 
     private async Task<IResponse> HandleGamePlay(string? input)
     {
-        var parseResult = parser.Parse(input);
+        var playthrough = await playthroughRepository.GetById(gameSession.PlaythroughId!);
+        var parseResult = parser.Parse(input, playthrough.Party);
         if (!parseResult.IsSuccess)
         {
             return parseResult.Error!;
         }
 
-        var response = await dispatcher.Send(parseResult.Request!);
+        var response = await dispatcher.Send(parseResult.Actor!, parseResult.Request!);
+
+        playthrough.IncrementTurns();
+        await playthroughRepository.Save(playthrough);
 
         if (response is Responses.GameQuitedResponse)
         {
@@ -84,14 +89,18 @@ public class GameEngine(
         return response;
     }
 
-    private async Task<IResponse> HandleCharacterCreation(string? input)
+    private async Task<IResponse> HandlePartyCreation(string? input)
     {
         var response = stateMachine.ProcessInput(input);
 
-        if (stateMachine.CompletedCharacter is { } character)
+        if (stateMachine.CompletedParty is { } party)
         {
             var adventure   = await adventureRepository.GetById(_selectedAdventureId);
-            var playthrough = Playthrough.Create(gameSession.Username!, _selectedAdventureId, adventure.StartingRoomId, character);
+            var playthrough = Playthrough.Create(
+                gameSession.Username!,
+                _selectedAdventureId,
+                adventure.StartingRoomId,
+                party);
 
             await playthroughRepository.Save(playthrough);
             gameSession.SetPlaythroughId(playthrough.Id);
@@ -111,9 +120,9 @@ public class GameEngine(
         }
 
         _selectedAdventureId = adventureId;
-        _phase               = GamePhase.CharacterCreation;
+        _phase               = GamePhase.PartyCreation;
 
-        return Task.FromResult(new Responses.NewAdventureSelectedResponse() as IResponse);
+        return Task.FromResult(stateMachine.Start() as IResponse);
     }
 
     private async Task<IResponse> HandleLogin(string? input)
@@ -124,7 +133,7 @@ public class GameEngine(
             return parseResult.Error!;
         }
 
-        var response         = await dispatcher.Send(parseResult.Request!);
+        var response         = await dispatcher.Send(new NoActor(), parseResult.Request!);
         var loggedInResponse = response as Responses.LoggedInResponse;
 
         gameSession.SetUsername(loggedInResponse!.Player.Username);
@@ -187,7 +196,7 @@ public class GameEngine(
         var lockedBarriers = GetLockedBarrierDescriptions(startingRoom.Exits, playthrough);
 
         return new Responses.AdventureStartedResponse(
-            playthrough.ToCharacterSummary(),
+            playthrough.Party.Members[0].ToSummary(),
             startingRoom.Name,
             startingRoom.Description,
             exits,

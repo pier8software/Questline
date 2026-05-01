@@ -12,13 +12,26 @@ public class When_converting_playthrough_to_summary
     }
 
     [Fact]
-    public void ToCharacterSummary_returns_summary()
+    public void ToPartySummary_returns_one_member_for_default_playthrough()
     {
-        var summary = _playthrough.ToCharacterSummary();
+        var summary = _playthrough.ToPartySummary();
 
-        summary.Name.ShouldBe("TestHero");
-        summary.Race.ShouldBe("Human");
-        summary.Class.ShouldBe("Fighter");
-        summary.Level.ShouldBe(1);
+        summary.Members.Count.ShouldBe(1);
+    }
+
+    [Fact]
+    public void ToPartySummary_leader_has_correct_name()
+    {
+        var summary = _playthrough.ToPartySummary();
+
+        summary.Members[0].Name.ShouldBe("Aric");
+    }
+
+    [Fact]
+    public void ToPartySummary_turns_is_zero_initially()
+    {
+        var summary = _playthrough.ToPartySummary();
+
+        summary.Turns.ShouldBe(0);
     }
 }

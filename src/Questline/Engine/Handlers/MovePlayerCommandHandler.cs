@@ -12,7 +12,7 @@ public class MovePlayerCommandHandler(
     IPlaythroughRepository playthroughRepository,
     IRoomRepository        roomRepository) : IRequestHandler<Requests.MovePlayerCommand>
 {
-    public async Task<IResponse> Handle(Requests.MovePlayerCommand command)
+    public async Task<IResponse> Handle(Actor actor, Requests.MovePlayerCommand command)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
         var currentRoom = await roomRepository.GetById(playthrough.Location);

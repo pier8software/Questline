@@ -1,4 +1,5 @@
 using Questline.Domain.Characters.Entity;
+using Questline.Domain.Parties.Entity;
 using Questline.Domain.Playthroughs.Entity;
 using Questline.Domain.Shared.Entity;
 using Questline.Engine.Persistence.Rooms;
@@ -8,79 +9,109 @@ namespace Questline.Engine.Persistence.Playthroughs;
 
 public class PlaythroughMapper : IPersistenceMapper<Playthrough, PlaythroughDocument>
 {
-    public Playthrough From(PlaythroughDocument document) => new()
+    public Playthrough From(PlaythroughDocument document)
     {
-        Id             = document.Id,
-        Username       = document.Username,
-        AdventureId    = document.AdventureId,
-        StartingRoomId = document.StartingRoomId,
-        CharacterName  = document.CharacterName,
-        Race           = Enum.Parse<Race>(document.Race),
-        Class          = Enum.Parse<CharacterClass>(document.Class),
-        Level          = document.Level,
-        Experience     = document.Experience,
-        AbilityScores = new AbilityScores(
-            new AbilityScore(document.AbilityScores.Strength),
-            new AbilityScore(document.AbilityScores.Intelligence),
-            new AbilityScore(document.AbilityScores.Wisdom),
-            new AbilityScore(document.AbilityScores.Dexterity),
-            new AbilityScore(document.AbilityScores.Constitution),
-            new AbilityScore(document.AbilityScores.Charisma)),
-        HitPoints = new HitPoints(
-            document.HitPoints.MaxHitPoints,
-            document.HitPoints.CurrentHitPoints),
-        Location = document.Location,
-        Inventory = document.Inventory.Select(i => new Item
+        var playthrough = new Playthrough
         {
-            Id          = i.Id,
-            Name        = i.Name,
-            Description = i.Description
-        }).ToList(),
-        UnlockedBarriers = document.UnlockedBarriers.ToHashSet(),
-        RoomItems = document.RoomItems.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.Select(i => new Item
-            {
-                Id          = i.Id,
-                Name        = i.Name,
-                Description = i.Description
-            }).ToList())
-    };
+            Id               = document.Id,
+            Username         = document.Username,
+            AdventureId      = document.AdventureId,
+            StartingRoomId   = document.StartingRoomId,
+            Location         = document.Location,
+            Party            = MapParty(document.Party),
+            UnlockedBarriers = document.UnlockedBarriers.ToHashSet(),
+            RoomItems        = document.RoomItems.ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.Select(MapItem).ToList())
+        };
+
+        playthrough.RestoreTurns(document.Turns);
+        return playthrough;
+    }
 
     public PlaythroughDocument To(Playthrough entity) => new()
     {
-        Id             = entity.Id,
-        Username       = entity.Username,
-        AdventureId    = entity.AdventureId,
-        StartingRoomId = entity.StartingRoomId,
-        CharacterName  = entity.CharacterName,
-        Race           = entity.Race.ToString(),
-        Class          = entity.Class.ToString(),
-        Level          = entity.Level,
-        Experience     = entity.Experience,
+        Id               = entity.Id,
+        Username         = entity.Username,
+        AdventureId      = entity.AdventureId,
+        StartingRoomId   = entity.StartingRoomId,
+        Location         = entity.Location,
+        Turns            = entity.Turns,
+        Party            = new PartyDocument
+        {
+            Members = entity.Party.Members.Select(MapCharacterToDoc).ToList()
+        },
+        UnlockedBarriers = entity.UnlockedBarriers.ToList(),
+        RoomItems        = entity.RoomItems.ToDictionary(
+            kvp => kvp.Key,
+            kvp => kvp.Value.Select(MapItemToDoc).ToList())
+    };
+
+    private static Party MapParty(PartyDocument doc) =>
+        new(
+            id: Guid.NewGuid().ToString(),
+            members: doc.Members.Select(MapCharacterFromDoc).ToList());
+
+    private static Character MapCharacterFromDoc(CharacterDocument doc)
+    {
+        var character = Character.Create(
+            id: doc.Id,
+            name: doc.Name,
+            race: Enum.Parse<Race>(doc.Race),
+            characterClass: doc.Class is null ? null : Enum.Parse<CharacterClass>(doc.Class),
+            hitPoints: new HitPoints(max: doc.HitPoints.MaxHitPoints, current: doc.HitPoints.CurrentHitPoints),
+            abilityScores: new AbilityScores(
+                new AbilityScore(doc.AbilityScores.Strength),
+                new AbilityScore(doc.AbilityScores.Intelligence),
+                new AbilityScore(doc.AbilityScores.Wisdom),
+                new AbilityScore(doc.AbilityScores.Dexterity),
+                new AbilityScore(doc.AbilityScores.Constitution),
+                new AbilityScore(doc.AbilityScores.Charisma)),
+            occupation: doc.Occupation,
+            level: doc.Level);
+
+        foreach (var item in doc.Inventory)
+        {
+            character.AddInventoryItem(MapItem(item));
+        }
+
+        return character;
+    }
+
+    private static CharacterDocument MapCharacterToDoc(Character character) => new()
+    {
+        Id         = character.Id,
+        Name       = character.Name,
+        Race       = character.Race.ToString(),
+        Class      = character.Class?.ToString(),
+        Level      = character.Level,
+        Experience = character.Experience,
+        Occupation = character.Occupation,
         AbilityScores = new AbilityScoresDocument
         {
-            Strength     = entity.AbilityScores.Strength.Score,
-            Intelligence = entity.AbilityScores.Intelligence.Score,
-            Wisdom       = entity.AbilityScores.Wisdom.Score,
-            Dexterity    = entity.AbilityScores.Dexterity.Score,
-            Constitution = entity.AbilityScores.Constitution.Score,
-            Charisma     = entity.AbilityScores.Charisma.Score
+            Strength     = character.AbilityScores.Strength.Score,
+            Intelligence = character.AbilityScores.Intelligence.Score,
+            Wisdom       = character.AbilityScores.Wisdom.Score,
+            Dexterity    = character.AbilityScores.Dexterity.Score,
+            Constitution = character.AbilityScores.Constitution.Score,
+            Charisma     = character.AbilityScores.Charisma.Score
         },
         HitPoints = new HitPointsDocument
         {
-            MaxHitPoints     = entity.HitPoints.MaxHitPoints,
-            CurrentHitPoints = entity.HitPoints.CurrentHitPoints
+            MaxHitPoints     = character.HitPoints.Max,
+            CurrentHitPoints = character.HitPoints.Current
         },
-        Location         = entity.Location,
-        Inventory        = entity.Inventory.Select(ToItemDocument).ToList(),
-        UnlockedBarriers = entity.UnlockedBarriers.ToList(),
-        RoomItems = entity.RoomItems.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.Select(ToItemDocument).ToList())
+        Inventory = character.Inventory.Select(MapItemToDoc).ToList()
     };
 
-    private static ItemDocument ToItemDocument(Item item) => new()
+    private static Item MapItem(ItemDocument doc) => new()
+    {
+        Id          = doc.Id,
+        Name        = doc.Name,
+        Description = doc.Description
+    };
+
+    private static ItemDocument MapItemToDoc(Item item) => new()
     {
         Id          = item.Id,
         Name        = item.Name,

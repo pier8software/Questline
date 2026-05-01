@@ -1,4 +1,5 @@
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -22,7 +23,7 @@ public class When_item_is_in_room
     [Fact]
     public async Task Returns_successful_take_response()
     {
-        var result = await _handler.Handle(new Requests.TakeItemCommand("brass lamp"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.TakeItemCommand("brass lamp"));
 
         var takeResult = result.ShouldBeOfType<Responses.ItemTakenResponse>();
         takeResult.ItemName.ShouldBe("brass lamp");
@@ -31,7 +32,7 @@ public class When_item_is_in_room
     [Fact]
     public async Task Matching_is_case_insensitive()
     {
-        var result = await _handler.Handle(new Requests.TakeItemCommand("BRASS LAMP"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.TakeItemCommand("BRASS LAMP"));
 
         var takeResult = result.ShouldBeOfType<Responses.ItemTakenResponse>();
         takeResult.ItemName.ShouldBe("brass lamp");

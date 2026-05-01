@@ -10,12 +10,14 @@ public class ExamineCommandHandler(
     IPlaythroughRepository playthroughRepository,
     IRoomRepository        roomRepository) : IRequestHandler<Requests.ExamineCommand>
 {
-    public async Task<IResponse> Handle(Requests.ExamineCommand command)
+    public async Task<IResponse> Handle(Actor actor, Requests.ExamineCommand command)
     {
         var playthrough = await playthroughRepository.GetById(session.PlaythroughId!);
 
+        var actingCharacter = ActingCharacterResolver.Resolve(actor, playthrough.Party);
+
         // Search order: inventory items > room items > room features
-        var inventoryItem = playthrough.FindInventoryItemByName(command.TargetName);
+        var inventoryItem = actingCharacter.FindInventoryItemByName(command.TargetName);
         if (inventoryItem is not null)
         {
             return new Responses.ExamineResponse(inventoryItem.Description);

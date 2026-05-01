@@ -16,11 +16,25 @@ namespace Questline.Tests.Cli.Game.GameApp;
 
 public class When_playing_game
 {
-    // 3d6 x 6 ability scores = 18 rolls, then 1d8 for HP = 19 rolls total
-    private static readonly int[] DefaultDiceRolls = [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4];
+    // 4 PCs × (1 race + 18 ability scores + 1 hp + 1 occupation + 1 name) = 88 dice slots
+    private static readonly int[] DefaultDiceRolls = BuildDiceRolls();
 
-    // Login, start menu (New Game), select adventure, then character creation: select class (Fighter), select race (Human), continue (HP roll), enter name
-    private static readonly string[] SetupInputs = ["login Player1", "1", "1", "1", "1", "", "Hero"];
+    // Login, start menu (New Game), select adventure, then party creation: accept rolled party
+    private static readonly string[] SetupInputs = ["login Player1", "1", "1", "accept"];
+
+    private static int[] BuildDiceRolls()
+    {
+        var rolls = new List<int>();
+        for (var i = 0; i < 4; i++)
+        {
+            rolls.Add(1);                              // race: Human
+            for (var s = 0; s < 18; s++) rolls.Add(3); // 6 × 3d6, each die = 3
+            rolls.Add(2);                              // hp = 2
+            rolls.Add(1);                              // occupation index
+            rolls.Add(i + 1);                          // name index (unique per PC)
+        }
+        return rolls.ToArray();
+    }
 
     private static (Questline.Cli.Game.GameApp app, FakeConsole console) CreateCliApp()
     {
@@ -73,7 +87,7 @@ public class When_playing_game
         var console = new FakeConsole();
 
         var dice         = new FakeDice(DefaultDiceRolls);
-        var stateMachine = new CharacterCreationStateMachine(dice);
+        var stateMachine = new PartyCreationStateMachine(dice);
 
         var dispatcher = new RequestSender(serviceProvider);
         var parser     = new Parser();

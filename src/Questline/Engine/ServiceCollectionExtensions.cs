@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<Parser>();
         services.AddSingleton<IDice, Dice>();
-        services.AddSingleton<CharacterCreationStateMachine>();
+        services.AddSingleton<PartyCreationStateMachine>();
         services.AddSingleton<GameEngine>();
 
         services.AddSingleton<IGameSession, GameSession>();
@@ -52,6 +52,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRequestHandler<UseItemCommand>, UseItemCommandHandler>();
         services.AddSingleton<IRequestHandler<ExamineCommand>, ExamineCommandHandler>();
         services.AddSingleton<IRequestHandler<VersionQuery>, VersionQueryHandler>();
+        services.AddSingleton<IRequestHandler<StatsQuery>, StatsQueryHandler>();
 
         services.AddSingleton<RequestSender>();
     }

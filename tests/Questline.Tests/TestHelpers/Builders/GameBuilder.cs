@@ -1,5 +1,6 @@
 using Questline.Domain.Adventures.Entity;
 using Questline.Domain.Characters.Entity;
+using Questline.Domain.Parties.Entity;
 using Questline.Domain.Playthroughs.Data;
 using Questline.Domain.Playthroughs.Entity;
 using Questline.Domain.Rooms.Entity;
@@ -19,13 +20,13 @@ public class GameBuilder
 
     private readonly Dictionary<string, Room> _rooms = new();
 
-    private readonly string           _adventureId   = "test-adventure";
-    private readonly string           _characterName = "TestHero";
-    private readonly Race             _race          = Race.Human;
-    private readonly CharacterClass   _class         = CharacterClass.Fighter;
-    private readonly AbilityScores    _abilityScores = DefaultAbilityScores;
-    private readonly HitPoints        _hitPoints     = DefaultHitPoints;
-    private          List<Item>?      _inventoryItems;
+    private readonly string         _adventureId    = "test-adventure";
+    private readonly string         _characterName  = "TestHero";
+    private readonly Race           _race           = Race.Human;
+    private readonly CharacterClass _class          = CharacterClass.Fighter;
+    private readonly AbilityScores  _abilityScores  = DefaultAbilityScores;
+    private readonly HitPoints      _hitPoints      = DefaultHitPoints;
+    private          List<Item>?    _inventoryItems;
     private          HashSet<string>? _unlockedBarriers;
 
     public GameBuilder WithRoom(RoomBuilder builder)
@@ -51,19 +52,30 @@ public class GameBuilder
 
     public GameFixture Build(string startLocation)
     {
+        var character = Character.Create(
+            id:            Guid.NewGuid().ToString(),
+            name:          _characterName,
+            race:          _race,
+            characterClass: _class,
+            hitPoints:     _hitPoints,
+            abilityScores: _abilityScores);
+
+        if (_inventoryItems is not null)
+        {
+            foreach (var item in _inventoryItems)
+                character.AddInventoryItem(item);
+        }
+
+        var party = new Party(id: Guid.NewGuid().ToString(), members: [character]);
+
         var playthrough = new Playthrough
         {
             Id               = "test-playthrough",
             Username         = "test-user",
             AdventureId      = _adventureId,
             StartingRoomId   = startLocation,
-            CharacterName    = _characterName,
-            Race             = _race,
-            Class            = _class,
-            AbilityScores    = _abilityScores,
-            HitPoints        = _hitPoints,
             Location         = startLocation,
-            Inventory        = _inventoryItems   ?? [],
+            Party            = party,
             UnlockedBarriers = _unlockedBarriers ?? []
         };
 
@@ -107,7 +119,11 @@ public class FakePlaythroughRepository : IPlaythroughRepository
     {
         var summaries = _store.Values
             .Where(p => p.Username == username)
-            .Select(p => new PlaythroughSummary(p.Id, p.CharacterName, p.AdventureId, p.Location))
+            .Select(p => new PlaythroughSummary(
+                p.Id,
+                p.Party.Members[0].Name,
+                p.AdventureId,
+                p.Location))
             .ToList();
 
         return Task.FromResult<IReadOnlyList<PlaythroughSummary>>(summaries);

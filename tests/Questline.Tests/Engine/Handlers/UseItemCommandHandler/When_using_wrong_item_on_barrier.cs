@@ -27,7 +27,7 @@ public class When_using_wrong_item_on_barrier
     [Fact]
     public async Task Returns_error_and_barrier_stays_locked()
     {
-        var result = await _handler.Handle(new Requests.UseItemCommand("torch", "iron door"));
+        var result = await _handler.Handle(new PartyActor(), new Requests.UseItemCommand("torch", "iron door"));
 
         var error = result.ShouldBeOfType<ErrorResponse>();
         error.ErrorMessage.ShouldBe("The torch doesn't work on the iron door.");

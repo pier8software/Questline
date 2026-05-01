@@ -1,4 +1,5 @@
 using Questline.Engine.Messages;
+using Questline.Framework.Mediator;
 using Questline.Tests.TestHelpers.Builders;
 using static Questline.Tests.TestHelpers.Builders.Templates.Templates;
 
@@ -23,10 +24,11 @@ public class When_player_has_items
     [Fact]
     public async Task Lists_carried_items()
     {
-        var result = await _handler.Handle(new Requests.GetPlayerInventoryQuery());
+        var result = await _handler.Handle(new PartyActor(), new Requests.GetPlayerInventoryQuery());
 
-        var inventoryResult = result.ShouldBeOfType<Responses.PlayerInventoryResponse>();
-        inventoryResult.Items.ShouldContain("brass lamp");
-        inventoryResult.Items.ShouldContain("rusty key");
+        var inventoryResult = result.ShouldBeOfType<Responses.InventoryResponse>();
+        var allItems        = inventoryResult.PartyInventory.SelectMany(p => p.ItemNames).ToList();
+        allItems.ShouldContain("brass lamp");
+        allItems.ShouldContain("rusty key");
     }
 }
